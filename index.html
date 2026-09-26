@@ -3,59 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Crownspips Trading - Demo Forex</title>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f5f8;color:#111827}
-header{background:#111827;color:white;padding:18px;text-align:center}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f3f5f8;
+color:#111827;
+}
+
+header{
+background:#111827;
+color:white;
+padding:20px;
+text-align:center;
+}
+
 .gold{color:#d4af37}
-.container{width:94%;max-width:1200px;margin:20px auto}
-.top{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-.card,section{background:white;border-radius:14px;padding:18px;box-shadow:0 3px 12px #0001;margin-bottom:18px}
-.card h3{font-size:13px;color:#6b7280;margin:0 0 8px}
-.amount{font-size:25px;font-weight:bold}
+
+.container{
+width:94%;
+max-width:1250px;
+margin:20px auto;
+}
+
+.notice{
+background:#fff8df;
+border-left:5px solid #d4af37;
+padding:15px;
+margin-bottom:20px;
+line-height:1.5;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+}
+
+.card,section{
+background:white;
+border-radius:14px;
+padding:20px;
+box-shadow:0 3px 12px #0001;
+margin-bottom:20px;
+}
+
+.card h3{
+font-size:13px;
+color:#6b7280;
+margin:0 0 8px;
+}
+
+.amount{
+font-size:24px;
+font-weight:bold;
+}
+
 .green{color:#15803d}
 .red{color:#dc2626}
 
-.notice{background:#fff8df;border-left:5px solid #d4af37;padding:14px;margin-bottom:18px}
+table{
+width:100%;
+border-collapse:collapse;
+min-width:750px;
+}
 
-table{width:100%;border-collapse:collapse;min-width:700px}
-th,td{padding:11px;border-bottom:1px solid #eee;text-align:left}
-th{font-size:12px;color:#6b7280}
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:left;
+}
 
-.buy,.sell{border:0;color:white;padding:8px 13px;border-radius:6px;font-weight:bold;cursor:pointer}
+th{
+font-size:12px;
+color:#6b7280;
+}
+
+.table-wrap{
+overflow-x:auto;
+}
+
+button{
+border:0;
+border-radius:7px;
+padding:9px 13px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
 .buy{background:#15803d}
 .sell{background:#dc2626}
 
-.market{overflow-x:auto}
+.trade-button{
+width:100%;
+margin-top:15px;
+padding:13px;
+background:#111827;
+}
 
-input,select{padding:10px;border:1px solid #ddd;border-radius:7px;width:100%;margin-top:6px}
+input,select{
+width:100%;
+padding:11px;
+border:1px solid #ddd;
+border-radius:7px;
+margin-top:6px;
+}
 
-.trade-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.trade-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+}
 
-.trade-button{margin-top:10px;width:100%;padding:12px;border:0;border-radius:8px;background:#111827;color:white;font-weight:bold}
-
-footer{text-align:center;padding:25px;color:#777;font-size:13px}
+footer{
+text-align:center;
+padding:25px;
+color:#777;
+font-size:13px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Crownspips <span class="gold">Trading</span></h1>
+
 <p>Demo Forex Trading Platform</p>
+
 </header>
 
 <div class="container">
 
 <div class="notice">
+
 <strong>DEMO ACCOUNT</strong><br>
-This is a simulated trading environment. Prices, trades, profits and losses are simulated.
+
+This is a simulated trading environment.
+Prices, trades, profits and losses are simulated.
 No real money is deposited, withdrawn or traded.
+
 </div>
 
-<div class="top">
+
+<div class="cards">
 
 <div class="card">
 <h3>ACCOUNT BALANCE</h3>
@@ -79,32 +177,102 @@ No real money is deposited, withdrawn or traded.
 
 </div>
 
+
 <section>
+
 <h2>Market Watch</h2>
 
-<div class="market">
+<div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Pair</th>
 <th>Bid</th>
 <th>Ask</th>
-<th>Change</th>
 <th>Action</th>
 </tr>
+
 </thead>
 
 <tbody id="market"></tbody>
+
 </table>
+
 </div>
+
 </section>
 
+
 <section>
+
+<h2>Place Demo Trade</h2>
+
+<div class="trade-grid">
+
+<div>
+<label>Currency Pair</label>
+
+<select id="pair"></select>
+
+</div>
+
+
+<div>
+
+<label>Trade Size</label>
+
+<input
+id="units"
+type="number"
+value="1000"
+min="100"
+>
+
+</div>
+
+
+<div>
+
+<label>Order Type</label>
+
+<select id="type">
+
+<option value="BUY">BUY</option>
+
+<option value="SELL">SELL</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<button
+class="trade-button"
+onclick="placeTrade()"
+>
+
+Place Demo Trade
+
+</button>
+
+</section>
+
+
+<section>
+
 <h2>Open Positions</h2>
 
-<div class="market">
+<div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Pair</th>
 <th>Type</th>
@@ -114,53 +282,34 @@ No real money is deposited, withdrawn or traded.
 <th>P/L</th>
 <th>Action</th>
 </tr>
+
 </thead>
 
 <tbody id="positions">
+
 <tr>
 <td colspan="7">No open positions</td>
 </tr>
+
 </tbody>
 
 </table>
-</div>
-</section>
-
-<section>
-<h2>Place Demo Trade</h2>
-
-<div class="trade-grid">
-
-<div>
-<label>Currency Pair</label>
-<select id="pair"></select>
-</div>
-
-<div>
-<label>Trade Size</label>
-<input id="units" type="number" value="1000" min="100">
-</div>
-
-<div>
-<label>Order Type</label>
-<select id="type">
-<option value="BUY">BUY</option>
-<option value="SELL">SELL</option>
-</select>
-</div>
 
 </div>
-
-<button class="trade-button" onclick="placeTrade()">Place Demo Trade</button>
 
 </section>
 
+
 <section>
+
 <h2>Trade History</h2>
 
-<div class="market">
+<div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Time</th>
 <th>Pair</th>
@@ -169,29 +318,79 @@ No real money is deposited, withdrawn or traded.
 <th>Price</th>
 <th>Status</th>
 </tr>
+
 </thead>
 
 <tbody id="history">
+
 <tr>
 <td colspan="6">No trades yet</td>
 </tr>
+
 </tbody>
 
 </table>
+
 </div>
+
+</section>
+
+
+<section>
+
+<h2>Demo Activity</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Details</th>
+</tr>
+
+</thead>
+
+<tbody id="activity">
+
+<tr>
+<td colspan="3">No activity yet</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
 </section>
 
 </div>
 
+
 <footer>
-© 2026 Crownspips Trading — Demo Trading Environment
+
+© 2026 Crownspips Trading — Demo Environment
+
 </footer>
+
 
 <script>
 
 let balance = 10000;
 
+let positions = [];
+
+let history = [];
+
+let activity = [];
+
+
 let pairs = {
+
 "EUR/USD":1.1742,
 "GBP/USD":1.3405,
 "USD/JPY":148.72,
@@ -222,14 +421,84 @@ let pairs = {
 "GBP/NZD":2.2910,
 "AUD/NZD":1.1285,
 "CAD/CHF":0.5742
+
 };
 
-let positions=[];
-let history=[];
 
-function money(n){
-return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function money(number){
+
+return "$" + number.toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
 }
+);
+
+}
+
+
+function addActivity(type,details){
+
+activity.unshift({
+
+time:new Date().toLocaleTimeString(),
+
+type:type,
+
+details:details
+
+});
+
+if(activity.length > 20){
+
+activity.pop();
+
+}
+
+renderActivity();
+
+}
+
+
+function renderActivity(){
+
+let html="";
+
+if(activity.length===0){
+
+html=`
+<tr>
+<td colspan="3">No activity yet</td>
+</tr>
+`;
+
+}else{
+
+activity.forEach(item=>{
+
+html+=`
+
+<tr>
+
+<td>${item.time}</td>
+
+<td><strong>${item.type}</strong></td>
+
+<td>${item.details}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("activity").innerHTML=html;
+
+}
+
 
 function renderMarket(){
 
@@ -238,92 +507,174 @@ let html="";
 for(let pair in pairs){
 
 let price=pairs[pair];
+
 let spread=0.0002;
 
 html+=`
+
 <tr>
-<td><strong>${pair}</strong></td>
-<td>${price.toFixed(4)}</td>
-<td>${(price+spread).toFixed(4)}</td>
-<td class="green">+0.02%</td>
+
 <td>
-<button class="buy" onclick="quickTrade('${pair}','BUY')">BUY</button>
-<button class="sell" onclick="quickTrade('${pair}','SELL')">SELL</button>
+<strong>${pair}</strong>
 </td>
+
+<td>
+${price.toFixed(4)}
+</td>
+
+<td>
+${(price+spread).toFixed(4)}
+</td>
+
+<td>
+
+<button
+class="buy"
+onclick="quickTrade('${pair}','BUY')"
+>
+BUY
+</button>
+
+<button
+class="sell"
+onclick="quickTrade('${pair}','SELL')"
+>
+SELL
+</button>
+
+</td>
+
 </tr>
+
 `;
+
 }
 
 document.getElementById("market").innerHTML=html;
+
 
 let select=document.getElementById("pair");
 
 if(select.options.length===0){
 
 for(let pair in pairs){
+
 let option=document.createElement("option");
+
 option.value=pair;
+
 option.textContent=pair;
+
 select.appendChild(option);
-}
 
 }
 
 }
+
+}
+
 
 function quickTrade(pair,type){
 
 document.getElementById("pair").value=pair;
+
 document.getElementById("type").value=type;
 
 placeTrade();
 
 }
 
+
 function placeTrade(){
 
 let pair=document.getElementById("pair").value;
+
 let type=document.getElementById("type").value;
-let units=parseInt(document.getElementById("units").value);
+
+let units=parseInt(
+document.getElementById("units").value
+);
+
 
 if(!units || units<100){
 
 alert("Enter at least 100 units.");
 
 return;
+
 }
+
 
 let price=pairs[pair];
 
+
 positions.push({
+
 pair:pair,
+
 type:type,
+
 units:units,
+
 open:price
+
 });
+
 
 history.unshift({
+
 time:new Date().toLocaleTimeString(),
+
 pair:pair,
+
 type:type,
+
 units:units,
+
 price:price
+
 });
 
+
+addActivity(
+
+"TRADE OPENED",
+
+type+" "+units.toLocaleString()+" units of "+pair
+
+);
+
+
 renderPositions();
+
 renderHistory();
 
-alert("Demo trade opened successfully.");
+
+alert(
+"Demo trade opened successfully."
+);
 
 }
+
 
 function renderPositions(){
 
 let html="";
 
+
 if(positions.length===0){
 
-html=`<tr><td colspan="7">No open positions</td></tr>`;
+html=`
+
+<tr>
+
+<td colspan="7">
+No open positions
+</td>
+
+</tr>
+
+`;
 
 }else{
 
@@ -331,27 +682,58 @@ positions.forEach((p,index)=>{
 
 let current=pairs[p.pair];
 
-let difference=p.type==="BUY"
+
+let difference=
+
+p.type==="BUY"
+
 ?current-p.open
+
 :p.open-current;
+
 
 let pl=difference*p.units;
 
+
 html+=`
+
 <tr>
+
 <td>${p.pair}</td>
+
 <td>${p.type}</td>
+
 <td>${p.units.toLocaleString()}</td>
+
 <td>${p.open.toFixed(4)}</td>
+
 <td>${current.toFixed(4)}</td>
-<td class="${pl>=0?'green':'red'}">${money(pl)}</td>
-<td><button class="sell" onclick="closeTrade(${index})">Close</button></td>
+
+<td class="${pl>=0?'green':'red'}">
+
+${money(pl)}
+
+</td>
+
+<td>
+
+<button
+class="sell"
+onclick="closeTrade(${index})"
+>
+Close
+</button>
+
+</td>
+
 </tr>
+
 `;
 
 });
 
 }
+
 
 document.getElementById("positions").innerHTML=html;
 
@@ -359,108 +741,200 @@ calculateEquity();
 
 }
 
+
 function closeTrade(index){
 
 let p=positions[index];
+
 let current=pairs[p.pair];
 
-let difference=p.type==="BUY"
+
+let difference=
+
+p.type==="BUY"
+
 ?current-p.open
+
 :p.open-current;
+
 
 let pl=difference*p.units;
 
+
 balance+=pl;
+
+
+addActivity(
+
+"TRADE CLOSED",
+
+p.type+" "+p.units.toLocaleString()+" units of "+p.pair+
+" | P/L: "+money(pl)
+
+);
+
 
 positions.splice(index,1);
 
-document.getElementById("balance").textContent=money(balance);
+
+document.getElementById(
+"balance"
+).textContent=money(balance);
+
 
 renderPositions();
 
-alert("Demo trade closed. P/L: "+money(pl));
+
+alert(
+"Demo trade closed. P/L: "+money(pl)
+);
 
 }
+
 
 function calculateEquity(){
 
 let totalPL=0;
 
+
 positions.forEach(p=>{
 
 let current=pairs[p.pair];
 
-let difference=p.type==="BUY"
+
+let difference=
+
+p.type==="BUY"
+
 ?current-p.open
+
 :p.open-current;
+
 
 totalPL+=difference*p.units;
 
 });
 
-document.getElementById("openPL").textContent=money(totalPL);
-document.getElementById("openPL").className=
-"amount "+(totalPL>=0?"green":"red");
 
-document.getElementById("equity").textContent=money(balance+totalPL);
+document.getElementById(
+"openPL"
+).textContent=money(totalPL);
+
+
+document.getElementById(
+"openPL"
+).className=
+
+"amount "+
+
+(totalPL>=0?"green":"red");
+
+
+document.getElementById(
+"equity"
+).textContent=
+
+money(balance+totalPL);
 
 }
+
 
 function renderHistory(){
 
 let html="";
 
+
 if(history.length===0){
 
-html=`<tr><td colspan="6">No trades yet</td></tr>`;
+html=`
+
+<tr>
+
+<td colspan="6">
+No trades yet
+</td>
+
+</tr>
+
+`;
 
 }else{
 
 history.forEach(h=>{
 
 html+=`
+
 <tr>
+
 <td>${h.time}</td>
+
 <td>${h.pair}</td>
+
 <td>${h.type}</td>
+
 <td>${h.units.toLocaleString()}</td>
+
 <td>${h.price.toFixed(4)}</td>
-<td class="green">Demo Opened</td>
+
+<td class="green">
+Demo Opened
+</td>
+
 </tr>
+
 `;
 
 });
 
 }
 
+
 document.getElementById("history").innerHTML=html;
 
 }
+
 
 function updatePrices(){
 
 for(let pair in pairs){
 
-let movement=(Math.random()-0.5)*0.0008;
+let movement=
+
+(Math.random()-0.5)*0.0008;
+
 
 pairs[pair]+=movement;
 
+
 if(pairs[pair]<=0){
+
 pairs[pair]=0.0001;
+
 }
 
 }
+
 
 renderMarket();
+
 renderPositions();
 
 }
 
+
 renderMarket();
+
 renderPositions();
+
 renderHistory();
 
-setInterval(updatePrices,3000);
+renderActivity();
+
+
+setInterval(
+updatePrices,
+3000
+);
 
 </script>
 
