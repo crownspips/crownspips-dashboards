@@ -1,23 +1,260 @@
-<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crownspips Trading - Investor Dashboard</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#f5f7fb;color:#172033}header{background:#111827;color:white;padding:20px 30px;display:flex;justify-content:space-between}.brand{font-size:22px;font-weight:bold}.brand span{color:#d4af37}main{max-width:1100px;margin:auto;padding:30px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:white;padding:22px;border-radius:14px;box-shadow:0 2px 12px #0001}.label{color:#697386;font-size:13px}.value{font-size:25px;font-weight:bold;margin-top:8px}.actions{margin:22px 0}button{padding:11px 17px;border:0;border-radius:8px;margin-right:8px;font-weight:bold}.dark{background:#111827;color:white}.gold{background:#d4af37}table{width:100%;background:white;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:14px;border-bottom:1px solid #eee}.notice{margin-top:22px;padding:15px;background:#fff8e6;border-left:4px solid #d4af37}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:500px){.grid{grid-template-columns:1fr}}
-</style></head>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  color: #111827;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.gold {
+  color: #d4af37;
+}
+
+.container {
+  width: 92%;
+  max-width: 1100px;
+  margin: 25px auto;
+}
+
+.welcome {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 15px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px #0001;
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.amount {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profit {
+  color: #15803d;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+
+button {
+  border: none;
+  padding: 13px 20px;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+section {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  padding: 13px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+th {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.status {
+  color: #15803d;
+  font-weight: bold;
+}
+
+.notice {
+  background: #fff8e1;
+  border-left: 5px solid #d4af37;
+  padding: 15px;
+  line-height: 1.5;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #777;
+  font-size: 13px;
+}
+</style>
+</head>
+
 <body>
-<header><div class="brand">👑 Crownspips <span>Trading</span></div><button>Log out</button></header>
-<main><h1>Investor Dashboard</h1><p>Welcome back, Demo Investor</p>
-<div class="grid">
-<div class="card"><div class="label">Account Balance</div><div class="value">₦500,000.00</div></div>
-<div class="card"><div class="label">Amount Invested</div><div class="value">₦450,000.00</div></div>
-<div class="card"><div class="label">Current Value</div><div class="value">₦472,500.00</div></div>
-<div class="card"><div class="label">Profit / Loss</div><div class="value">₦22,500.00</div></div>
+
+<header>
+  <h1>Crownspips <span class="gold">Trading</span></h1>
+  <p>Investor Dashboard</p>
+</header>
+
+<div class="container">
+
+  <div class="welcome">
+    <h2>Welcome, Demo Investor 👋</h2>
+    <p>Here is your demo investment account overview.</p>
+  </div>
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>ACCOUNT BALANCE</h3>
+      <div class="amount">₦500,000.00</div>
+    </div>
+
+    <div class="card">
+      <h3>AMOUNT INVESTED</h3>
+      <div class="amount">₦450,000.00</div>
+    </div>
+
+    <div class="card">
+      <h3>CURRENT VALUE</h3>
+      <div class="amount">₦472,500.00</div>
+    </div>
+
+    <div class="card">
+      <h3>PROFIT / LOSS</h3>
+      <div class="amount profit">+₦22,500.00</div>
+    </div>
+
+  </div>
+
+  <div class="buttons">
+    <button onclick="demoDeposit()">Deposit</button>
+    <button onclick="demoWithdraw()">Withdraw</button>
+  </div>
+
+  <section>
+    <h2>My Investments</h2>
+
+    <table>
+      <tr>
+        <th>Investment</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Current Value</th>
+      </tr>
+
+      <tr>
+        <td>Forex Managed Portfolio</td>
+        <td>₦300,000</td>
+        <td class="status">Active</td>
+        <td>₦315,000</td>
+      </tr>
+
+      <tr>
+        <td>Balanced Trading Portfolio</td>
+        <td>₦150,000</td>
+        <td class="status">Active</td>
+        <td>₦157,500</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Recent Transactions</h2>
+
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Transaction</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+
+      <tr>
+        <td>26 Sep 2026</td>
+        <td>Investment</td>
+        <td>₦300,000</td>
+        <td class="status">Completed</td>
+      </tr>
+
+      <tr>
+        <td>26 Sep 2026</td>
+        <td>Investment</td>
+        <td>₦150,000</td>
+        <td class="status">Completed</td>
+      </tr>
+    </table>
+  </section>
+
+  <div class="notice">
+    <strong>Demo Platform Notice:</strong><br>
+    This dashboard is for demonstration purposes only.
+    It does not accept real deposits, process real withdrawals,
+    execute investments, or guarantee returns.
+  </div>
+
 </div>
-<div class="actions"><button class="dark">Deposit</button><button class="gold">Withdraw</button><button class="dark">View Investments</button></div>
-<h2>My Investments</h2><table><tr><th>Investment</th><th>Amount</th><th>Status</th><th>Current Value</th></tr>
-<tr><td>Forex Managed Portfolio</td><td>₦300,000</td><td>Active</td><td>₦315,000</td></tr>
-<tr><td>Balanced Trading Portfolio</td><td>₦150,000</td><td>Active</td><td>₦157,500</td></tr></table>
-<h2>Recent Transactions</h2><table><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
-<tr><td>25 Sep 2026</td><td>Investment</td><td>₦150,000</td><td>Completed</td></tr></table>
-<div class="notice"><b>Demo only:</b> These are sample figures. This page does not accept deposits, execute investments, or guarantee returns.</div>
-</main></body></html>
+
+<footer>
+  © 2026 Crownspips Trading — Demo Platform
+</footer>
+
+<script>
+function demoDeposit() {
+  alert("Demo only: real deposits are not available yet.");
+}
+
+function demoWithdraw() {
+  alert("Demo only: real withdrawals are not available yet.");
+}
+</script>
+
+</body>
+</html>
