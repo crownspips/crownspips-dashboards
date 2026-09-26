@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crownspips Trading - Admin Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f5f8;
+  color:#111827
+}
+
+header{
+  background:#111827;
+  color:white;
+  padding:20px;
+  text-align:center
+}
+
+.gold{color:#d4af37}
+
+.container{
+  width:94%;
+  max-width:1200px;
+  margin:22px auto
+}
+
+.notice{
+  background:#fff8df;
+  border-left:5px solid #d4af37;
+  padding:15px;
+  margin-bottom:20px;
+  line-height:1.5
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+  margin-bottom:20px
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 3px 12px #0001
+}
+
+.card h3{
+  margin:0 0 8px;
+  color:#6b7280;
+  font-size:13px
+}
+
+.amount{
+  font-size:24px;
+  font-weight:bold
+}
+
+.green{color:#15803d}
+.red{color:#dc2626}
+
+section{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:20px;
+  overflow-x:auto
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-align:left
+}
+
+th{
+  color:#6b7280;
+  font-size:13px
+}
+
+.badge{
+  padding:5px 9px;
+  border-radius:15px;
+  font-size:12px;
+  font-weight:bold
+}
+
+.active{
+  background:#dcfce7;
+  color:#166534
+}
+
+.pending{
+  background:#fef3c7;
+  color:#92400e
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:9px 13px;
+  background:#111827;
+  color:white;
+  font-weight:bold;
+  cursor:pointer
+}
+
+button:hover{opacity:.9}
+
+.action{
+  margin-bottom:15px
+}
+
+footer{
+  text-align:center;
+  padding:25px;
+  color:#777;
+  font-size:13px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Crownspips <span class="gold">Trading</span></h1>
+<p>Demo Admin Dashboard</p>
+</header>
+
+<div class="container">
+
+<div class="notice">
+<strong>DEMO ADMIN ENVIRONMENT</strong><br>
+This dashboard contains simulated investor information only.
+It does not control real client funds, process real withdrawals,
+or execute real trades.
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>TOTAL DEMO INVESTORS</h3>
+<div class="amount" id="investors">24</div>
+</div>
+
+<div class="card">
+<h3>TOTAL DEMO CAPITAL</h3>
+<div class="amount">$125,000.00</div>
+</div>
+
+<div class="card">
+<h3>DEMO INVESTMENTS</h3>
+<div class="amount">$110,000.00</div>
+</div>
+
+<div class="card">
+<h3>DEMO PROFIT</h3>
+<div class="amount green">$8,750.00</div>
+</div>
+
+</div>
+
+<section>
+
+<h2>Investor Accounts</h2>
+
+<div class="action">
+<button onclick="addInvestor()">Add Demo Investor</button>
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Investor</th>
+<th>Email</th>
+<th>Balance</th>
+<th>Invested</th>
+<th>Profit</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="investorTable">
+
+<tr>
+<td>Demo Investor</td>
+<td>demo@example.com</td>
+<td>$10,000</td>
+<td>$8,000</td>
+<td class="green">+$600</td>
+<td><span class="badge active">Active</span></td>
+</tr>
+
+<tr>
+<td>John Demo</td>
+<td>john@example.com</td>
+<td>$7,500</td>
+<td>$6,000</td>
+<td class="green">+$450</td>
+<td><span class="badge active">Active</span></td>
+</tr>
+
+<tr>
+<td>Sarah Demo</td>
+<td>sarah@example.com</td>
+<td>$12,000</td>
+<td>$10,000</td>
+<td class="green">+$900</td>
+<td><span class="badge active">Active</span></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Demo Deposits & Withdrawals</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Investor</th>
+<th>Type</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>26 Sep 2026</td>
+<td>Demo Investor</td>
+<td>Deposit</td>
+<td>$5,000</td>
+<td><span class="badge pending">Pending</span></td>
+<td><button onclick="approve()">Approve Demo</button></td>
+</tr>
+
+<tr>
+<td>26 Sep 2026</td>
+<td>John Demo</td>
+<td>Withdrawal</td>
+<td>$1,000</td>
+<td><span class="badge pending">Pending</span></td>
+<td><button onclick="approve()">Approve Demo</button></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Demo Trading Positions</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Investor</th>
+<th>Pair</th>
+<th>Type</th>
+<th>Units</th>
+<th>Entry</th>
+<th>Current</th>
+<th>P/L</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>Demo Investor</td>
+<td>EUR/USD</td>
+<td>BUY</td>
+<td>1,000</td>
+<td>1.1700</td>
+<td>1.1742</td>
+<td class="green">+$4.20</td>
+</tr>
+
+<tr>
+<td>John Demo</td>
+<td>GBP/USD</td>
+<td>SELL</td>
+<td>2,000</td>
+<td>1.3450</td>
+<td>1.3405</td>
+<td class="green">+$9.00</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+<section>
+
+<h2>Demo Profit Sharing</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Investor</th>
+<th>Net Profit</th>
+<th>Investor 70%</th>
+<th>Management 30%</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>Demo Investor</td>
+<td>$600.00</td>
+<td class="green">$420.00</td>
+<td>$180.00</td>
+</tr>
+
+<tr>
+<td>John Demo</td>
+<td>$450.00</td>
+<td class="green">$315.00</td>
+<td>$135.00</td>
+</tr>
+
+<tr>
+<td>Sarah Demo</td>
+<td>$900.00</td>
+<td class="green">$630.00</td>
+<td>$270.00</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+</div>
+
+<footer>
+© 2026 Crownspips Trading — Demo Admin Environment
+</footer>
+
+<script>
+
+function approve(){
+alert("Demo transaction approved. No real money was moved.");
+}
+
+function addInvestor(){
+alert("Demo only: investor creation is simulated.");
+}
+
+</script>
+
+</body>
+  </html>
