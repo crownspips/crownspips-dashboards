@@ -3,166 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crownspips Admin</title>
+  <title>Crownspips Trading - Admin Dashboard</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
       background: #f4f7fb;
       color: #172033;
     }
 
     header {
-      background: #0b1f3a;
+      background: #111827;
       color: white;
       padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
     }
 
     header h1 {
-      margin: 0;
-      font-size: 22px;
+      margin-bottom: 5px;
     }
 
-    button {
-      border: 0;
-      border-radius: 8px;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-weight: bold;
+    header p {
+      color: #d1d5db;
+      font-size: 14px;
     }
 
-    .logout {
-      background: #e74c3c;
-      color: white;
-    }
-
-    main {
+    .container {
       max-width: 1200px;
-      margin: 25px auto;
-      padding: 0 15px;
+      margin: auto;
+      padding: 20px;
     }
 
-    .notice {
-      background: #fff3cd;
-      border: 1px solid #ffe69c;
+    .warning {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 20px;
+      line-height: 1.5;
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     .stat {
       background: white;
+      padding: 18px;
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .stat span {
+      display: block;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 8px;
     }
 
     .stat strong {
-      display: block;
-      font-size: 28px;
-      margin-top: 8px;
+      font-size: 25px;
     }
 
-    section {
+    .card {
       background: white;
-      padding: 20px;
       border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.07);
-      overflow-x: auto;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
 
-    section h2 {
-      margin-top: 0;
+    .card h2 {
+      margin-bottom: 15px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 700px;
+      min-width: 750px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px;
-      border-bottom: 1px solid #e5e9f0;
+      border-bottom: 1px solid #e5e7eb;
       text-align: left;
       font-size: 14px;
     }
 
     th {
-      background: #f7f9fc;
+      background: #f9fafb;
     }
 
-    .pending {
-      color: #b77900;
+    button {
+      border: none;
+      padding: 9px 12px;
+      border-radius: 7px;
+      cursor: pointer;
       font-weight: bold;
+      margin: 2px;
     }
 
-    .verified,
-    .completed {
-      color: #16834b;
-      font-weight: bold;
-    }
-
-    .rejected {
-      color: #c0392b;
-      font-weight: bold;
-    }
-
-    .verify {
-      background: #16834b;
+    .approve {
+      background: #059669;
       color: white;
-      margin-right: 5px;
     }
 
     .reject {
-      background: #c0392b;
+      background: #dc2626;
       color: white;
     }
 
+    .logout {
+      background: #6b7280;
+      color: white;
+      padding: 12px 18px;
+    }
+
+    .status {
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #d97706;
+    }
+
+    .completed,
+    .verified {
+      color: #059669;
+    }
+
+    .rejected {
+      color: #dc2626;
+    }
+
+    .empty {
+      padding: 20px;
+      color: #6b7280;
+      text-align: center;
+    }
+
     .message {
+      margin-bottom: 15px;
       padding: 12px;
       border-radius: 8px;
-      margin-bottom: 15px;
       display: none;
     }
 
     .success {
       display: block;
-      background: #d1e7dd;
-      color: #0f5132;
+      background: #ecfdf5;
+      color: #047857;
     }
 
     .error {
       display: block;
-      background: #f8d7da;
-      color: #842029;
+      background: #fef2f2;
+      color: #b91c1c;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
       .stats {
         grid-template-columns: 1fr;
       }
 
-      header {
-        align-items: flex-start;
+      .container {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 15px;
       }
     }
   </style>
@@ -172,472 +203,1044 @@
 
 <header>
   <h1>👑 Crownspips Admin Dashboard</h1>
-  <button class="logout" id="logoutBtn">Logout</button>
+  <p>Administration and test transaction management</p>
 </header>
 
-<main>
+<div class="container">
 
-  <div class="notice">
-    <strong>TEST / DEMO MODE</strong><br>
-    This administration panel currently manages simulated accounts,
-    test transactions and test withdrawals only.
+  <div class="warning">
+    ⚠️ <strong>TEST / DEMO MODE</strong><br>
+    This dashboard is for managing the Crownspips Trading demonstration
+    system. Do not treat test transactions as real-money settlement.
   </div>
 
   <div id="message" class="message"></div>
 
   <div class="stats">
+
     <div class="stat">
-      Real Account Applications
+      <span>Real Account Applications</span>
       <strong id="applicationCount">0</strong>
     </div>
 
     <div class="stat">
-      Pending Withdrawals
+      <span>Pending Bank Deposits</span>
+      <strong id="depositCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span>Pending Withdrawals</span>
       <strong id="withdrawalCount">0</strong>
     </div>
 
     <div class="stat">
-      Pending Deposits
-      <strong id="depositCount">0</strong>
+      <span>Total Transactions</span>
+      <strong id="transactionCount">0</strong>
     </div>
+
   </div>
 
-  <section>
-    <h2>Real Account Applications</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Account Type</th>
-          <th>Verification</th>
-          <th>Created</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+  <!-- REAL ACCOUNT APPLICATIONS -->
 
-      <tbody id="applicationsTable">
-        <tr>
-          <td colspan="6">Loading applications...</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+  <div class="card">
 
-  <section>
-    <h2>Withdrawal Requests</h2>
+    <h2>👤 Real Account Applications</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>User ID</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Method</th>
-          <th>Status</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+    <div class="table-wrap">
 
-      <tbody id="withdrawalsTable">
-        <tr>
-          <td colspan="7">Loading withdrawals...</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+      <table>
 
-  <section>
-    <h2>Recent Transactions</h2>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Account Type</th>
+            <th>Verification</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-    <table>
-      <thead>
-        <tr>
-          <th>User ID</th>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Status</th>
-          <th>Date</th>
-        </tr>
-      </thead>
+        <tbody id="applicationsBody">
+        </tbody>
 
-      <tbody id="transactionsTable">
-        <tr>
-          <td colspan="6">Loading transactions...</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+      </table>
 
-</main>
+    </div>
+
+  </div>
+
+
+  <!-- BANK TRANSFER DEPOSITS -->
+
+  <div class="card">
+
+    <h2>🏦 Bank Transfer Deposits</h2>
+
+    <p style="margin-bottom:15px;color:#6b7280;">
+      Review manual NGN bank-transfer submissions before crediting
+      the customer's NGN balance.
+    </p>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Payment Method</th>
+            <th>Reference</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="depositsBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- WITHDRAWALS -->
+
+  <div class="card">
+
+    <h2>💸 Withdrawal Requests</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Method</th>
+            <th>Reference</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="withdrawalsBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- RECENT TRANSACTIONS -->
+
+  <div class="card">
+
+    <h2>📋 Recent Transactions</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Method</th>
+            <th>Reference</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody id="transactionsBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <button
+    class="logout"
+    onclick="logout()"
+  >
+    Logout
+  </button>
+
+</div>
+
 
 <script>
-  const SUPABASE_URL =
-    "https://ghagrruxxqtnochooiaj.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+const SUPABASE_URL =
+  "https://ghagrruxxqtnochooiaj.supabase.co";
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+const SUPABASE_KEY =
+  "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
-  const messageBox = document.getElementById("message");
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-  function showMessage(text, type) {
-    messageBox.textContent = text;
-    messageBox.className = "message " + type;
+let currentUser = null;
 
-    setTimeout(() => {
-      messageBox.className = "message";
-    }, 4000);
+
+// =====================================
+// START
+// =====================================
+
+async function startAdmin() {
+
+  const {
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
+
+  if (error || !user) {
+    window.location.href = "admin-login.html";
+    return;
   }
 
-  function escapeHtml(value) {
-    if (value === null || value === undefined) return "";
+  currentUser = user;
 
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+
+  const {
+    data: admin,
+    error: adminError
+  } = await supabaseClient
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+
+  if (adminError || !admin) {
+
+    alert("You are not authorized to access the admin dashboard.");
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "admin-login.html";
+
+    return;
   }
 
-  function formatDate(value) {
-    if (!value) return "-";
 
-    return new Date(value).toLocaleString();
-  }
+  await loadAll();
 
-  async function checkAdmin() {
-    const {
-      data: { session },
-      error
-    } = await supabaseClient.auth.getSession();
+}
 
-    if (error || !session) {
-      window.location.href = "admin-login.html";
-      return null;
-    }
 
-    const { data: admin, error: adminError } =
-      await supabaseClient
-        .from("admin_users")
-        .select("user_id")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+// =====================================
+// LOAD EVERYTHING
+// =====================================
 
-    if (adminError || !admin) {
-      alert("You are not authorized as an administrator.");
-      await supabaseClient.auth.signOut();
-      window.location.href = "admin-login.html";
-      return null;
-    }
+async function loadAll() {
 
-    return session;
-  }
+  await loadApplications();
 
-  async function loadApplications() {
+  await loadDeposits();
 
-    const { data, error } =
-      await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("account_type", "real")
-        .order("created_at", { ascending: false });
+  await loadWithdrawals();
 
-    const table =
-      document.getElementById("applicationsTable");
+  await loadTransactions();
 
-    if (error) {
-      table.innerHTML =
-        `<tr><td colspan="6">
-          Error loading applications: ${escapeHtml(error.message)}
-        </td></tr>`;
-      return;
-    }
+}
 
-    document.getElementById("applicationCount").textContent =
-      data ? data.length : 0;
 
-    if (!data || data.length === 0) {
-      table.innerHTML =
-        `<tr><td colspan="6">
-          No real-account applications found.
-        </td></tr>`;
-      return;
-    }
+// =====================================
+// APPLICATIONS
+// =====================================
 
-    table.innerHTML = data.map(profile => {
+async function loadApplications() {
 
-      const status =
-        profile.verification_status || "pending";
-
-      let action = "";
-
-      if (status === "pending") {
-        action = `
-          <button class="verify"
-            onclick="updateVerification('${profile.id}', 'verified')">
-            Verify
-          </button>
-
-          <button class="reject"
-            onclick="updateVerification('${profile.id}', 'rejected')">
-            Reject
-          </button>
-        `;
-      } else if (status === "verified") {
-        action = `<span class="verified">Verified</span>`;
-      } else {
-        action = `<span class="rejected">Rejected</span>`;
-      }
-
-      return `
-        <tr>
-          <td>${escapeHtml(profile.full_name || "-")}</td>
-          <td>${escapeHtml(profile.email || "-")}</td>
-          <td>${escapeHtml(profile.account_type || "-")}</td>
-          <td class="${escapeHtml(status)}">
-            ${escapeHtml(status.toUpperCase())}
-          </td>
-          <td>${formatDate(profile.created_at)}</td>
-          <td>${action}</td>
-        </tr>
-      `;
-
-    }).join("");
-  }
-
-  async function updateVerification(userId, status) {
-
-    const { error } =
-      await supabaseClient
-        .from("profiles")
-        .update({
-          verification_status: status
-        })
-        .eq("id", userId);
-
-    if (error) {
-      showMessage(
-        "Could not update account: " + error.message,
-        "error"
-      );
-      return;
-    }
-
-    showMessage(
-      "Account status changed to " + status.toUpperCase(),
-      "success"
-    );
-
-    await loadApplications();
-  }
-
-  async function loadWithdrawals() {
-
-    const { data, error } =
-      await supabaseClient
-        .from("transactions")
-        .select("*")
-        .eq("transaction_type", "WITHDRAWAL")
-        .order("created_at", { ascending: false });
-
-    const table =
-      document.getElementById("withdrawalsTable");
-
-    if (error) {
-      table.innerHTML =
-        `<tr><td colspan="7">
-          Error loading withdrawals: ${escapeHtml(error.message)}
-        </td></tr>`;
-      return;
-    }
-
-    const pending =
-      (data || []).filter(
-        transaction => transaction.status === "PENDING"
-      ).length;
-
-    document.getElementById("withdrawalCount").textContent =
-      pending;
-
-    if (!data || data.length === 0) {
-      table.innerHTML =
-        `<tr><td colspan="7">
-          No withdrawal requests found.
-        </td></tr>`;
-      return;
-    }
-
-    table.innerHTML = data.map(transaction => {
-
-      let action = "";
-
-      if (transaction.status === "PENDING") {
-
-        action = `
-          <button class="verify"
-            onclick="updateWithdrawal(${transaction.id}, 'COMPLETED')">
-            Approve
-          </button>
-
-          <button class="reject"
-            onclick="updateWithdrawal(${transaction.id}, 'REJECTED')">
-            Reject
-          </button>
-        `;
-
-      } else {
-
-        action =
-          `<span class="${transaction.status === "COMPLETED"
-            ? "completed"
-            : "rejected"}">
-            ${escapeHtml(transaction.status)}
-          </span>`;
-      }
-
-      return `
-        <tr>
-          <td>${escapeHtml(transaction.user_id)}</td>
-          <td>${escapeHtml(transaction.amount)}</td>
-          <td>${escapeHtml(transaction.currency || "USD")}</td>
-          <td>${escapeHtml(transaction.payment_method || "-")}</td>
-          <td>${escapeHtml(transaction.status || "-")}</td>
-          <td>${formatDate(transaction.created_at)}</td>
-          <td>${action}</td>
-        </tr>
-      `;
-
-    }).join("");
-  }
-
-  async function updateWithdrawal(id, status) {
-
-    const description =
-      status === "COMPLETED"
-        ? "Simulated test withdrawal approved by admin"
-        : "Simulated test withdrawal rejected by admin";
-
-    const { error } =
-      await supabaseClient
-        .from("transactions")
-        .update({
-          status: status,
-          description: description
-        })
-        .eq("id", id);
-
-    if (error) {
-      showMessage(
-        "Could not update withdrawal: " + error.message,
-        "error"
-      );
-      return;
-    }
-
-    showMessage(
-      "Withdrawal marked as " + status,
-      "success"
-    );
-
-    await loadWithdrawals();
-    await loadTransactions();
-  }
-
-  async function loadTransactions() {
-
-    const { data, error } =
-      await supabaseClient
-        .from("transactions")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
-
-    const table =
-      document.getElementById("transactionsTable");
-
-    if (error) {
-      table.innerHTML =
-        `<tr><td colspan="6">
-          Error loading transactions: ${escapeHtml(error.message)}
-        </td></tr>`;
-      return;
-    }
-
-    const pendingDeposits =
-      (data || []).filter(
-        transaction =>
-          transaction.transaction_type === "DEPOSIT" &&
-          transaction.status === "PENDING"
-      ).length;
-
-    document.getElementById("depositCount").textContent =
-      pendingDeposits;
-
-    if (!data || data.length === 0) {
-      table.innerHTML =
-        `<tr><td colspan="6">
-          No transactions found.
-        </td></tr>`;
-      return;
-    }
-
-    table.innerHTML = data.map(transaction => {
-
-      const statusClass =
-        transaction.status === "COMPLETED"
-          ? "completed"
-          : transaction.status === "REJECTED"
-            ? "rejected"
-            : "pending";
-
-      return `
-        <tr>
-          <td>${escapeHtml(transaction.user_id)}</td>
-          <td>${escapeHtml(transaction.transaction_type)}</td>
-          <td>${escapeHtml(transaction.amount)}</td>
-          <td>${escapeHtml(transaction.currency || "USD")}</td>
-          <td class="${statusClass}">
-            ${escapeHtml(transaction.status)}
-          </td>
-          <td>${formatDate(transaction.created_at)}</td>
-        </tr>
-      `;
-
-    }).join("");
-  }
-
-  document
-    .getElementById("logoutBtn")
-    .addEventListener("click", async () => {
-
-      await supabaseClient.auth.signOut();
-
-      window.location.href = "admin-login.html";
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select(
+      "id, full_name, email, account_type, verification_status, created_at"
+    )
+    .eq("account_type", "real")
+    .order("created_at", {
+      ascending: false
     });
 
-  async function start() {
 
-    const session = await checkAdmin();
+  const body =
+    document.getElementById("applicationsBody");
 
-    if (!session) return;
+  body.innerHTML = "";
 
-    await loadApplications();
-    await loadWithdrawals();
-    await loadTransactions();
+
+  if (error) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="5">Unable to load applications.</td>
+      </tr>`;
+
+    return;
   }
 
-  start();
-</script>
 
-</body>
-            </html>
+  let pending = 0;
+
+
+  if (!data || data.length === 0) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="5" class="empty">
+          No real-account applications found.
+        </td>
+      </tr>`;
+
+  } else {
+
+    data.forEach(profile => {
+
+      if (profile.verification_status === "pending") {
+        pending++;
+      }
+
+
+      const row =
+        document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>${escapeHtml(profile.full_name || "N/A")}</td>
+
+        <td>${escapeHtml(profile.email || "N/A")}</td>
+
+        <td>${escapeHtml(profile.account_type || "N/A")}</td>
+
+        <td class="status ${statusClass(profile.verification_status)}">
+          ${escapeHtml(profile.verification_status || "pending")}
+        </td>
+
+        <td>
+          ${
+            profile.verification_status === "pending"
+            ? `
+              <button
+                class="approve"
+                onclick="verifyAccount('${profile.id}')"
+              >
+                Verify
+              </button>
+
+              <button
+                class="reject"
+                onclick="rejectAccount('${profile.id}')"
+              >
+                Reject
+              </button>
+            `
+            : "-"
+          }
+        </td>
+
+      `;
+
+
+      body.appendChild(row);
+
+    });
+
+  }
+
+
+  document.getElementById("applicationCount").textContent =
+    pending;
+
+}
+
+
+// =====================================
+// VERIFY ACCOUNT
+// =====================================
+
+async function verifyAccount(id) {
+
+  if (!confirm("Verify this real account?")) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .update({
+      verification_status: "verified"
+    })
+    .eq("id", id);
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to verify account: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Real account verified successfully.",
+    "success"
+  );
+
+
+  await loadApplications();
+
+}
+
+
+// =====================================
+// REJECT ACCOUNT
+// =====================================
+
+async function rejectAccount(id) {
+
+  if (!confirm("Reject this real account application?")) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .update({
+      verification_status: "rejected"
+    })
+    .eq("id", id);
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to reject account: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Real account application rejected.",
+    "success"
+  );
+
+
+  await loadApplications();
+
+}
+
+
+// =====================================
+// BANK TRANSFER DEPOSITS
+// =====================================
+
+async function loadDeposits() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .select(
+      "id, user_id, amount, currency, status, payment_method, payment_reference, created_at"
+    )
+    .eq("transaction_type", "DEPOSIT")
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  const body =
+    document.getElementById("depositsBody");
+
+  body.innerHTML = "";
+
+
+  if (error) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="7">
+          Unable to load deposits.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  const bankDeposits =
+    (data || []).filter(
+      transaction =>
+        transaction.payment_method === "BANK_TRANSFER"
+    );
+
+
+  const pendingDeposits =
+    bankDeposits.filter(
+      transaction =>
+        transaction.status === "PENDING"
+    );
+
+
+  document.getElementById("depositCount").textContent =
+    pendingDeposits.length;
+
+
+  if (bankDeposits.length === 0) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="7" class="empty">
+          No bank-transfer deposits found.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  const userIds =
+    [
+      ...new Set(
+        bankDeposits.map(item => item.user_id)
+      )
+    ];
+
+
+  let profiles = [];
+
+
+  if (userIds.length > 0) {
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", userIds);
+
+    profiles = result.data || [];
+  }
+
+
+  bankDeposits.forEach(transaction => {
+
+    const profile =
+      profiles.find(
+        p => p.id === transaction.user_id
+      );
+
+
+    const row =
+      document.createElement("tr");
+
+
+    row.innerHTML = `
+
+      <td>
+        ${escapeHtml(
+          profile?.full_name || "Unknown"
+        )}
+        <br>
+        <small>
+          ${escapeHtml(
+            profile?.email || transaction.user_id
+          )}
+        </small>
+      </td>
+
+      <td>
+        ${formatNumber(transaction.amount)}
+      </td>
+
+      <td>
+        ${escapeHtml(transaction.currency || "NGN")}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          transaction.payment_method || "-"
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          transaction.payment_reference || "-"
+        )}
+      </td>
+
+      <td class="status ${statusClass(transaction.status)}">
+        ${escapeHtml(transaction.status || "-")}
+      </td>
+
+      <td>
+
+        ${
+          transaction.status === "PENDING"
+          ? `
+            <button
+              class="approve"
+              onclick="approveDeposit('${transaction.id}')"
+            >
+              Approve
+            </button>
+
+            <button
+              class="reject"
+              onclick="rejectDeposit('${transaction.id}')"
+            >
+              Reject
+            </button>
+          `
+          : "-"
+        }
+
+      </td>
+
+    `;
+
+
+    body.appendChild(row);
+
+  });
+
+}
+
+
+// =====================================
+// APPROVE BANK DEPOSIT
+// =====================================
+
+async function approveDeposit(id) {
+
+  if (
+    !confirm(
+      "Approve this bank-transfer deposit?"
+    )
+  ) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .update({
+      status: "COMPLETED"
+    })
+    .eq("id", id)
+    .eq("transaction_type", "DEPOSIT")
+    .eq("status", "PENDING");
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to approve deposit: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Bank-transfer deposit approved successfully.",
+    "success"
+  );
+
+
+  await loadDeposits();
+
+  await loadTransactions();
+
+}
+
+
+// =====================================
+// REJECT BANK DEPOSIT
+// =====================================
+
+async function rejectDeposit(id) {
+
+  if (
+    !confirm(
+      "Reject this bank-transfer deposit?"
+    )
+  ) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .update({
+      status: "REJECTED"
+    })
+    .eq("id", id)
+    .eq("transaction_type", "DEPOSIT")
+    .eq("status", "PENDING");
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to reject deposit: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Bank-transfer deposit rejected.",
+    "success"
+  );
+
+
+  await loadDeposits();
+
+  await loadTransactions();
+
+}
+
+
+// =====================================
+// WITHDRAWALS
+// =====================================
+
+async function loadWithdrawals() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .select(
+      "id, user_id, amount, currency, status, payment_method, payment_reference, created_at"
+    )
+    .eq("transaction_type", "WITHDRAWAL")
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  const body =
+    document.getElementById("withdrawalsBody");
+
+  body.innerHTML = "";
+
+
+  if (error) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="7">
+          Unable to load withdrawals.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  const pending =
+    (data || []).filter(
+      item => item.status === "PENDING"
+    );
+
+
+  document.getElementById("withdrawalCount").textContent =
+    pending.length;
+
+
+  if (!data || data.length === 0) {
+
+    body.innerHTML =
+      `<tr>
+        <td colspan="7" class="empty">
+          No withdrawal requests found.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  const userIds =
+    [
+      ...new Set(
+        data.map(item => item.user_id)
+      )
+    ];
+
+
+  let profiles = [];
+
+
+  if (userIds.length > 0) {
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", userIds);
+
+    profiles = result.data || [];
+  }
+
+
+  data.forEach(transaction => {
+
+    const profile =
+      profiles.find(
+        p => p.id === transaction.user_id
+      );
+
+
+    const row =
+      document.createElement("tr");
+
+
+    row.innerHTML = `
+
+      <td>
+        ${escapeHtml(
+          profile?.full_name || "Unknown"
+        )}
+        <br>
+        <small>
+          ${escapeHtml(
+            profile?.email || transaction.user_id
+          )}
+        </small>
+      </td>
+
+      <td>
+        ${formatNumber(transaction.amount)}
+      </td>
+
+      <td>
+        ${escapeHtml(transaction.currency || "USD")}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          transaction.payment_method || "-"
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          transaction.payment_reference || "-"
+        )}
+      </td>
+
+      <td class="status ${statusClass(transaction.status)}">
+        ${escapeHtml(transaction.status || "-")}
+      </td>
+
+      <td>
+
+        ${
+          transaction.status === "PENDING"
+          ? `
+            <button
+              class="approve"
+              onclick="approveWithdrawal('${transaction.id}')"
+            >
+              Approve
+            </button>
+
+            <button
+              class="reject"
+              onclick="rejectWithdrawal('${transaction.id}')"
+            >
+              Reject
+            </button>
+          `
+          : "-"
+        }
+
+      </td>
+
+    `;
+
+
+    body.appendChild(row);
+
+  });
+
+}
+
+
+// =====================================
+// APPROVE WITHDRAWAL
+// =====================================
+
+async function approveWithdrawal(id) {
+
+  if (
+    !confirm(
+      "Approve this withdrawal?"
+    )
+  ) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .update({
+      status: "COMPLETED"
+    })
+    .eq("id", id)
+    .eq("transaction_type", "WITHDRAWAL")
+    .eq("status", "PENDING");
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to approve withdrawal: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Withdrawal approved successfully.",
+    "success"
+  );
+
+
+  await loadWithdrawals();
+
+  await loadTransactions();
+
+}
+
+
+// =====================================
+// REJECT WITHDRAWAL
+// =====================================
+
+async function rejectWithdrawal(id) {
+
+  if (
+    !confirm(
+      "Reject this withdrawal?"
+    )
+  ) {
+    return;
+  }
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .update({
+      status: "REJECTED"
+    })
+    .eq("id", id)
+    .eq("transaction_type", "WITHDRAWAL")
+    .eq("status", "PENDING");
+
+
+  if (error) {
+
+    showMessage(
+      "Unable to reject withdrawal: " +
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Withdrawal rejected.",
+    "success"
+  );
+
+
+  await loadWithdrawals();
+
+  await loadTransactions();
+
+}
+
+
+// =====================================
+// RECENT TRANSACTIONS
+// =====================================
+
+async function loadTransactions() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .select(
+      "id, amount, currency, transaction_type, status, payment_method, payment_reference, created_at"
+    )
+    .order("created_at", {
+      ascending: false
+    })
+    .limit(50);
+
+
+  const body =
+    document.getElementById("transactionsBody");
+
+  body.innerHTML = "";
+
+
+  if (error) {
+
+    body.innerHTML =
+    
