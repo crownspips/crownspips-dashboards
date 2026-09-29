@@ -5,299 +5,442 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crownspips Trading - Admin</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f5f8;color:#111827}
-header{background:#111827;color:white;padding:20px;text-align:center}
-.gold{color:#d4af37}
-.container{width:94%;max-width:1250px;margin:20px auto}
-.notice{background:#fff8df;border-left:5px solid #d4af37;padding:15px;margin-bottom:20px;line-height:1.5}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}
-.card,section{background:white;border-radius:14px;padding:20px;box-shadow:0 3px 12px #0001;margin-bottom:20px}
-.card h3{font-size:13px;color:#6b7280;margin:0 0 8px}
-.amount{font-size:24px;font-weight:bold}
-.green{color:#15803d}
-.red{color:#dc2626}
-table{width:100%;border-collapse:collapse;min-width:850px}
-th,td{padding:12px;border-bottom:1px solid #eee;text-align:left}
-th{font-size:12px;color:#6b7280}
-.table-wrap{overflow-x:auto}
-.badge{padding:5px 9px;border-radius:15px;font-size:12px;font-weight:bold}
-.active{background:#dcfce7;color:#166534}
-.pending{background:#fef3c7;color:#92400e}
-button{border:0;border-radius:7px;padding:9px 13px;background:#111827;color:white;font-weight:bold;cursor:pointer}
-button:hover{opacity:.9}
-footer{text-align:center;padding:25px;color:#777;font-size:13px}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#07111f;
+  color:white;
+}
+
+header{
+  background:#101d2e;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+header h1{
+  margin:0;
+  font-size:21px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.logout{
+  background:#dc2626;
+  color:white;
+}
+
+.container{
+  padding:20px;
+  max-width:1200px;
+  margin:auto;
+}
+
+.card{
+  background:#101d2e;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+}
+
+.stat{
+  background:#17263a;
+  padding:20px;
+  border-radius:12px;
+}
+
+.stat h3{
+  margin:0;
+  color:#9ca3af;
+  font-size:14px;
+}
+
+.stat strong{
+  display:block;
+  margin-top:10px;
+  font-size:25px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+th,td{
+  padding:13px;
+  border-bottom:1px solid #26364a;
+  text-align:left;
+}
+
+th{
+  color:#9ca3af;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.pending{
+  background:#854d0e;
+  color:#fde68a;
+}
+
+.verified{
+  background:#166534;
+  color:#bbf7d0;
+}
+
+.rejected{
+  background:#991b1b;
+  color:#fecaca;
+}
+
+.action{
+  background:#16a34a;
+  color:white;
+  margin-right:5px;
+}
+
+.reject{
+  background:#dc2626;
+  color:white;
+}
+
+.disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.notice{
+  padding:15px;
+  background:#17263a;
+  border-radius:10px;
+  color:#cbd5e1;
+  margin-bottom:20px;
+}
+
+#message{
+  margin-bottom:15px;
+  font-weight:bold;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Crownspips <span class="gold">Trading</span></h1>
-<p>Demo Administration Panel</p>
+  <h1>👑 Crownspips Admin</h1>
+  <button class="logout" onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
-<div class="notice">
-<strong>DEMO ADMIN PANEL</strong><br>
-All information on this page is simulated. No real client money,
-deposits, withdrawals or trading activity is connected to this dashboard.
-</div>
+  <div id="message"></div>
 
-<div class="cards">
+  <div class="notice">
+    <strong>Admin Verification System</strong><br>
+    Review real-account applications and change their verification status.
+    Verification does not activate real-money trading by itself.
+  </div>
 
-<div class="card">
-<h3>DEMO CLIENTS</h3>
-<div class="amount">24</div>
-</div>
+  <div class="stats">
 
-<div class="card">
-<h3>TOTAL DEMO CAPITAL</h3>
-<div class="amount">$125,000.00</div>
-</div>
+    <div class="stat">
+      <h3>Total Profiles</h3>
+      <strong id="totalProfiles">0</strong>
+    </div>
 
-<div class="card">
-<h3>DEMO INVESTED</h3>
-<div class="amount">$110,000.00</div>
-</div>
+    <div class="stat">
+      <h3>Real Accounts</h3>
+      <strong id="realAccounts">0</strong>
+    </div>
 
-<div class="card">
-<h3>DEMO NET PROFIT</h3>
-<div class="amount green">$8,750.00</div>
-</div>
+    <div class="stat">
+      <h3>Pending</h3>
+      <strong id="pendingAccounts">0</strong>
+    </div>
 
-</div>
+    <div class="stat">
+      <h3>Verified</h3>
+      <strong id="verifiedAccounts">0</strong>
+    </div>
 
-<section>
+  </div>
 
-<h2>Client Management</h2>
+  <div class="card">
+    <h2>Real Account Applications</h2>
 
-<div class="table-wrap">
-<table>
+    <div class="table-wrap">
+      <table>
 
-<thead>
-<tr>
-<th>Client</th>
-<th>Email</th>
-<th>Balance</th>
-<th>Invested</th>
-<th>Net Profit</th>
-<th>Client 70%</th>
-<th>Management 30%</th>
-<th>Status</th>
-</tr>
-</thead>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Account Type</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-<tbody>
+        <tbody id="applications">
+        </tbody>
 
-<tr>
-<td>Demo Investor</td>
-<td>demo@example.com</td>
-<td>$10,000</td>
-<td>$8,000</td>
-<td class="green">$600</td>
-<td class="green">$420</td>
-<td>$180</td>
-<td><span class="badge active">Active</span></td>
-</tr>
-
-<tr>
-<td>John Demo</td>
-<td>john@example.com</td>
-<td>$7,500</td>
-<td>$6,000</td>
-<td class="green">$450</td>
-<td class="green">$315</td>
-<td>$135</td>
-<td><span class="badge active">Active</span></td>
-</tr>
-
-<tr>
-<td>Sarah Demo</td>
-<td>sarah@example.com</td>
-<td>$12,000</td>
-<td>$10,000</td>
-<td class="green">$900</td>
-<td class="green">$630</td>
-<td>$270</td>
-<td><span class="badge active">Active</span></td>
-</tr>
-
-</tbody>
-
-</table>
-</div>
-
-</section>
-
-<section>
-
-<h2>Demo Transactions</h2>
-
-<div class="table-wrap">
-<table>
-
-<thead>
-<tr>
-<th>Date</th>
-<th>Client</th>
-<th>Type</th>
-<th>Amount</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>26 Sep 2026</td>
-<td>Demo Investor</td>
-<td>Deposit</td>
-<td>$5,000</td>
-<td><span class="badge pending">Pending</span></td>
-<td><button onclick="demoAction()">Approve Demo</button></td>
-</tr>
-
-<tr>
-<td>26 Sep 2026</td>
-<td>John Demo</td>
-<td>Withdrawal</td>
-<td>$1,000</td>
-<td><span class="badge pending">Pending</span></td>
-<td><button onclick="demoAction()">Approve Demo</button></td>
-</tr>
-
-</tbody>
-
-</table>
-</div>
-
-</section>
-
-<section>
-
-<h2>Demo Trading Positions</h2>
-
-<div class="table-wrap">
-<table>
-
-<thead>
-<tr>
-<th>Client</th>
-<th>Pair</th>
-<th>Direction</th>
-<th>Units</th>
-<th>Entry</th>
-<th>Current</th>
-<th>P/L</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>Demo Investor</td>
-<td>EUR/USD</td>
-<td>BUY</td>
-<td>1,000</td>
-<td>1.1700</td>
-<td>1.1742</td>
-<td class="green">+$4.20</td>
-</tr>
-
-<tr>
-<td>John Demo</td>
-<td>GBP/USD</td>
-<td>SELL</td>
-<td>2,000</td>
-<td>1.3450</td>
-<td>1.3405</td>
-<td class="green">+$9.00</td>
-</tr>
-
-<tr>
-<td>Sarah Demo</td>
-<td>USD/JPY</td>
-<td>BUY</td>
-<td>1,500</td>
-<td>148.50</td>
-<td>148.72</td>
-<td class="green">+$3.30</td>
-</tr>
-
-</tbody>
-
-</table>
-</div>
-
-</section>
-
-<section>
-
-<h2>Profit Sharing Summary</h2>
-
-<div class="table-wrap">
-<table>
-
-<thead>
-<tr>
-<th>Client</th>
-<th>Net Profit</th>
-<th>Client Share (70%)</th>
-<th>Management Share (30%)</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>Demo Investor</td>
-<td>$600.00</td>
-<td class="green">$420.00</td>
-<td>$180.00</td>
-</tr>
-
-<tr>
-<td>John Demo</td>
-<td>$450.00</td>
-<td class="green">$315.00</td>
-<td>$135.00</td>
-</tr>
-
-<tr>
-<td>Sarah Demo</td>
-<td>$900.00</td>
-<td class="green">$630.00</td>
-<td>$270.00</td>
-</tr>
-
-<tr>
-<td><strong>Total</strong></td>
-<td><strong>$1,950.00</strong></td>
-<td class="green"><strong>$1,365.00</strong></td>
-<td><strong>$585.00</strong></td>
-</tr>
-
-</tbody>
-
-</table>
-</div>
-
-</section>
+      </table>
+    </div>
+  </div>
 
 </div>
-
-<footer>
-© 2026 Crownspips Trading — Demo Environment
-</footer>
 
 <script>
-function demoAction(){
-alert("Demo action completed. No real money was moved.");
+
+const SUPABASE_URL =
+"https://ghagrruxxqtnochooiaj.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+
+const supabaseClient =
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+
+async function start(){
+
+  const {
+    data:{session}
+  } = await supabaseClient.auth.getSession();
+
+  if(!session){
+    window.location.href="admin-login.html";
+    return;
+  }
+
+  currentUser = session.user;
+
+  const {data:admin,error} =
+    await supabaseClient
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+  if(error || !admin){
+
+    await supabaseClient.auth.signOut();
+
+    alert("Admin access required.");
+
+    window.location.href="admin-login.html";
+
+    return;
+  }
+
+  await loadApplications();
 }
+
+async function loadApplications(){
+
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        email,
+        account_type,
+        verification_status,
+        created_at
+      `)
+      .eq("account_type","real")
+      .order("created_at",{ascending:false});
+
+  if(error){
+
+    document.getElementById("message").textContent =
+      "Unable to load applications: " + error.message;
+
+    return;
+  }
+
+  const applications =
+    document.getElementById("applications");
+
+  applications.innerHTML="";
+
+  let pending=0;
+  let verified=0;
+
+  data.forEach(profile=>{
+
+    const status =
+      profile.verification_status || "pending";
+
+    if(status==="pending") pending++;
+    if(status==="verified") verified++;
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>${escapeHTML(profile.full_name || "Not provided")}</td>
+
+      <td>${escapeHTML(profile.email || "Not provided")}</td>
+
+      <td>
+        <span class="badge verified">
+          REAL
+        </span>
+      </td>
+
+      <td>
+        <span class="badge ${status}">
+          ${status.toUpperCase()}
+        </span>
+      </td>
+
+      <td>
+        ${new Date(profile.created_at).toLocaleString()}
+      </td>
+
+      <td>
+
+        ${
+          status !== "verified"
+          ?
+          `<button
+             class="action"
+             onclick="updateStatus('${profile.id}','verified')">
+             Verify
+           </button>`
+          :
+          ""
+        }
+
+        ${
+          status !== "rejected"
+          ?
+          `<button
+             class="reject"
+             onclick="updateStatus('${profile.id}','rejected')">
+             Reject
+           </button>`
+          :
+          ""
+        }
+
+      </td>
+    `;
+
+    applications.appendChild(row);
+
+  });
+
+  const {count:totalProfiles} =
+    await supabaseClient
+      .from("profiles")
+      .select("*",{count:"exact",head:true});
+
+  document.getElementById("totalProfiles").textContent =
+    totalProfiles || 0;
+
+  document.getElementById("realAccounts").textContent =
+    data.length;
+
+  document.getElementById("pendingAccounts").textContent =
+    pending;
+
+  document.getElementById("verifiedAccounts").textContent =
+    verified;
+}
+
+async function updateStatus(userId,status){
+
+  const action =
+    status==="verified"
+      ? "verify this account"
+      : "reject this account";
+
+  if(!confirm("Are you sure you want to " + action + "?")){
+    return;
+  }
+
+  const {error} =
+    await supabaseClient
+      .from("profiles")
+      .update({
+        verification_status:status
+      })
+      .eq("id",userId);
+
+  if(error){
+
+    alert("Update failed: " + error.message);
+
+    return;
+  }
+
+  alert(
+    status==="verified"
+      ? "Account verified successfully."
+      : "Account rejected."
+  );
+
+  await loadApplications();
+}
+
+async function logout(){
+
+  await supabaseClient.auth.signOut();
+
+  window.location.href="admin-login.html";
+}
+
+function escapeHTML(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+start();
+
 </script>
 
 </body>
