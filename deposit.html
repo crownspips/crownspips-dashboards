@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
+
+<title>Crownspips - Deposit</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f1f5f9;
+  color:#111827;
+}
+
+header{
+  background:#0f172a;
+  color:white;
+  padding:25px 20px;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+  font-size:32px;
+}
+
+header span{
+  color:#d4af37;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:20px;
+  box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+label{
+  display:block;
+  margin-top:18px;
+  font-weight:bold;
+}
+
+input,
+select{
+  width:100%;
+  padding:14px;
+  margin-top:8px;
+  border:1px solid #d1d5db;
+  border-radius:9px;
+  font-size:16px;
+}
+
+.amount-preview{
+  margin-top:15px;
+  background:#f8fafc;
+  padding:15px;
+  border-radius:10px;
+}
+
+button{
+  width:100%;
+  border:0;
+  border-radius:9px;
+  padding:15px;
+  margin-top:20px;
+  background:#16a34a;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.back{
+  background:#475569;
+}
+
+.test-notice{
+  background:#fff7ed;
+  border-left:6px solid #f97316;
+  padding:15px;
+  border-radius:9px;
+  margin-bottom:20px;
+}
+
+.success{
+  background:#dcfce7;
+  border-left:6px solid #16a34a;
+  padding:15px;
+  border-radius:9px;
+  margin-top:20px;
+}
+
+.error{
+  color:#dc2626;
+  margin-top:15px;
+  font-weight:bold;
+}
+
+.hidden{
+  display:none;
+}
+
+.reference{
+  word-break:break-all;
+  font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>
+Crownspips <span>Trading</span>
+</h1>
+
+</header>
+
+
+<div class="container">
+
+<div class="card">
+
+<h2>Deposit Funds</h2>
+
+<div class="test-notice">
+
+<strong>TEST PAYMENT MODE</strong>
+
+<p>
+This is a simulated payment environment.
+No real money or bank/card charge will occur.
+</p>
+
+</div>
+
+
+<label>
+Currency
+</label>
+
+<select id="currency">
+
+<option value="USD">🇺🇸 USD — US Dollar</option>
+<option value="EUR">🇪🇺 EUR — Euro</option>
+<option value="GBP">🇬🇧 GBP — British Pound</option>
+<option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
+<option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+<option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+
+</select>
+
+
+<label>
+Deposit Amount
+</label>
+
+<input
+  id="amount"
+  type="number"
+  min="1"
+  step="0.01"
+  placeholder="Enter amount"
+>
+
+
+<div class="amount-preview">
+
+<strong>Payment:</strong>
+
+<div id="preview">
+Choose a currency and enter an amount.
+</div>
+
+</div>
+
+
+<button onclick="startTestPayment()">
+
+Continue to Test Payment
+
+</button>
+
+
+<button
+  class="back"
+  onclick="window.location.href='index.html'">
+
+Back to Dashboard
+
+</button>
+
+
+<div id="message"></div>
+
+
+<div id="successBox"
+     class="success hidden">
+
+<h3>Test Payment Successful</h3>
+
+<p>
+Your simulated deposit has been recorded.
+</p>
+
+<p>
+<strong>Reference:</strong>
+</p>
+
+<div
+  id="reference"
+  class="reference">
+</div>
+
+<p>
+<strong>Status:</strong>
+COMPLETED
+</p>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Supported Test Currencies</h3>
+
+<p>🇺🇸 USD — US Dollar</p>
+<p>🇪🇺 EUR — Euro</p>
+<p>🇬🇧 GBP — British Pound</p>
+<p>🇳🇬 NGN — Nigerian Naira</p>
+<p>🇨🇦 CAD — Canadian Dollar</p>
+<p>🇦🇺 AUD — Australian Dollar</p>
+
+</div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://ghagrruxxqtnochooiaj.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+let currentUser = null;
+
+
+async function start(){
+
+  const {
+    data:{session}
+  } =
+  await supabaseClient.auth.getSession();
+
+
+  if(!session){
+
+    window.location.href="login.html";
+
+    return;
+  }
+
+
+  currentUser =
+    session.user;
+
+}
+
+
+function updatePreview(){
+
+  const currency =
+    document.getElementById(
+      "currency"
+    ).value;
+
+
+  const amount =
+    Number(
+      document.getElementById(
+        "amount"
+      ).value
+    );
+
+
+  const preview =
+    document.getElementById(
+      "preview"
+    );
+
+
+  if(!amount || amount <= 0){
+
+    preview.textContent =
+      "Enter an amount.";
+
+    return;
+  }
+
+
+  preview.textContent =
+    amount.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    )
+    + " "
+    + currency;
+
+}
+
+
+document
+  .getElementById("currency")
+  .addEventListener(
+    "change",
+    updatePreview
+  );
+
+
+document
+  .getElementById("amount")
+  .addEventListener(
+    "input",
+    updatePreview
+  );
+
+
+async function startTestPayment(){
+
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+
+  const successBox =
+    document.getElementById(
+      "successBox"
+    );
+
+
+  message.textContent = "";
+
+  successBox.classList.add(
+    "hidden"
+  );
+
+
+  const currency =
+    document.getElementById(
+      "currency"
+    ).value;
+
+
+  const amount =
+    Number(
+      document.getElementById(
+        "amount"
+      ).value
+    );
+
+
+  if(!amount || amount <= 0){
+
+    message.innerHTML =
+      '<div class="error">' +
+      'Please enter a valid amount.' +
+      '</div>';
+
+    return;
+  }
+
+
+  if(!currentUser){
+
+    message.innerHTML =
+      '<div class="error">' +
+      'Please log in first.' +
+      '</div>';
+
+    return;
+  }
+
+
+  const reference =
+    "TEST-"
+    + Date.now()
+    + "-"
+    + Math.random()
+        .toString(36)
+        .substring(2,8)
+        .toUpperCase();
+
+
+  /*
+   TEST PAYMENT ONLY
+
+   This records a simulated completed
+   deposit. It does NOT charge money.
+  */
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("transactions")
+    .insert({
+
+      user_id:
+        currentUser.id,
+
+      transaction_type:
+        "DEPOSIT",
+
+      amount:
+        amount,
+
+      currency:
+        currency,
+
+      status:
+        "COMPLETED",
+
+      payment_method:
+        "TEST_PAYMENT",
+
+      payment_reference:
+        reference,
+
+      description:
+        "Simulated international test deposit"
+
+    });
+
+
+  if(error){
+
+    message.innerHTML =
+      '<div class="error">' +
+      'Test payment failed: ' +
+      escapeHTML(
+        error.message
+      ) +
+      '</div>';
+
+    return;
+  }
+
+
+  document
+    .getElementById(
+      "reference"
+    )
+    .textContent =
+    reference;
+
+
+  successBox.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>
