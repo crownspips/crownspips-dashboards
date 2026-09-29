@@ -102,6 +102,14 @@
       font-weight: bold;
     }
 
+    .ngn-card {
+      border-left: 4px solid #059669;
+    }
+
+    .usd-card {
+      border-left: 4px solid #2563eb;
+    }
+
     .actions {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -296,14 +304,24 @@
 
   <div class="cards">
 
-    <div class="card">
-      <h3>Account Balance</h3>
+    <div class="card usd-card">
+      <h3>USD Account Balance</h3>
       <p id="balance">$0.00</p>
     </div>
 
+    <div class="card ngn-card">
+      <h3>NGN Balance</h3>
+      <p id="ngnBalance">₦0.00</p>
+    </div>
+
     <div class="card">
-      <h3>Total Deposits</h3>
+      <h3>USD Deposits</h3>
       <p id="totalDeposits">$0.00</p>
+    </div>
+
+    <div class="card">
+      <h3>NGN Deposits</h3>
+      <p id="totalNgnDeposits">₦0.00</p>
     </div>
 
     <div class="card">
@@ -515,19 +533,17 @@ async function loadProfile() {
 
 
   /*
-    BALANCE LOGIC
+    USD BALANCE
 
-    DEMO ACCOUNT:
-    Uses the normal demo balance.
+    Demo account:
+    uses balance.
 
-    VERIFIED REAL ACCOUNT:
-    Uses the separate real_balance field.
-
-    PENDING / REJECTED:
-    Keeps the demo balance display.
+    Verified real account:
+    uses real_balance.
   */
 
-  let displayBalance = Number(data.balance || 0);
+  let displayBalance =
+    Number(data.balance || 0);
 
   if (
     accountType === "real" &&
@@ -539,6 +555,25 @@ async function loadProfile() {
 
   document.getElementById("balance").textContent =
     "$" + displayBalance.toFixed(2);
+
+
+  /*
+    NGN BALANCE
+
+    NGN is stored separately from USD.
+  */
+
+  const ngnBalance =
+    Number(data.ngn_balance || 0);
+
+  document.getElementById("ngnBalance").textContent =
+    "₦" + ngnBalance.toLocaleString(
+      undefined,
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    );
 
 
   const accountBox =
@@ -636,8 +671,7 @@ async function loadProfile() {
       <div class="success">
         ✅ Your account has been verified.
         <br><br>
-        Your displayed balance is now the separate
-        Real Account Balance.
+        Your USD and NGN balances are displayed separately.
         <br><br>
         Deposit and withdrawal features shown here remain in TEST mode.
         Real-money services are not enabled.
@@ -825,11 +859,16 @@ async function loadTransactions() {
     document.getElementById("totalDeposits").textContent =
       "$0.00";
 
+    document.getElementById("totalNgnDeposits").textContent =
+      "₦0.00";
+
     return;
   }
 
 
-  let totalDeposits = 0;
+  let totalUsdDeposits = 0;
+  let totalNgnDeposits = 0;
+
 
   data.forEach(transaction => {
 
@@ -838,8 +877,21 @@ async function loadTransactions() {
       transaction.status === "COMPLETED"
     ) {
 
-      totalDeposits +=
+      const amount =
         Number(transaction.amount || 0);
+
+      const currency =
+        transaction.currency || "USD";
+
+      if (currency === "NGN") {
+
+        totalNgnDeposits += amount;
+
+      } else if (currency === "USD") {
+
+        totalUsdDeposits += amount;
+
+      }
 
     }
 
@@ -847,7 +899,17 @@ async function loadTransactions() {
 
 
   document.getElementById("totalDeposits").textContent =
-    "$" + totalDeposits.toFixed(2);
+    "$" + totalUsdDeposits.toFixed(2);
+
+
+  document.getElementById("totalNgnDeposits").textContent =
+    "₦" + totalNgnDeposits.toLocaleString(
+      undefined,
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    );
 
 
   let html = `
@@ -1103,31 +1165,4 @@ async function logout() {
 }
 
 
-// =============================
-// AUTH STATE
-// =============================
-
-supabaseClient.auth.onAuthStateChange(
-  (event, session) => {
-
-    if (!session) {
-
-      window.location.href =
-        "login.html";
-
-    }
-
-  }
-);
-
-
-// =============================
-// START
-// =============================
-
-startDashboard();
-
-</script>
-
-</body>
-</html>
+/
