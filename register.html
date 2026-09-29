@@ -22,8 +22,8 @@ body{
 
 .container{
     width:92%;
-    max-width:460px;
-    margin:45px auto;
+    max-width:480px;
+    margin:40px auto;
 }
 
 .box{
@@ -62,6 +62,40 @@ input{
     border:1px solid #ddd;
     border-radius:8px;
     font-size:15px;
+}
+
+.account-options{
+    display:grid;
+    gap:12px;
+    margin-top:10px;
+}
+
+.account-option{
+    border:2px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    cursor:pointer;
+}
+
+.account-option:hover{
+    border-color:#d4af37;
+}
+
+.account-option input{
+    width:auto;
+    margin:0 8px 0 0;
+}
+
+.account-title{
+    font-weight:bold;
+    font-size:16px;
+}
+
+.account-description{
+    color:#6b7280;
+    font-size:13px;
+    margin-top:7px;
+    line-height:1.5;
 }
 
 button{
@@ -178,6 +212,53 @@ Create Investor Account
     required
 >
 
+<label>Choose Account Type</label>
+
+<div class="account-options">
+
+<label class="account-option">
+
+<input
+    type="radio"
+    name="accountType"
+    value="demo"
+    checked
+>
+
+<span class="account-title">
+Demo Account
+</span>
+
+<div class="account-description">
+Practice with virtual funds and simulated trades.
+No real money is involved.
+</div>
+
+</label>
+
+
+<label class="account-option">
+
+<input
+    type="radio"
+    name="accountType"
+    value="real"
+>
+
+<span class="account-title">
+Real Account
+</span>
+
+<div class="account-description">
+Apply for a real investor account. Real-money services are
+not currently active and will require verification and the
+necessary financial infrastructure before funds can be accepted.
+</div>
+
+</label>
+
+</div>
+
 <button
     id="registerButton"
     type="submit"
@@ -201,11 +282,12 @@ Already have an account? Login
 
 <div class="notice">
 
-<strong>Demo Environment</strong><br>
+<strong>Important</strong><br>
 
-This platform is currently under development.
-New accounts receive a demo balance only.
-Real deposits, withdrawals and investment services are not currently available.
+Demo accounts use simulated funds.
+Real accounts are currently applications only.
+Crownspips Trading does not currently accept real deposits
+or process real withdrawals through this website.
 
 </div>
 
@@ -289,12 +371,14 @@ async function(e){
     .getElementById("confirmPassword")
     .value;
 
+    const accountType =
+    document.querySelector(
+        'input[name="accountType"]:checked'
+    ).value;
+
     const button =
-    document
-    .getElementById("registerButton");
+    document.getElementById("registerButton");
 
-
-    /* Check password */
 
     if(password !== confirmPassword){
 
@@ -306,8 +390,6 @@ async function(e){
         return;
     }
 
-
-    /* Minimum password */
 
     if(password.length < 6){
 
@@ -324,7 +406,7 @@ async function(e){
     button.textContent="Creating Account...";
 
 
-    /* Create Supabase account */
+    /* Create authentication account */
 
     const {data,error} =
     await supabaseClient.auth.signUp({
@@ -335,7 +417,8 @@ async function(e){
 
         options:{
             data:{
-                full_name:fullName
+                full_name:fullName,
+                account_type:accountType
             }
         }
 
@@ -356,10 +439,7 @@ async function(e){
     }
 
 
-    /* Get created user */
-
-    const user =
-    data.user;
+    const user=data.user;
 
 
     if(!user){
@@ -389,24 +469,14 @@ async function(e){
 
         email:email,
 
-        balance:10000
+        balance:10000,
+
+        account_type:accountType
 
     });
 
 
-    /*
-       If email confirmation is enabled,
-       the profile may still be created
-       because the authenticated user ID
-       is already known.
-    */
-
     if(profileError){
-
-        /*
-           Duplicate profile is harmless.
-           Other errors are shown.
-        */
 
         if(
             !profileError.message
@@ -428,10 +498,21 @@ async function(e){
     }
 
 
-    showMessage(
-        "Account created successfully! You can now log in.",
-        "success"
-    );
+    if(accountType==="demo"){
+
+        showMessage(
+            "Demo account created successfully! You can now log in.",
+            "success"
+        );
+
+    }else{
+
+        showMessage(
+            "Real account application created successfully. Your account is pending verification.",
+            "success"
+        );
+
+    }
 
 
     button.textContent="Account Created";
@@ -448,4 +529,4 @@ async function(e){
 </script>
 
 </body>
-  </html>
+</html>
