@@ -1,202 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crownspips Trading - Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crownspips Trading - Admin Dashboard</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
-    body {
-      background: #f4f7fb;
-      color: #172033;
-    }
+body{
+  background:#f4f7fb;
+  color:#172033;
+}
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 20px;
-    }
+header{
+  background:#111827;
+  color:white;
+  padding:20px;
+}
 
-    header h1 {
-      margin-bottom: 5px;
-    }
+header h1{
+  margin-bottom:5px;
+}
 
-    header p {
-      color: #d1d5db;
-      font-size: 14px;
-    }
+header p{
+  color:#d1d5db;
+  font-size:14px;
+}
 
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 20px;
-    }
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
 
-    .warning {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      color: #9a3412;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
+.warning{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+  line-height:1.5;
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:20px;
+}
 
-    .stat {
-      background: white;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
+.stat{
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
 
-    .stat span {
-      display: block;
-      color: #6b7280;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
+.stat span{
+  display:block;
+  color:#6b7280;
+  font-size:13px;
+  margin-bottom:8px;
+}
 
-    .stat strong {
-      font-size: 25px;
-    }
+.stat strong{
+  font-size:25px;
+}
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
+.card{
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
 
-    .card h2 {
-      margin-bottom: 15px;
-    }
+.card h2{
+  margin-bottom:15px;
+}
 
-    .table-wrap {
-      overflow-x: auto;
-    }
+.card-description{
+  color:#6b7280;
+  margin-bottom:15px;
+  line-height:1.5;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 750px;
-    }
+.table-wrap{
+  width:100%;
+  overflow:hidden;
+}
 
-    th,
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-      font-size: 14px;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+}
 
-    th {
-      background: #f9fafb;
-    }
+th,
+td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+  font-size:14px;
+}
 
-    button {
-      border: none;
-      padding: 9px 12px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-weight: bold;
-      margin: 2px;
-    }
+th{
+  background:#f9fafb;
+}
 
-    .approve {
-      background: #059669;
-      color: white;
-    }
+button{
+  border:none;
+  padding:9px 12px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:bold;
+  margin:2px;
+}
 
-    .reject {
-      background: #dc2626;
-      color: white;
-    }
+.approve{
+  background:#059669;
+  color:white;
+}
 
-    .logout {
-      background: #6b7280;
-      color: white;
-      padding: 12px 18px;
-    }
+.reject{
+  background:#dc2626;
+  color:white;
+}
 
-    .status {
-      font-weight: bold;
-    }
+.logout{
+  background:#6b7280;
+  color:white;
+  padding:12px 18px;
+}
 
-    .pending {
-      color: #d97706;
-    }
+.status{
+  font-weight:bold;
+}
 
-    .completed,
-    .verified {
-      color: #059669;
-    }
+.pending{
+  color:#d97706;
+}
 
-    .rejected {
-      color: #dc2626;
-    }
+.completed,
+.verified{
+  color:#059669;
+}
 
-    .empty {
-      padding: 20px;
-      color: #6b7280;
-      text-align: center;
-    }
+.rejected{
+  color:#dc2626;
+}
 
-    .message {
-      margin-bottom: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      display: none;
-    }
+.empty{
+  padding:20px;
+  color:#6b7280;
+  text-align:center;
+}
 
-    .success {
-      display: block;
-      background: #ecfdf5;
-      color: #047857;
-    }
+.message{
+  margin-bottom:15px;
+  padding:12px;
+  border-radius:8px;
+  display:none;
+}
 
-    .error {
-      display: block;
-      background: #fef2f2;
-      color: #b91c1c;
-    }
+.success{
+  display:block;
+  background:#ecfdf5;
+  color:#047857;
+}
 
-    @media (max-width: 800px) {
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+.error{
+  display:block;
+  background:#fef2f2;
+  color:#b91c1c;
+}
 
-    @media (max-width: 500px) {
-      .stats {
-        grid-template-columns: 1fr;
-      }
 
-      .container {
-        padding: 12px;
-      }
+/* MOBILE */
 
-      .card {
-        padding: 15px;
-      }
-    }
-  </style>
+@media(max-width:700px){
+
+  .container{
+    padding:12px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .stat{
+    padding:15px;
+  }
+
+  .stat strong{
+    font-size:22px;
+  }
+
+  .card{
+    padding:15px;
+    border-radius:14px;
+  }
+
+  .card h2{
+    font-size:22px;
+    line-height:1.25;
+  }
+
+  /*
+    Turn every table into mobile cards.
+  */
+
+  table,
+  thead,
+  tbody,
+  tr,
+  td{
+    display:block;
+    width:100%;
+  }
+
+  thead{
+    display:none;
+  }
+
+  tbody{
+    width:100%;
+  }
+
+  tr{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    margin-bottom:12px;
+    padding:8px;
+  }
+
+  td{
+    border:none;
+    border-bottom:1px solid #e5e7eb;
+    padding:10px 5px 10px 42%;
+    min-height:42px;
+    position:relative;
+    word-break:break-word;
+  }
+
+  td:last-child{
+    border-bottom:none;
+  }
+
+  td::before{
+    position:absolute;
+    left:5px;
+    top:10px;
+    width:37%;
+    font-weight:bold;
+    color:#6b7280;
+  }
+
+  /* Applications */
+
+  #applicationsBody td:nth-child(1)::before{
+    content:"Name";
+  }
+
+  #applicationsBody td:nth-child(2)::before{
+    content:"Email";
+  }
+
+  #applicationsBody td:nth-child(3)::before{
+    content:"Account";
+  }
+
+  #applicationsBody td:nth-child(4)::before{
+    content:"Status";
+  }
+
+  #applicationsBody td:nth-child(5)::before{
+    content:"Action";
+  }
+
+  /* Deposits */
+
+  #depositsBody td:nth-child(1)::before{
+    content:"Customer";
+  }
+
+  #depositsBody td:nth-child(2)::before{
+    content:"Amount";
+  }
+
+  #depositsBody td:nth-child(3)::before{
+    content:"Currency";
+  }
+
+  #depositsBody td:nth-child(4)::before{
+    content:"Method";
+  }
+
+  #depositsBody td:nth-child(5)::before{
+    content:"Reference";
+  }
+
+  #depositsBody td:nth-child(6)::before{
+    content:"Status";
+  }
+
+  #depositsBody td:nth-child(7)::before{
+    content:"Action";
+  }
+
+  /* Withdrawals */
+
+  #withdrawalsBody td:nth-child(1)::before{
+    content:"Customer";
+  }
+
+  #withdrawalsBody td:nth-child(2)::before{
+    content:"Amount";
+  }
+
+  #withdrawalsBody td:nth-child(3)::before{
+    content:"Currency";
+  }
+
+  #withdrawalsBody td:nth-child(4)::before{
+    content:"Method";
+  }
+
+  #withdrawalsBody td:nth-child(5)::before{
+    content:"Reference";
+  }
+
+  #withdrawalsBody td:nth-child(6)::before{
+    content:"Status";
+  }
+
+  #withdrawalsBody td:nth-child(7)::before{
+    content:"Action";
+  }
+
+  /* Recent transactions */
+
+  #transactionsBody td:nth-child(1)::before{
+    content:"Type";
+  }
+
+  #transactionsBody td:nth-child(2)::before{
+    content:"Amount";
+  }
+
+  #transactionsBody td:nth-child(3)::before{
+    content:"Currency";
+  }
+
+  #transactionsBody td:nth-child(4)::before{
+    content:"Method";
+  }
+
+  #transactionsBody td:nth-child(5)::before{
+    content:"Reference";
+  }
+
+  #transactionsBody td:nth-child(6)::before{
+    content:"Status";
+  }
+
+  #transactionsBody td:nth-child(7)::before{
+    content:"Date";
+  }
+
+  button{
+    padding:10px 12px;
+  }
+}
+
+@media(max-width:420px){
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  header h1{
+    font-size:20px;
+  }
+
+  .card h2{
+    font-size:20px;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -208,176 +409,156 @@
 
 <div class="container">
 
-  <div class="warning">
-    ⚠️ <strong>TEST / DEMO MODE</strong><br>
-    This dashboard is for managing the Crownspips Trading demonstration
-    system. Do not treat test transactions as real-money settlement.
-  </div>
+<div class="warning">
+⚠️ <strong>TEST / DEMO MODE</strong><br>
+This dashboard is for managing the Crownspips Trading demonstration system.
+Do not treat test transactions as real-money settlement.
+</div>
 
-  <div id="message" class="message"></div>
+<div id="message" class="message"></div>
 
-  <div class="stats">
+<div class="stats">
 
-    <div class="stat">
-      <span>Real Account Applications</span>
-      <strong id="applicationCount">0</strong>
-    </div>
+<div class="stat">
+<span>Real Account Applications</span>
+<strong id="applicationCount">0</strong>
+</div>
 
-    <div class="stat">
-      <span>Pending Bank Deposits</span>
-      <strong id="depositCount">0</strong>
-    </div>
+<div class="stat">
+<span>Pending Bank Deposits</span>
+<strong id="depositCount">0</strong>
+</div>
 
-    <div class="stat">
-      <span>Pending Withdrawals</span>
-      <strong id="withdrawalCount">0</strong>
-    </div>
+<div class="stat">
+<span>Pending Withdrawals</span>
+<strong id="withdrawalCount">0</strong>
+</div>
 
-    <div class="stat">
-      <span>Total Transactions</span>
-      <strong id="transactionCount">0</strong>
-    </div>
+<div class="stat">
+<span>Total Transactions</span>
+<strong id="transactionCount">0</strong>
+</div>
 
-  </div>
-
-
-  <!-- REAL ACCOUNT APPLICATIONS -->
-
-  <div class="card">
-
-    <h2>👤 Real Account Applications</h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Account Type</th>
-            <th>Verification</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody id="applicationsBody">
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
+</div>
 
 
-  <!-- BANK TRANSFER DEPOSITS -->
+<div class="card">
 
-  <div class="card">
+<h2>👤 Real Account Applications</h2>
 
-    <h2>🏦 Bank Transfer Deposits</h2>
+<div class="table-wrap">
 
-    <p style="margin-bottom:15px;color:#6b7280;">
-      Review manual NGN bank-transfer submissions before crediting
-      the customer's NGN balance.
-    </p>
+<table>
 
-    <div class="table-wrap">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Account Type</th>
+<th>Verification</th>
+<th>Action</th>
+</tr>
+</thead>
 
-      <table>
+<tbody id="applicationsBody"></tbody>
 
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Payment Method</th>
-            <th>Reference</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+</table>
 
-        <tbody id="depositsBody">
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
+</div>
+</div>
 
 
-  <!-- WITHDRAWALS -->
+<div class="card">
 
-  <div class="card">
+<h2>🏦 Bank Transfer Deposits</h2>
 
-    <h2>💸 Withdrawal Requests</h2>
+<p class="card-description">
+Review manual NGN bank-transfer submissions before crediting the customer's NGN balance.
+</p>
 
-    <div class="table-wrap">
+<div class="table-wrap">
 
-      <table>
+<table>
 
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Method</th>
-            <th>Reference</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+<thead>
+<tr>
+<th>Customer</th>
+<th>Amount</th>
+<th>Currency</th>
+<th>Payment Method</th>
+<th>Reference</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
 
-        <tbody id="withdrawalsBody">
-        </tbody>
+<tbody id="depositsBody"></tbody>
 
-      </table>
+</table>
 
-    </div>
-
-  </div>
-
-
-  <!-- RECENT TRANSACTIONS -->
-
-  <div class="card">
-
-    <h2>📋 Recent Transactions</h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Method</th>
-            <th>Reference</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-
-        <tbody id="transactionsBody">
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
+</div>
+</div>
 
 
-  <button
-    class="logout"
-    onclick="logout()"
-  >
-    Logout
-  </button>
+<div class="card">
+
+<h2>💸 Withdrawal Requests</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Customer</th>
+<th>Amount</th>
+<th>Currency</th>
+<th>Method</th>
+<th>Reference</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="withdrawalsBody"></tbody>
+
+</table>
+
+</div>
+</div>
+
+
+<div class="card">
+
+<h2>📋 Recent Transactions</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Type</th>
+<th>Amount</th>
+<th>Currency</th>
+<th>Method</th>
+<th>Reference</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody id="transactionsBody"></tbody>
+
+</table>
+
+</div>
+</div>
+
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
 
 </div>
 
@@ -385,862 +566,813 @@
 <script>
 
 const SUPABASE_URL =
-  "https://ghagrruxxqtnochooiaj.supabase.co";
+"https://ghagrruxxqtnochooiaj.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
-let currentUser = null;
-
-
-// =====================================
-// START
-// =====================================
-
-async function startAdmin() {
-
-  const {
-    data: { user },
-    error
-  } = await supabaseClient.auth.getUser();
-
-  if (error || !user) {
-    window.location.href = "admin-login.html";
-    return;
-  }
-
-  currentUser = user;
+let currentUser=null;
 
 
-  const {
-    data: admin,
-    error: adminError
-  } = await supabaseClient
-    .from("admin_users")
-    .select("user_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
+async function startAdmin(){
 
+const {
+data:{user},
+error
+}=await supabaseClient.auth.getUser();
 
-  if (adminError || !admin) {
+if(error || !user){
 
-    alert("You are not authorized to access the admin dashboard.");
+window.location.href="admin-login.html";
+return;
 
-    await supabaseClient.auth.signOut();
+}
 
-    window.location.href = "admin-login.html";
+currentUser=user;
 
-    return;
-  }
+const {
+data:admin,
+error:adminError
+}=await supabaseClient
+.from("admin_users")
+.select("user_id")
+.eq("user_id",user.id)
+.maybeSingle();
 
+if(adminError || !admin){
 
-  await loadAll();
+alert("You are not authorized to access the admin dashboard.");
+
+await supabaseClient.auth.signOut();
+
+window.location.href="admin-login.html";
+
+return;
+
+}
+
+await loadAll();
 
 }
 
 
-// =====================================
-// LOAD EVERYTHING
-// =====================================
+async function loadAll(){
 
-async function loadAll() {
-
-  await loadApplications();
-
-  await loadDeposits();
-
-  await loadWithdrawals();
-
-  await loadTransactions();
+await loadApplications();
+await loadDeposits();
+await loadWithdrawals();
+await loadTransactions();
 
 }
 
 
-// =====================================
-// APPLICATIONS
-// =====================================
+/* APPLICATIONS */
 
-async function loadApplications() {
+async function loadApplications(){
 
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .select(
-      "id, full_name, email, account_type, verification_status, created_at"
-    )
-    .eq("account_type", "real")
-    .order("created_at", {
-      ascending: false
-    });
+const {
+data,
+error
+}=await supabaseClient
+.from("profiles")
+.select(
+"id,full_name,email,account_type,verification_status,created_at"
+)
+.eq("account_type","real")
+.order("created_at",{ascending:false});
 
+const body=
+document.getElementById("applicationsBody");
 
-  const body =
-    document.getElementById("applicationsBody");
+body.innerHTML="";
 
-  body.innerHTML = "";
+if(error){
 
+body.innerHTML=
+`<tr><td>Unable to load applications.</td></tr>`;
 
-  if (error) {
+return;
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="5">Unable to load applications.</td>
-      </tr>`;
+}
 
-    return;
-  }
+let pending=0;
 
+if(!data || data.length===0){
 
-  let pending = 0;
+body.innerHTML=
+`<tr><td class="empty">
+No real-account applications found.
+</td></tr>`;
 
+}else{
 
-  if (!data || data.length === 0) {
+data.forEach(profile=>{
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="5" class="empty">
-          No real-account applications found.
-        </td>
-      </tr>`;
+if(profile.verification_status==="pending"){
+pending++;
+}
 
-  } else {
+const row=document.createElement("tr");
 
-    data.forEach(profile => {
+row.innerHTML=`
 
-      if (profile.verification_status === "pending") {
-        pending++;
-      }
+<td>${escapeHtml(profile.full_name||"N/A")}</td>
 
+<td>${escapeHtml(profile.email||"N/A")}</td>
 
-      const row =
-        document.createElement("tr");
+<td>${escapeHtml(profile.account_type||"N/A")}</td>
 
+<td class="status ${statusClass(profile.verification_status)}">
+${escapeHtml(profile.verification_status||"pending")}
+</td>
 
-      row.innerHTML = `
+<td>
+${
+profile.verification_status==="pending"
+?
+`
+<button class="approve"
+onclick="verifyAccount('${profile.id}')">
+Verify
+</button>
 
-        <td>${escapeHtml(profile.full_name || "N/A")}</td>
+<button class="reject"
+onclick="rejectAccount('${profile.id}')">
+Reject
+</button>
+`
+:"-"
+}
+</td>
+`;
 
-        <td>${escapeHtml(profile.email || "N/A")}</td>
+body.appendChild(row);
 
-        <td>${escapeHtml(profile.account_type || "N/A")}</td>
+});
 
-        <td class="status ${statusClass(profile.verification_status)}">
-          ${escapeHtml(profile.verification_status || "pending")}
-        </td>
+}
 
-        <td>
-          ${
-            profile.verification_status === "pending"
-            ? `
-              <button
-                class="approve"
-                onclick="verifyAccount('${profile.id}')"
-              >
-                Verify
-              </button>
-
-              <button
-                class="reject"
-                onclick="rejectAccount('${profile.id}')"
-              >
-                Reject
-              </button>
-            `
-            : "-"
-          }
-        </td>
-
-      `;
-
-
-      body.appendChild(row);
-
-    });
-
-  }
-
-
-  document.getElementById("applicationCount").textContent =
-    pending;
+document.getElementById("applicationCount").textContent=pending;
 
 }
 
 
-// =====================================
-// VERIFY ACCOUNT
-// =====================================
+/* VERIFY ACCOUNT */
 
-async function verifyAccount(id) {
+async function verifyAccount(id){
 
-  if (!confirm("Verify this real account?")) {
-    return;
-  }
+if(!confirm("Verify this real account?")) return;
 
+const {error}=await supabaseClient
+.from("profiles")
+.update({
+verification_status:"verified"
+})
+.eq("id",id);
 
-  const {
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .update({
-      verification_status: "verified"
-    })
-    .eq("id", id);
+if(error){
 
+showMessage(
+"Unable to verify account: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
+}
 
-    showMessage(
-      "Unable to verify account: " + error.message,
-      "error"
-    );
+showMessage(
+"Real account verified successfully.",
+"success"
+);
 
-    return;
-  }
-
-
-  showMessage(
-    "Real account verified successfully.",
-    "success"
-  );
-
-
-  await loadApplications();
+await loadApplications();
 
 }
 
 
-// =====================================
-// REJECT ACCOUNT
-// =====================================
+/* REJECT ACCOUNT */
 
-async function rejectAccount(id) {
+async function rejectAccount(id){
 
-  if (!confirm("Reject this real account application?")) {
-    return;
-  }
+if(!confirm("Reject this real account application?")) return;
 
+const {error}=await supabaseClient
+.from("profiles")
+.update({
+verification_status:"rejected"
+})
+.eq("id",id);
 
-  const {
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .update({
-      verification_status: "rejected"
-    })
-    .eq("id", id);
+if(error){
 
+showMessage(
+"Unable to reject account: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
+}
 
-    showMessage(
-      "Unable to reject account: " + error.message,
-      "error"
-    );
+showMessage(
+"Real account application rejected.",
+"success"
+);
 
-    return;
-  }
-
-
-  showMessage(
-    "Real account application rejected.",
-    "success"
-  );
-
-
-  await loadApplications();
+await loadApplications();
 
 }
 
 
-// =====================================
-// BANK TRANSFER DEPOSITS
-// =====================================
+/* BANK DEPOSITS */
 
-async function loadDeposits() {
+async function loadDeposits(){
 
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .select(
-      "id, user_id, amount, currency, status, payment_method, payment_reference, created_at"
-    )
-    .eq("transaction_type", "DEPOSIT")
-    .order("created_at", {
-      ascending: false
-    });
+const {
+data,
+error
+}=await supabaseClient
+.from("transactions")
+.select(
+"id,user_id,amount,currency,status,payment_method,payment_reference,created_at"
+)
+.eq("transaction_type","DEPOSIT")
+.order("created_at",{ascending:false});
 
+const body=
+document.getElementById("depositsBody");
 
-  const body =
-    document.getElementById("depositsBody");
+body.innerHTML="";
 
-  body.innerHTML = "";
+if(error){
 
+body.innerHTML=
+`<tr><td>Unable to load deposits.</td></tr>`;
 
-  if (error) {
+return;
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="7">
-          Unable to load deposits.
-        </td>
-      </tr>`;
+}
 
-    return;
-  }
+const bankDeposits=(data||[]).filter(
+item=>item.payment_method==="BANK_TRANSFER"
+);
 
+const pendingDeposits=bankDeposits.filter(
+item=>item.status==="PENDING"
+);
 
-  const bankDeposits =
-    (data || []).filter(
-      transaction =>
-        transaction.payment_method === "BANK_TRANSFER"
-    );
+document.getElementById("depositCount").textContent=
+pendingDeposits.length;
 
+if(bankDeposits.length===0){
 
-  const pendingDeposits =
-    bankDeposits.filter(
-      transaction =>
-        transaction.status === "PENDING"
-    );
+body.innerHTML=
+`<tr>
+<td class="empty">
+No bank-transfer deposits found.
+</td>
+</tr>`;
 
+return;
 
-  document.getElementById("depositCount").textContent =
-    pendingDeposits.length;
+}
 
+const userIds=[
+...new Set(
+bankDeposits.map(item=>item.user_id)
+)
+];
 
-  if (bankDeposits.length === 0) {
+let profiles=[];
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="7" class="empty">
-          No bank-transfer deposits found.
-        </td>
-      </tr>`;
+if(userIds.length){
 
-    return;
-  }
+const result=
+await supabaseClient
+.from("profiles")
+.select("id,full_name,email")
+.in("id",userIds);
 
+profiles=result.data||[];
 
-  const userIds =
-    [
-      ...new Set(
-        bankDeposits.map(item => item.user_id)
-      )
-    ];
+}
 
+bankDeposits.forEach(transaction=>{
 
-  let profiles = [];
+const profile=profiles.find(
+p=>p.id===transaction.user_id
+);
 
+const row=document.createElement("tr");
 
-  if (userIds.length > 0) {
+row.innerHTML=`
 
-    const result =
-      await supabaseClient
-        .from("profiles")
-        .select("id, full_name, email")
-        .in("id", userIds);
+<td>
+${escapeHtml(profile?.full_name||"Unknown")}
+<br>
+<small>
+${escapeHtml(profile?.email||transaction.user_id)}
+</small>
+</td>
 
-    profiles = result.data || [];
-  }
+<td>${formatNumber(transaction.amount)}</td>
 
+<td>${escapeHtml(transaction.currency||"NGN")}</td>
 
-  bankDeposits.forEach(transaction => {
+<td>${escapeHtml(transaction.payment_method||"-")}</td>
 
-    const profile =
-      profiles.find(
-        p => p.id === transaction.user_id
-      );
+<td>${escapeHtml(transaction.payment_reference||"-")}</td>
 
+<td class="status ${statusClass(transaction.status)}">
+${escapeHtml(transaction.status||"-")}
+</td>
 
-    const row =
-      document.createElement("tr");
+<td>
 
+${
+transaction.status==="PENDING"
+?
+`
+<button class="approve"
+onclick="approveDeposit('${transaction.id}')">
+Approve
+</button>
 
-    row.innerHTML = `
+<button class="reject"
+onclick="rejectDeposit('${transaction.id}')">
+Reject
+</button>
+`
+:"-"
+}
 
-      <td>
-        ${escapeHtml(
-          profile?.full_name || "Unknown"
-        )}
-        <br>
-        <small>
-          ${escapeHtml(
-            profile?.email || transaction.user_id
-          )}
-        </small>
-      </td>
+</td>
 
-      <td>
-        ${formatNumber(transaction.amount)}
-      </td>
+`;
 
-      <td>
-        ${escapeHtml(transaction.currency || "NGN")}
-      </td>
+body.appendChild(row);
 
-      <td>
-        ${escapeHtml(
-          transaction.payment_method || "-"
-        )}
-      </td>
-
-      <td>
-        ${escapeHtml(
-          transaction.payment_reference || "-"
-        )}
-      </td>
-
-      <td class="status ${statusClass(transaction.status)}">
-        ${escapeHtml(transaction.status || "-")}
-      </td>
-
-      <td>
-
-        ${
-          transaction.status === "PENDING"
-          ? `
-            <button
-              class="approve"
-              onclick="approveDeposit('${transaction.id}')"
-            >
-              Approve
-            </button>
-
-            <button
-              class="reject"
-              onclick="rejectDeposit('${transaction.id}')"
-            >
-              Reject
-            </button>
-          `
-          : "-"
-        }
-
-      </td>
-
-    `;
-
-
-    body.appendChild(row);
-
-  });
+});
 
 }
 
 
-// =====================================
-// APPROVE BANK DEPOSIT
-// =====================================
+/* APPROVE DEPOSIT */
 
-async function approveDeposit(id) {
+async function approveDeposit(id){
 
-  if (
-    !confirm(
-      "Approve this bank-transfer deposit?"
-    )
-  ) {
-    return;
-  }
+if(!confirm("Approve this bank-transfer deposit?")) return;
 
+const {error}=await supabaseClient
+.from("transactions")
+.update({
+status:"COMPLETED"
+})
+.eq("id",id)
+.eq("transaction_type","DEPOSIT")
+.eq("status","PENDING");
 
-  const {
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .update({
-      status: "COMPLETED"
-    })
-    .eq("id", id)
-    .eq("transaction_type", "DEPOSIT")
-    .eq("status", "PENDING");
+if(error){
 
+showMessage(
+"Unable to approve deposit: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
 
-    showMessage(
-      "Unable to approve deposit: " +
-      error.message,
-      "error"
-    );
+}
 
-    return;
-  }
+showMessage(
+"Bank-transfer deposit approved successfully.",
+"success"
+);
 
-
-  showMessage(
-    "Bank-transfer deposit approved successfully.",
-    "success"
-  );
-
-
-  await loadDeposits();
-
-  await loadTransactions();
+await loadDeposits();
+await loadTransactions();
 
 }
 
 
-// =====================================
-// REJECT BANK DEPOSIT
-// =====================================
+/* REJECT DEPOSIT */
 
-async function rejectDeposit(id) {
+async function rejectDeposit(id){
 
-  if (
-    !confirm(
-      "Reject this bank-transfer deposit?"
-    )
-  ) {
-    return;
-  }
+if(!confirm("Reject this bank-transfer deposit?")) return;
 
+const {error}=await supabaseClient
+.from("transactions")
+.update({
+status:"REJECTED"
+})
+.eq("id",id)
+.eq("transaction_type","DEPOSIT")
+.eq("status","PENDING");
 
-  const {
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .update({
-      status: "REJECTED"
-    })
-    .eq("id", id)
-    .eq("transaction_type", "DEPOSIT")
-    .eq("status", "PENDING");
+if(error){
 
+showMessage(
+"Unable to reject deposit: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
 
-    showMessage(
-      "Unable to reject deposit: " +
-      error.message,
-      "error"
-    );
+}
 
-    return;
-  }
+showMessage(
+"Bank-transfer deposit rejected.",
+"success"
+);
 
-
-  showMessage(
-    "Bank-transfer deposit rejected.",
-    "success"
-  );
-
-
-  await loadDeposits();
-
-  await loadTransactions();
+await loadDeposits();
+await loadTransactions();
 
 }
 
 
-// =====================================
-// WITHDRAWALS
-// =====================================
+/* WITHDRAWALS */
 
-async function loadWithdrawals() {
+async function loadWithdrawals(){
 
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .select(
-      "id, user_id, amount, currency, status, payment_method, payment_reference, created_at"
-    )
-    .eq("transaction_type", "WITHDRAWAL")
-    .order("created_at", {
-      ascending: false
-    });
+const {
+data,
+error
+}=await supabaseClient
+.from("transactions")
+.select(
+"id,user_id,amount,currency,status,payment_method,payment_reference,created_at"
+)
+.eq("transaction_type","WITHDRAWAL")
+.order("created_at",{ascending:false});
 
+const body=
+document.getElementById("withdrawalsBody");
 
-  const body =
-    document.getElementById("withdrawalsBody");
+body.innerHTML="";
 
-  body.innerHTML = "";
+if(error){
 
+body.innerHTML=
+`<tr><td>Unable to load withdrawals.</td></tr>`;
 
-  if (error) {
+return;
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="7">
-          Unable to load withdrawals.
-        </td>
-      </tr>`;
+}
 
-    return;
-  }
+const pending=(data||[]).filter(
+item=>item.status==="PENDING"
+);
 
+document.getElementById("withdrawalCount").textContent=
+pending.length;
 
-  const pending =
-    (data || []).filter(
-      item => item.status === "PENDING"
-    );
+if(!data || !data.length){
 
+body.innerHTML=
+`<tr>
+<td class="empty">
+No withdrawal requests found.
+</td>
+</tr>`;
 
-  document.getElementById("withdrawalCount").textContent =
-    pending.length;
+return;
 
+}
 
-  if (!data || data.length === 0) {
+const userIds=[
+...new Set(data.map(item=>item.user_id))
+];
 
-    body.innerHTML =
-      `<tr>
-        <td colspan="7" class="empty">
-          No withdrawal requests found.
-        </td>
-      </tr>`;
+let profiles=[];
 
-    return;
-  }
+if(userIds.length){
 
+const result=
+await supabaseClient
+.from("profiles")
+.select("id,full_name,email")
+.in("id",userIds);
 
-  const userIds =
-    [
-      ...new Set(
-        data.map(item => item.user_id)
-      )
-    ];
+profiles=result.data||[];
 
+}
 
-  let profiles = [];
+data.forEach(transaction=>{
 
+const profile=profiles.find(
+p=>p.id===transaction.user_id
+);
 
-  if (userIds.length > 0) {
+const row=document.createElement("tr");
 
-    const result =
-      await supabaseClient
-        .from("profiles")
-        .select("id, full_name, email")
-        .in("id", userIds);
+row.innerHTML=`
 
-    profiles = result.data || [];
-  }
+<td>
+${escapeHtml(profile?.full_name||"Unknown")}
+<br>
+<small>
+${escapeHtml(profile?.email||transaction.user_id)}
+</small>
+</td>
 
+<td>${formatNumber(transaction.amount)}</td>
 
-  data.forEach(transaction => {
+<td>${escapeHtml(transaction.currency||"USD")}</td>
 
-    const profile =
-      profiles.find(
-        p => p.id === transaction.user_id
-      );
+<td>${escapeHtml(transaction.payment_method||"-")}</td>
 
+<td>${escapeHtml(transaction.payment_reference||"-")}</td>
 
-    const row =
-      document.createElement("tr");
+<td class="status ${statusClass(transaction.status)}">
+${escapeHtml(transaction.status||"-")}
+</td>
 
+<td>
 
-    row.innerHTML = `
+${
+transaction.status==="PENDING"
+?
+`
+<button class="approve"
+onclick="approveWithdrawal('${transaction.id}')">
+Approve
+</button>
 
-      <td>
-        ${escapeHtml(
-          profile?.full_name || "Unknown"
-        )}
-        <br>
-        <small>
-          ${escapeHtml(
-            profile?.email || transaction.user_id
-          )}
-        </small>
-      </td>
+<button class="reject"
+onclick="rejectWithdrawal('${transaction.id}')">
+Reject
+</button>
+`
+:"-"
+}
 
-      <td>
-        ${formatNumber(transaction.amount)}
-      </td>
+</td>
 
-      <td>
-        ${escapeHtml(transaction.currency || "USD")}
-      </td>
+`;
 
-      <td>
-        ${escapeHtml(
-          transaction.payment_method || "-"
-        )}
-      </td>
+body.appendChild(row);
 
-      <td>
-        ${escapeHtml(
-          transaction.payment_reference || "-"
-        )}
-      </td>
-
-      <td class="status ${statusClass(transaction.status)}">
-        ${escapeHtml(transaction.status || "-")}
-      </td>
-
-      <td>
-
-        ${
-          transaction.status === "PENDING"
-          ? `
-            <button
-              class="approve"
-              onclick="approveWithdrawal('${transaction.id}')"
-            >
-              Approve
-            </button>
-
-            <button
-              class="reject"
-              onclick="rejectWithdrawal('${transaction.id}')"
-            >
-              Reject
-            </button>
-          `
-          : "-"
-        }
-
-      </td>
-
-    `;
-
-
-    body.appendChild(row);
-
-  });
+});
 
 }
 
 
-// =====================================
-// APPROVE WITHDRAWAL
-// =====================================
+/* APPROVE WITHDRAWAL */
 
-async function approveWithdrawal(id) {
+async function approveWithdrawal(id){
 
-  if (
-    !confirm(
-      "Approve this withdrawal?"
-    )
-  ) {
-    return;
-  }
+if(!confirm("Approve this withdrawal?")) return;
 
+const {error}=await supabaseClient
+.from("transactions")
+.update({
+status:"COMPLETED"
+})
+.eq("id",id)
+.eq("transaction_type","WITHDRAWAL")
+.eq("status","PENDING");
 
-  const {
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .update({
-      status: "COMPLETED"
-    })
-    .eq("id", id)
-    .eq("transaction_type", "WITHDRAWAL")
-    .eq("status", "PENDING");
+if(error){
 
+showMessage(
+"Unable to approve withdrawal: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
 
-    showMessage(
-      "Unable to approve withdrawal: " +
-      error.message,
-      "error"
-    );
+}
 
-    return;
-  }
+showMessage(
+"Withdrawal approved successfully.",
+"success"
+);
 
-
-  showMessage(
-    "Withdrawal approved successfully.",
-    "success"
-  );
-
-
-  await loadWithdrawals();
-
-  await loadTransactions();
+await loadWithdrawals();
+await loadTransactions();
 
 }
 
 
-// =====================================
-// REJECT WITHDRAWAL
-// =====================================
+/* REJECT WITHDRAWAL */
 
-async function rejectWithdrawal(id) {
+async function rejectWithdrawal(id){
 
-  if (
-    !confirm(
-      "Reject this withdrawal?"
-    )
-  ) {
-    return;
-  }
+if(!confirm("Reject this withdrawal?")) return;
 
+const {error}=await supabaseClient
+.from("transactions")
+.update({
+status:"REJECTED"
+})
+.eq("id",id)
+.eq("transaction_type","WITHDRAWAL")
+.eq("status","PENDING");
 
-  const {
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .update({
-      status: "REJECTED"
-    })
-    .eq("id", id)
-    .eq("transaction_type", "WITHDRAWAL")
-    .eq("status", "PENDING");
+if(error){
 
+showMessage(
+"Unable to reject withdrawal: "+error.message,
+"error"
+);
 
-  if (error) {
+return;
 
-    showMessage(
-      "Unable to reject withdrawal: " +
-      error.message,
-      "error"
-    );
+}
 
-    return;
-  }
+showMessage(
+"Withdrawal rejected.",
+"success"
+);
 
-
-  showMessage(
-    "Withdrawal rejected.",
-    "success"
-  );
-
-
-  await loadWithdrawals();
-
-  await loadTransactions();
+await loadWithdrawals();
+await loadTransactions();
 
 }
 
 
-// =====================================
-// RECENT TRANSACTIONS
-// =====================================
+/* TRANSACTIONS */
 
-async function loadTransactions() {
+async function loadTransactions(){
 
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .select(
-      "id, amount, currency, transaction_type, status, payment_method, payment_reference, created_at"
-    )
-    .order("created_at", {
-      ascending: false
-    })
-    .limit(50);
+const {
+data,
+error
+}=await supabaseClient
+.from("transactions")
+.select(
+"id,amount,currency,transaction_type,status,payment_method,payment_reference,created_at"
+)
+.order("created_at",{ascending:false})
+.limit(50);
+
+const body=
+document.getElementById("transactionsBody");
+
+body.innerHTML="";
+
+if(error){
+
+body.innerHTML=
+`<tr><td>Unable to load transactions.</td></tr>`;
+
+return;
+
+}
+
+document.getElementById("transactionCount").textContent=
+data?.length||0;
+
+if(!data || !data.length){
+
+body.innerHTML=
+`<tr>
+<td class="empty">
+No transactions found.
+</td>
+</tr>`;
+
+return;
+
+}
+
+data.forEach(transaction=>{
+
+const row=document.createElement("tr");
+
+const date=transaction.created_at
+?new Date(transaction.created_at).toLocaleString()
+:"-";
+
+row.innerHTML=`
+
+<td>
+${escapeHtml(transaction.transaction_type||"-")}
+</td>
+
+<td>
+${formatNumber(transaction.amount)}
+</td>
+
+<td>
+${escapeHtml(transaction.currency||"-")}
+</td>
+
+<td>
+${escapeHtml(transaction.payment_method||"-")}
+</td>
+
+<td>
+${escapeHtml(transaction.payment_reference||"-")}
+</td>
+
+<td class="status ${statusClass(transaction.status)}">
+${escapeHtml(transaction.status||"-")}
+</td>
+
+<td>
+${escapeHtml(date)}
+</td>
+
+`;
+
+body.appendChild(row);
+
+});
+
+}
 
 
-  const body =
-    document.getElementById("transactionsBody");
+/* HELPERS */
 
-  body.innerHTML = "";
+function formatNumber(value){
+
+const number=Number(value);
+
+if(!Number.isFinite(number)){
+return "0.00";
+}
+
+return number.toLocaleString(
+undefined,
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
 
 
-  if (error) {
+function statusClass(status){
 
-    body.innerHTML =
-    
+if(status==="PENDING"){
+return "pending";
+}
+
+if(
+status==="COMPLETED" ||
+status==="verified"
+){
+return "completed";
+}
+
+if(status==="REJECTED"){
+return "rejected";
+}
+
+return "";
+
+}
+
+
+function escapeHtml(value){
+
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function showMessage(text,type){
+
+const message=
+document.getElementById("message");
+
+message.textContent=text;
+
+message.className=
+"message "+type;
+
+setTimeout(()=>{
+message.className="message";
+},4000);
+
+}
+
+
+async function logout(){
+
+await supabaseClient.auth.signOut();
+
+window.location.href="admin-login.html";
+
+}
+
+
+startAdmin();
+
+</script>
+
+</body>
+</html>
