@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crownspips Trading</title>
+
+<title>Crownspips Trading - Investor Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -26,6 +27,12 @@ text-align:center
 
 .gold{color:#d4af37}
 
+.header-user{
+font-size:14px;
+color:#d1d5db;
+margin:6px 0
+}
+
 .container{
 width:94%;
 max-width:1200px;
@@ -33,10 +40,47 @@ margin:20px auto
 }
 
 .notice{
-background:#fff8df;
-border-left:5px solid #d4af37;
 padding:15px;
-margin-bottom:18px
+margin-bottom:18px;
+border-radius:10px;
+line-height:1.5
+}
+
+.demo-notice{
+background:#fff8df;
+border-left:5px solid #d4af37
+}
+
+.real-notice{
+background:#e0f2fe;
+border-left:5px solid #0284c7
+}
+
+.status{
+background:white;
+padding:15px;
+border-radius:12px;
+margin-bottom:18px;
+box-shadow:0 3px 12px #0001
+}
+
+.account-badge{
+display:inline-block;
+padding:7px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+margin-top:8px
+}
+
+.demo-badge{
+background:#fef3c7;
+color:#92400e
+}
+
+.real-badge{
+background:#dbeafe;
+color:#1d4ed8
 }
 
 .cards{
@@ -123,19 +167,29 @@ font-weight:bold;
 cursor:pointer
 }
 
+button:disabled{
+opacity:.55;
+cursor:not-allowed
+}
+
 .buy{background:#15803d}
 .sell{background:#dc2626}
-.trade{background:#111827;width:100%;margin-top:12px}
 
-.actions{
-display:flex;
-gap:10px;
+.trade{
+background:#111827;
+width:100%;
 margin-top:12px
 }
 
 .logout{
 background:#dc2626;
 margin-top:10px
+}
+
+.actions{
+display:flex;
+gap:10px;
+margin-top:12px
 }
 
 .table{
@@ -159,11 +213,10 @@ font-size:12px;
 color:#6b7280
 }
 
-.status{
-padding:8px;
-background:#f3f4f6;
-border-radius:7px;
-margin-bottom:15px
+.empty{
+text-align:center;
+color:#777;
+padding:20px
 }
 
 footer{
@@ -178,161 +231,377 @@ color:#777
 
 <header>
 
-<h1>Crownspips <span class="gold">Trading</span></h1>
+<h1>
+Crownspips <span class="gold">Trading</span>
+</h1>
 
-<p>Investor Dashboard</p>
+<div class="header-user" id="userEmail">
+Loading account...
+</div>
 
-<button class="logout" onclick="logout()">
+<button
+class="logout"
+onclick="logout()"
+>
 Logout
 </button>
 
 </header>
 
+
 <div class="container">
 
-<div class="notice">
 
-<strong>DEMO INVESTOR ACCOUNT</strong><br>
+<!-- ACCOUNT NOTICE -->
 
-Your account is connected to Crownspips Trading's secure database.
-Real deposits and withdrawals are not currently available.
-
+<div
+id="accountNotice"
+class="notice demo-notice"
+>
+Loading account information...
 </div>
+
+
+<!-- ACCOUNT STATUS -->
 
 <div class="status">
-Logged in as: <strong id="userEmail">Loading...</strong>
+
+<strong>ACCOUNT TYPE</strong>
+
+<br>
+
+<span
+id="accountBadge"
+class="account-badge demo-badge"
+>
+Loading...
+</span>
+
+<br><br>
+
+<strong>Investor:</strong>
+<span id="investorName">
+Loading...
+</span>
+
 </div>
+
+
+<!-- ACCOUNT CARDS -->
 
 <div class="cards">
 
 <div class="card">
+
 <h3>ACCOUNT BALANCE</h3>
-<div class="amount" id="balance">$0.00</div>
+
+<div
+class="amount"
+id="balance"
+>
+$0.00
 </div>
 
+</div>
+
+
 <div class="card">
+
 <h3>EQUITY</h3>
-<div class="amount" id="equity">$0.00</div>
+
+<div
+class="amount"
+id="equity"
+>
+$0.00
 </div>
 
+</div>
+
+
 <div class="card">
+
 <h3>OPEN P/L</h3>
-<div class="amount green" id="pl">$0.00</div>
+
+<div
+class="amount green"
+id="pl"
+>
+$0.00
 </div>
+
+</div>
+
 
 <div class="card">
+
 <h3>CURRENCY</h3>
-<div class="amount">USD</div>
+
+<div class="amount">
+USD
 </div>
 
 </div>
 
-<section>
+</div>
+
+
+<!-- TRADING -->
+
+<section id="tradingSection">
 
 <h2>📊 Live Demo Candlestick Chart</h2>
 
 <div class="controls">
 
 <div>
-<label>Currency Pair</label>
-<select id="chartPair"></select>
+
+<label>
+Currency Pair
+</label>
+
+<select id="chartPair">
+</select>
+
 </div>
+
 
 <div>
-<label>Candle Period</label>
+
+<label>
+Candle Period
+</label>
+
 <select id="period">
-<option value="5">5 Seconds</option>
-<option value="10">10 Seconds</option>
-<option value="30">30 Seconds</option>
-<option value="60">1 Minute</option>
-<option value="300">5 Minutes</option>
-<option value="600">10 Minutes</option>
+
+<option value="5">
+5 Seconds
+</option>
+
+<option value="10">
+10 Seconds
+</option>
+
+<option value="30">
+30 Seconds
+</option>
+
+<option value="60">
+1 Minute
+</option>
+
+<option value="300">
+5 Minutes
+</option>
+
+<option value="600">
+10 Minutes
+</option>
+
 </select>
+
 </div>
 
 </div>
+
 
 <div class="chart-info">
 
 <div>
-<small>CURRENT PRICE</small>
-<div class="price" id="price">1.1742</div>
+
+<small>
+CURRENT PRICE
+</small>
+
+<div
+class="price"
+id="price"
+>
+1.1742
 </div>
+
+</div>
+
 
 <div>
-<small>NEXT CANDLE IN</small>
-<div class="timer" id="timer">00:05</div>
+
+<small>
+NEXT CANDLE IN
+</small>
+
+<div
+class="timer"
+id="timer"
+>
+00:05
 </div>
 
 </div>
+
+</div>
+
 
 <div class="chart">
+
 <canvas id="chart"></canvas>
+
 </div>
 
+
 <div class="actions">
-<button class="buy" onclick="quickTrade('BUY')">BUY</button>
-<button class="sell" onclick="quickTrade('SELL')">SELL</button>
+
+<button
+class="buy"
+id="buyButton"
+onclick="quickTrade('BUY')"
+>
+BUY
+</button>
+
+<button
+class="sell"
+id="sellButton"
+onclick="quickTrade('SELL')"
+>
+SELL
+</button>
+
 </div>
 
 </section>
 
-<section>
 
-<h2>Place Demo Trade</h2>
+<!-- PLACE TRADE -->
+
+<section id="tradeSection">
+
+<h2>
+Place Demo Trade
+</h2>
 
 <div class="controls">
 
 <div>
-<label>Pair</label>
-<select id="tradePair"></select>
-</div>
 
-<div>
-<label>Units</label>
-<input id="units" type="number" value="1000" min="100">
-</div>
+<label>
+Pair
+</label>
 
-<div>
-<label>Type</label>
-<select id="tradeType">
-<option>BUY</option>
-<option>SELL</option>
+<select id="tradePair">
 </select>
-</div>
 
 </div>
 
-<button class="trade" onclick="openTrade()">
+
+<div>
+
+<label>
+Units
+</label>
+
+<input
+id="units"
+type="number"
+value="1000"
+min="100"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Type
+</label>
+
+<select id="tradeType">
+
+<option>
+BUY
+</option>
+
+<option>
+SELL
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<button
+class="trade"
+onclick="openTrade()"
+id="tradeButton"
+>
 Place Demo Trade
 </button>
 
 </section>
 
+
+<!-- OPEN POSITIONS -->
+
 <section>
 
-<h2>Open Positions</h2>
+<h2>
+Open Positions
+</h2>
 
 <div class="table">
 
 <table>
 
 <thead>
+
 <tr>
-<th>Pair</th>
-<th>Type</th>
-<th>Units</th>
-<th>Open</th>
-<th>Current</th>
-<th>P/L</th>
-<th></th>
+
+<th>
+Pair
+</th>
+
+<th>
+Type
+</th>
+
+<th>
+Units
+</th>
+
+<th>
+Open
+</th>
+
+<th>
+Current
+</th>
+
+<th>
+P/L
+</th>
+
+<th>
+</th>
+
 </tr>
+
 </thead>
+
 
 <tbody id="positions">
 
 <tr>
-<td colspan="7">Loading...</td>
+
+<td
+colspan="7"
+class="empty"
+>
+Loading...
+</td>
+
 </tr>
 
 </tbody>
@@ -343,29 +612,63 @@ Place Demo Trade
 
 </section>
 
+
+<!-- HISTORY -->
+
 <section>
 
-<h2>Trade History</h2>
+<h2>
+Trade History
+</h2>
 
 <div class="table">
 
 <table>
 
 <thead>
+
 <tr>
-<th>Time</th>
-<th>Pair</th>
-<th>Type</th>
-<th>Units</th>
-<th>Price</th>
-<th>Status</th>
+
+<th>
+Time
+</th>
+
+<th>
+Pair
+</th>
+
+<th>
+Type
+</th>
+
+<th>
+Units
+</th>
+
+<th>
+Price
+</th>
+
+<th>
+Status
+</th>
+
 </tr>
+
 </thead>
+
 
 <tbody id="history">
 
 <tr>
-<td colspan="6">Loading...</td>
+
+<td
+colspan="6"
+class="empty"
+>
+Loading...
+</td>
+
 </tr>
 
 </tbody>
@@ -376,17 +679,22 @@ Place Demo Trade
 
 </section>
 
+
 </div>
 
+
 <footer>
-© 2026 Crownspips Trading — Demo Environment
+
+© 2026 Crownspips Trading
+
 </footer>
+
 
 <script>
 
-/* =========================
-   SUPABASE CONNECTION
-========================= */
+/* =================================
+   SUPABASE
+================================= */
 
 const SUPABASE_URL =
 "https://ghagrruxxqtnochooiaj.supabase.co";
@@ -401,9 +709,9 @@ SUPABASE_KEY
 );
 
 
-/* =========================
+/* =================================
    FOREX PAIRS
-========================= */
+================================= */
 
 const pairs={
 
@@ -441,25 +749,35 @@ const pairs={
 };
 
 
+/* =================================
+   VARIABLES
+================================= */
+
 let currentUser=null;
+
 let profile=null;
 
 let positions=[];
+
 let history=[];
 
 let selected="EUR/USD";
+
 let candles=[];
+
 let period=5;
+
 let candleStart=Date.now();
 
 
-/* =========================
+/* =================================
    HELPERS
-========================= */
+================================= */
 
 function money(n){
 
-return "$"+Number(n).toLocaleString(
+return "$"+
+Number(n).toLocaleString(
 "en-US",
 {
 minimumFractionDigits:2,
@@ -472,31 +790,40 @@ maximumFractionDigits:2
 
 function dp(pair){
 
-return pair.includes("JPY")?2:4;
+return pair.includes("JPY")
+?2
+:4;
 
 }
 
 
-/* =========================
+/* =================================
    LOAD USER
-========================= */
+================================= */
 
 async function loadUser(){
 
-const {data,error}=
+const {data,error} =
 await supabaseClient.auth.getUser();
+
 
 if(error || !data.user){
 
 window.location.href="login.html";
+
 return;
 
 }
 
+
 currentUser=data.user;
 
-document.getElementById("userEmail")
-.textContent=currentUser.email;
+
+document.getElementById(
+"userEmail"
+).textContent=
+currentUser.email;
+
 
 await loadProfile();
 
@@ -505,56 +832,63 @@ await loadTrades();
 }
 
 
-/* =========================
-   PROFILE
-========================= */
+/* =================================
+   LOAD PROFILE
+================================= */
 
 async function loadProfile(){
 
-let result=
+const result =
 await supabaseClient
 .from("profiles")
 .select("*")
 .eq("id",currentUser.id)
 .maybeSingle();
 
+
 if(result.error){
 
-alert(result.error.message);
+alert(
+"Could not load account: "+
+result.error.message
+);
+
 return;
 
 }
 
+
 profile=result.data;
 
 
-/*
-If this investor does not yet
-have a profile, create one.
-*/
-
 if(!profile){
 
-let newProfile={
+const newProfile={
 
 id:currentUser.id,
 
 full_name:
 currentUser.user_metadata?.full_name ||
-"Demo Investor",
+"Investor",
 
 email:currentUser.email,
 
-balance:10000
+balance:10000,
+
+account_type:
+currentUser.user_metadata?.account_type ||
+"demo"
 
 };
 
-let created=
+
+const created =
 await supabaseClient
 .from("profiles")
 .insert(newProfile)
 .select()
 .single();
+
 
 if(created.error){
 
@@ -567,110 +901,232 @@ return;
 
 }
 
+
 profile=created.data;
 
 }
 
-document.getElementById("balance")
-.textContent=money(profile.balance);
+
+displayAccount();
 
 }
 
 
-/* =========================
+/* =================================
+   DISPLAY ACCOUNT TYPE
+================================= */
+
+function displayAccount(){
+
+const type =
+(profile.account_type || "demo")
+.toLowerCase();
+
+
+const name =
+profile.full_name ||
+"Investor";
+
+
+document.getElementById(
+"investorName"
+).textContent=name;
+
+
+document.getElementById(
+"balance"
+).textContent=
+money(profile.balance);
+
+
+const badge =
+document.getElementById(
+"accountBadge"
+);
+
+
+const notice =
+document.getElementById(
+"accountNotice"
+);
+
+
+if(type==="real"){
+
+badge.textContent=
+"REAL ACCOUNT";
+
+badge.className=
+"account-badge real-badge";
+
+
+notice.className=
+"notice real-notice";
+
+
+notice.innerHTML=
+"<strong>REAL ACCOUNT APPLICATION</strong><br>"+
+"Your account is registered as a real account. "+
+"Real-money deposits, withdrawals and live trading are "+
+"not currently active. Your account remains pending "+
+"until the required verification and financial infrastructure "+
+"are completed.";
+
+
+document.getElementById(
+"tradingSection"
+).style.display="none";
+
+
+document.getElementById(
+"tradeSection"
+).style.display="none";
+
+
+}else{
+
+badge.textContent=
+"DEMO ACCOUNT";
+
+badge.className=
+"account-badge demo-badge";
+
+
+notice.className=
+"notice demo-notice";
+
+
+notice.innerHTML=
+"<strong>DEMO ACCOUNT</strong><br>"+
+"All prices, trades, profits and losses on this account "+
+"are simulated. No real money is being traded.";
+
+}
+
+}
+
+
+/* =================================
    LOAD TRADES
-========================= */
+================================= */
 
 async function loadTrades(){
 
-let result=
+const result =
 await supabaseClient
 .from("trades")
 .select("*")
 .eq("user_id",currentUser.id)
 .order("opened_at",{ascending:false});
 
+
 if(result.error){
 
-alert(result.error.message);
+alert(
+"Could not load trades: "+
+result.error.message
+);
+
 return;
 
 }
 
-positions=
-(result.data||[])
-.filter(t=>t.status==="OPEN");
 
-history=result.data||[];
+history=result.data || [];
+
+
+positions=
+history.filter(
+trade=>trade.status==="OPEN"
+);
+
 
 renderPositions();
+
 renderHistory();
 
 }
 
 
-/* =========================
-   SELECT PAIRS
-========================= */
+/* =================================
+   SETUP PAIRS
+================================= */
 
 function setup(){
 
-let a=
-document.getElementById("chartPair");
+const chartPair =
+document.getElementById(
+"chartPair"
+);
 
-let b=
-document.getElementById("tradePair");
+const tradePair =
+document.getElementById(
+"tradePair"
+);
+
 
 for(let p in pairs){
 
-let x=
+const a=
 document.createElement("option");
 
-x.value=p;
-x.textContent=p;
+a.value=p;
 
-a.appendChild(x);
+a.textContent=p;
+
+chartPair.appendChild(a);
 
 
-let y=
+const b=
 document.createElement("option");
 
-y.value=p;
-y.textContent=p;
+b.value=p;
 
-b.appendChild(y);
+b.textContent=p;
+
+tradePair.appendChild(b);
 
 }
 
-a.value=selected;
+
+chartPair.value=selected;
 
 }
 
 
-/* =========================
+/* =================================
    CANDLES
-========================= */
+================================= */
 
 function makeCandles(){
 
 candles=[];
 
+
 let p=pairs[selected];
+
 
 for(let i=0;i<50;i++){
 
 let open=p;
 
 let close=
-open+(Math.random()-.5)*open*.0015;
+open+
+(Math.random()-.5)*
+open*.0015;
+
 
 let high=
 Math.max(open,close)+
-Math.random()*open*.0006;
+Math.random()*
+open*.0006;
+
 
 let low=
 Math.min(open,close)-
-Math.random()*open*.0006;
+Math.random()*
+open*.0006;
+
 
 candles.push({
 open,
@@ -679,60 +1135,96 @@ low,
 close
 });
 
+
 p=close;
 
 }
+
 
 pairs[selected]=p;
 
 candleStart=Date.now();
 
 draw();
+
 showPrice();
 
 }
 
 
-/* =========================
-   DRAW CHART
-========================= */
+/* =================================
+   DRAW
+================================= */
 
 function draw(){
 
-let canvas=
-document.getElementById("chart");
+const canvas =
+document.getElementById(
+"chart"
+);
 
-let w=canvas.clientWidth;
-let h=420;
 
-let dpr=
-window.devicePixelRatio||1;
+const w=canvas.clientWidth;
+
+const h=420;
+
+const dpr=
+window.devicePixelRatio || 1;
+
 
 canvas.width=w*dpr;
+
 canvas.height=h*dpr;
 
-let ctx=canvas.getContext("2d");
+
+const ctx=
+canvas.getContext("2d");
+
 
 ctx.setTransform(
 dpr,0,0,dpr,0,0
 );
 
-ctx.clearRect(0,0,w,h);
+
+ctx.clearRect(
+0,
+0,
+w,
+h
+);
+
 
 if(!candles.length)return;
 
+
 let high=
-Math.max(...candles.map(c=>c.high));
+Math.max(
+...candles.map(
+c=>c.high
+)
+);
+
 
 let low=
-Math.min(...candles.map(c=>c.low));
+Math.min(
+...candles.map(
+c=>c.low
+)
+);
 
-let pad=(high-low)*.12;
+
+let pad=
+(high-low)*.12;
+
 
 high+=pad;
+
 low-=pad;
 
-let range=high-low;
+
+let range=
+high-low;
+
 
 let step=
 w/candles.length;
@@ -747,19 +1239,29 @@ return 20+
 }
 
 
-candles.forEach((c,i)=>{
+candles.forEach(
+(c,i)=>{
 
 let x=
-i*step+step/2;
+i*step+
+step/2;
+
 
 let up=
 c.close>=c.open;
 
+
 ctx.strokeStyle=
-up?"#22c55e":"#ef4444";
+up
+?"#22c55e"
+:"#ef4444";
+
 
 ctx.fillStyle=
-up?"#22c55e":"#ef4444";
+up
+?"#22c55e"
+:"#ef4444";
+
 
 ctx.beginPath();
 
@@ -775,19 +1277,23 @@ y(c.low)
 
 ctx.stroke();
 
+
 let top=
 Math.min(
 y(c.open),
 y(c.close)
 );
 
+
 let height=
 Math.max(
 2,
 Math.abs(
-y(c.open)-y(c.close)
+y(c.open)-
+y(c.close)
 )
 );
+
 
 ctx.fillRect(
 x-step*.32,
@@ -800,6 +1306,7 @@ height
 
 
 ctx.fillStyle="#9ca3af";
+
 ctx.font="12px Arial";
 
 ctx.fillText(
@@ -811,14 +1318,15 @@ selected+" • DEMO",
 }
 
 
-/* =========================
+/* =================================
    PRICE
-========================= */
+================================= */
 
 function showPrice(){
 
-document.getElementById("price")
-.textContent=
+document.getElementById(
+"price"
+).textContent=
 pairs[selected].toFixed(
 dp(selected)
 );
@@ -826,25 +1334,33 @@ dp(selected)
 }
 
 
-/* =========================
+/* =================================
    NEW CANDLE
-========================= */
+================================= */
 
 function newCandle(){
 
-let open=pairs[selected];
+let open=
+pairs[selected];
+
 
 let close=
-open+(Math.random()-.5)*
+open+
+(Math.random()-.5)*
 open*.002;
+
 
 let high=
 Math.max(open,close)+
-Math.random()*open*.0008;
+Math.random()*
+open*.0008;
+
 
 let low=
 Math.min(open,close)-
-Math.random()*open*.0008;
+Math.random()*
+open*.0008;
+
 
 candles.push({
 open,
@@ -853,37 +1369,46 @@ low,
 close
 });
 
+
 if(candles.length>50)
 candles.shift();
+
 
 pairs[selected]=close;
 
 candleStart=Date.now();
 
 draw();
+
 showPrice();
 
 }
 
 
-/* =========================
+/* =================================
    LIVE PRICE
-========================= */
+================================= */
 
 function livePrice(){
 
 if(!candles.length)return;
 
+
 let c=
 candles[candles.length-1];
 
-let p=pairs[selected];
+
+let p=
+pairs[selected];
+
 
 p+=
 (Math.random()-.5)*
 p*.00025;
 
+
 pairs[selected]=p;
+
 
 c.close=p;
 
@@ -893,7 +1418,9 @@ Math.max(c.high,p);
 c.low=
 Math.min(c.low,p);
 
+
 draw();
+
 showPrice();
 
 renderPositions();
@@ -901,9 +1428,9 @@ renderPositions();
 }
 
 
-/* =========================
+/* =================================
    TIMER
-========================= */
+================================= */
 
 function timer(){
 
@@ -913,17 +1440,26 @@ Math.floor(
 (Date.now()-candleStart)/1000
 );
 
-if(total<0)total=0;
 
-let m=Math.floor(total/60);
+if(total<0)
+total=0;
 
-let s=total%60;
 
-document.getElementById("timer")
-.textContent=
+let m=
+Math.floor(total/60);
+
+
+let s=
+total%60;
+
+
+document.getElementById(
+"timer"
+).textContent=
 String(m).padStart(2,"0")+
 ":"+
 String(s).padStart(2,"0");
+
 
 if(total===0)
 newCandle();
@@ -931,42 +1467,89 @@ newCandle();
 }
 
 
-/* =========================
+/* =================================
    QUICK TRADE
-========================= */
+================================= */
 
 function quickTrade(type){
 
-document.getElementById("tradePair")
-.value=selected;
+if(!isDemo()){
 
-document.getElementById("tradeType")
-.value=type;
+alert(
+"Trading is currently available only for demo accounts."
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"tradePair"
+).value=selected;
+
+
+document.getElementById(
+"tradeType"
+).value=type;
+
 
 openTrade();
 
 }
 
 
-/* =========================
+/* =================================
+   ACCOUNT TYPE
+================================= */
+
+function isDemo(){
+
+return (
+profile &&
+(profile.account_type || "demo")
+.toLowerCase()==="demo"
+);
+
+}
+
+
+/* =================================
    OPEN TRADE
-========================= */
+================================= */
 
 async function openTrade(){
 
-let pair=
-document.getElementById("tradePair")
-.value;
+if(!isDemo()){
 
-let type=
-document.getElementById("tradeType")
-.value;
-
-let units=
-Number(
-document.getElementById("units")
-.value
+alert(
+"Real-money trading is not currently active."
 );
+
+return;
+
+}
+
+
+const pair=
+document.getElementById(
+"tradePair"
+).value;
+
+
+const type=
+document.getElementById(
+"tradeType"
+).value;
+
+
+const units=
+Number(
+document.getElementById(
+"units"
+).value
+);
+
 
 if(units<100){
 
@@ -979,7 +1562,7 @@ return;
 }
 
 
-let {error}=
+const {error}=
 await supabaseClient
 .from("trades")
 .insert({
@@ -1013,39 +1596,54 @@ return;
 
 await loadTrades();
 
-alert("Demo trade opened successfully.");
+
+alert(
+"Demo trade opened successfully."
+);
 
 }
 
 
-/* =========================
+/* =================================
    RENDER POSITIONS
-========================= */
+================================= */
 
 function renderPositions(){
 
 let html="";
 
+
 if(!positions.length){
 
 html=
-"<tr><td colspan='7'>No open positions</td></tr>";
+"<tr>"+
+"<td colspan='7' class='empty'>"+
+"No open positions"+
+"</td>"+
+"</tr>";
 
 }else{
+
 
 positions.forEach(p=>{
 
 let current=
 pairs[p.pair] ||
-p.open_price;
+Number(p.open_price);
+
 
 let difference=
 p.trade_type==="BUY"
-?current-p.open_price
-:p.open_price-current;
+?current-
+Number(p.open_price)
+:Number(p.open_price)-
+current;
+
 
 let pl=
-difference*Number(p.units);
+difference*
+Number(p.units);
+
 
 html+=`
 
@@ -1072,11 +1670,14 @@ ${money(pl)}
 </td>
 
 <td>
+
 <button
 class="sell"
-onclick="closeTrade('${p.id}')">
+onclick="closeTrade('${p.id}')"
+>
 Close
 </button>
+
 </td>
 
 </tr>
@@ -1088,75 +1689,114 @@ Close
 }
 
 
-document.getElementById("positions")
-.innerHTML=html;
+document.getElementById(
+"positions"
+).innerHTML=html;
 
 
 let total=0;
+
 
 positions.forEach(p=>{
 
 let current=
 pairs[p.pair] ||
-p.open_price;
+Number(p.open_price);
+
 
 let difference=
 p.trade_type==="BUY"
-?current-p.open_price
-:p.open_price-current;
+?current-
+Number(p.open_price)
+:Number(p.open_price)-
+current;
+
 
 total+=
-difference*Number(p.units);
+difference*
+Number(p.units);
 
 });
 
 
-let balance=
-Number(profile?.balance||0);
+const balance=
+Number(
+profile?.balance || 0
+);
 
-document.getElementById("balance")
-.textContent=money(balance);
 
-document.getElementById("pl")
-.textContent=money(total);
+document.getElementById(
+"balance"
+).textContent=
+money(balance);
 
-document.getElementById("pl")
-.className=
+
+document.getElementById(
+"pl"
+).textContent=
+money(total);
+
+
+document.getElementById(
+"pl"
+).className=
 "amount "+
 (total>=0?"green":"red");
 
-document.getElementById("equity")
-.textContent=
+
+document.getElementById(
+"equity"
+).textContent=
 money(balance+total);
 
 }
 
 
-/* =========================
+/* =================================
    CLOSE TRADE
-========================= */
+================================= */
 
 async function closeTrade(id){
 
-let trade=
-positions.find(p=>String(p.id)===String(id));
+if(!isDemo()){
+
+alert(
+"Real-money trading is not currently active."
+);
+
+return;
+
+}
+
+
+const trade=
+positions.find(
+p=>String(p.id)===String(id)
+);
+
 
 if(!trade)return;
 
-let current=
+
+const current=
 pairs[trade.pair] ||
-trade.open_price;
+Number(trade.open_price);
 
-let difference=
+
+const difference=
 trade.trade_type==="BUY"
-?current-trade.open_price
-:trade.open_price-current;
+?current-
+Number(trade.open_price)
+:Number(trade.open_price)-
+current;
 
-let profit=
-difference*Number(trade.units);
+
+const profit=
+difference*
+Number(trade.units);
 
 
-let tradeUpdate=
+const tradeUpdate=
 await supabaseClient
 .from("trades")
 .update({
@@ -1167,7 +1807,8 @@ profit_loss:profit,
 
 status:"CLOSED",
 
-closed_at:new Date().toISOString()
+closed_at:
+new Date().toISOString()
 
 })
 .eq("id",trade.id)
@@ -1186,18 +1827,18 @@ return;
 }
 
 
-/*
-Update investor balance.
-*/
+const newBalance=
+Number(profile.balance)+
+profit;
 
-let newBalance=
-Number(profile.balance)+profit;
 
-let balanceUpdate=
+const balanceUpdate=
 await supabaseClient
 .from("profiles")
 .update({
+
 balance:newBalance
+
 })
 .eq("id",currentUser.id);
 
@@ -1214,9 +1855,12 @@ return;
 }
 
 
-profile.balance=newBalance;
+profile.balance=
+newBalance;
+
 
 await loadTrades();
+
 
 alert(
 "Demo trade closed.\nP/L: "+
@@ -1226,28 +1870,37 @@ money(profit)
 }
 
 
-/* =========================
-   TRADE HISTORY
-========================= */
+/* =================================
+   HISTORY
+================================= */
 
 function renderHistory(){
 
 let html="";
 
+
 if(!history.length){
 
 html=
-"<tr><td colspan='6'>No trades yet</td></tr>";
+"<tr>"+
+"<td colspan='6' class='empty'>"+
+"No trades yet"+
+"</td>"+
+"</tr>";
 
 }else{
 
+
 history.forEach(h=>{
 
-let time=
+const time=
 h.opened_at
-?new Date(h.opened_at)
-.toLocaleString()
+?
+new Date(
+h.opened_at
+).toLocaleString()
 :"";
+
 
 html+=`
 
@@ -1276,31 +1929,38 @@ ${Number(h.open_price)
 
 }
 
-document.getElementById("history")
-.innerHTML=html;
+
+document.getElementById(
+"history"
+).innerHTML=html;
 
 }
 
 
-/* =========================
+/* =================================
    LOGOUT
-========================= */
+================================= */
 
 async function logout(){
 
-await supabaseClient.auth.signOut();
+await supabaseClient
+.auth
+.signOut();
 
-window.location.href="login.html";
+
+window.location.href=
+"login.html";
 
 }
 
 
-/* =========================
+/* =================================
    EVENTS
-========================= */
+================================= */
 
-document.getElementById("chartPair")
-.onchange=function(){
+document.getElementById(
+"chartPair"
+).onchange=function(){
 
 selected=this.value;
 
@@ -1309,20 +1969,22 @@ makeCandles();
 };
 
 
-document.getElementById("period")
-.onchange=function(){
+document.getElementById(
+"period"
+).onchange=function(){
 
 period=
 Number(this.value);
 
-candleStart=Date.now();
+candleStart=
+Date.now();
 
 };
 
 
-/* =========================
+/* =================================
    START
-========================= */
+================================= */
 
 setup();
 
@@ -1340,9 +2002,10 @@ timer,
 250
 );
 
-window.onresize=draw;
+window.onresize=
+draw;
 
 </script>
 
 </body>
-  </html>
+   </html>
