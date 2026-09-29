@@ -305,12 +305,12 @@
   <div class="cards">
 
     <div class="card usd-card">
-      <h3>USD Account Balance</h3>
+      <h3 id="usdBalanceTitle">Demo USD Balance</h3>
       <p id="balance">$0.00</p>
     </div>
 
     <div class="card ngn-card">
-      <h3>NGN Balance</h3>
+      <h3 id="ngnBalanceTitle">NGN Balance</h3>
       <p id="ngnBalance">₦0.00</p>
     </div>
 
@@ -375,11 +375,11 @@
   <div class="section">
     <h2>ℹ️ Account Information</h2>
 
-    <p>
+    <p id="accountInfoText">
       Crownspips Trading is currently operating in demonstration/test mode.
     </p>
 
-    <div class="notice">
+    <div class="notice" id="accountInfoNotice">
       Test deposits and withdrawals do not move real money.
       Real-money services are not currently enabled.
     </div>
@@ -531,50 +531,17 @@ async function loadProfile() {
   const verification =
     data.verification_status || "pending";
 
+  const balanceElement =
+    document.getElementById("balance");
 
-  /*
-    USD BALANCE
+  const ngnBalanceElement =
+    document.getElementById("ngnBalance");
 
-    Demo account:
-    uses balance.
+  const usdTitle =
+    document.getElementById("usdBalanceTitle");
 
-    Verified real account:
-    uses real_balance.
-  */
-
-  let displayBalance =
-    Number(data.balance || 0);
-
-  if (
-    accountType === "real" &&
-    verification === "verified"
-  ) {
-    displayBalance =
-      Number(data.real_balance || 0);
-  }
-
-  document.getElementById("balance").textContent =
-    "$" + displayBalance.toFixed(2);
-
-
-  /*
-    NGN BALANCE
-
-    NGN is stored separately from USD.
-  */
-
-  const ngnBalance =
-    Number(data.ngn_balance || 0);
-
-  document.getElementById("ngnBalance").textContent =
-    "₦" + ngnBalance.toLocaleString(
-      undefined,
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }
-    );
-
+  const ngnTitle =
+    document.getElementById("ngnBalanceTitle");
 
   const accountBox =
     document.getElementById("accountBox");
@@ -591,12 +558,33 @@ async function loadProfile() {
   const realNotice =
     document.getElementById("realNotice");
 
+  const accountInfoText =
+    document.getElementById("accountInfoText");
+
+  const accountInfoNotice =
+    document.getElementById("accountInfoNotice");
+
 
   // =============================
   // DEMO ACCOUNT
   // =============================
 
   if (accountType === "demo") {
+
+    const demoBalance =
+      Number(data.balance || 0);
+
+    balanceElement.textContent =
+      "$" + demoBalance.toFixed(2);
+
+    ngnBalanceElement.textContent =
+      "₦0.00";
+
+    usdTitle.textContent =
+      "Demo USD Balance";
+
+    ngnTitle.textContent =
+      "NGN Balance";
 
     accountBox.className =
       "account-box demo";
@@ -612,9 +600,17 @@ async function loadProfile() {
 
     realNotice.innerHTML = `
       <div class="notice">
-        🧪 Demo mode: all trading and withdrawal activity is simulated.
+        🧪 Demo mode: your balance is simulated.
+        <br><br>
+        Your demo balance is completely separate from any real-account balance.
       </div>
     `;
+
+    accountInfoText.textContent =
+      "Crownspips Trading demonstration account.";
+
+    accountInfoNotice.textContent =
+      "Demo deposits, withdrawals and trades are simulated and do not move real money.";
 
     return;
   }
@@ -624,7 +620,22 @@ async function loadProfile() {
   // REAL ACCOUNT - PENDING
   // =============================
 
-  if (verification === "pending") {
+  if (
+    accountType === "real" &&
+    verification === "pending"
+  ) {
+
+    balanceElement.textContent =
+      "$0.00";
+
+    ngnBalanceElement.textContent =
+      "₦0.00";
+
+    usdTitle.textContent =
+      "Real USD Balance";
+
+    ngnTitle.textContent =
+      "Real NGN Balance";
 
     accountBox.className =
       "account-box pending";
@@ -641,9 +652,16 @@ async function loadProfile() {
     realNotice.innerHTML = `
       <div class="notice">
         ⏳ Your real-account application is pending verification.
-        Test deposits and withdrawals remain simulated.
+        <br><br>
+        Real balances are not displayed or credited until verification is completed.
       </div>
     `;
+
+    accountInfoText.textContent =
+      "Your real-account application is currently under review.";
+
+    accountInfoNotice.textContent =
+      "Your demo balance remains separate. It cannot be transferred into the real account.";
 
     return;
   }
@@ -653,7 +671,34 @@ async function loadProfile() {
   // REAL ACCOUNT - VERIFIED
   // =============================
 
-  if (verification === "verified") {
+  if (
+    accountType === "real" &&
+    verification === "verified"
+  ) {
+
+    const realUsdBalance =
+      Number(data.real_balance || 0);
+
+    const realNgnBalance =
+      Number(data.ngn_balance || 0);
+
+    balanceElement.textContent =
+      "$" + realUsdBalance.toFixed(2);
+
+    ngnBalanceElement.textContent =
+      "₦" + realNgnBalance.toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }
+      );
+
+    usdTitle.textContent =
+      "Real USD Balance";
+
+    ngnTitle.textContent =
+      "Real NGN Balance";
 
     accountBox.className =
       "account-box real";
@@ -669,14 +714,19 @@ async function loadProfile() {
 
     realNotice.innerHTML = `
       <div class="success">
-        ✅ Your account has been verified.
+        ✅ Verified real account.
         <br><br>
-        Your USD and NGN balances are displayed separately.
+        USD and NGN balances are stored separately.
         <br><br>
-        Deposit and withdrawal features shown here remain in TEST mode.
-        Real-money services are not enabled.
+        Your demo balance is completely separate and cannot be transferred into these balances.
       </div>
     `;
+
+    accountInfoText.textContent =
+      "Verified account balance information.";
+
+    accountInfoNotice.textContent =
+      "USD transactions affect the USD balance. NGN transactions affect the NGN balance. The two balances are kept separate.";
 
     return;
   }
@@ -686,7 +736,22 @@ async function loadProfile() {
   // REAL ACCOUNT - REJECTED
   // =============================
 
-  if (verification === "rejected") {
+  if (
+    accountType === "real" &&
+    verification === "rejected"
+  ) {
+
+    balanceElement.textContent =
+      "$0.00";
+
+    ngnBalanceElement.textContent =
+      "₦0.00";
+
+    usdTitle.textContent =
+      "Real USD Balance";
+
+    ngnTitle.textContent =
+      "Real NGN Balance";
 
     accountBox.className =
       "account-box rejected";
@@ -702,9 +767,17 @@ async function loadProfile() {
 
     realNotice.innerHTML = `
       <div class="notice">
-        Your application is currently marked as rejected.
+        Your real-account application is currently marked as rejected.
+        <br><br>
+        No real-account balance is displayed or credited.
       </div>
     `;
+
+    accountInfoText.textContent =
+      "Your real-account application is currently marked as rejected.";
+
+    accountInfoNotice.textContent =
+      "Your demo account balance remains completely separate from the real-account system.";
   }
 }
 
@@ -816,7 +889,6 @@ async function submitWithdrawal() {
   );
 
   await loadTransactions();
-
 }
 
 
@@ -839,6 +911,7 @@ async function loadTransactions() {
     .order("created_at", {
       ascending: false
     });
+
 
   if (error) {
 
@@ -881,7 +954,10 @@ async function loadTransactions() {
         Number(transaction.amount || 0);
 
       const currency =
-        transaction.currency || "USD";
+        String(
+          transaction.currency || "USD"
+        ).toUpperCase();
+
 
       if (currency === "NGN") {
 
@@ -997,172 +1073,4 @@ async function loadTrades() {
     .from("trades")
     .select("*")
     .eq("user_id", currentUser.id)
-    .order("opened_at", {
-      ascending: false
-    });
-
-
-  if (error) {
-
-    console.log(error);
-
-    area.innerHTML =
-      "<p class='empty'>Unable to load trades.</p>";
-
-    return;
-  }
-
-
-  const openTrades =
-    (data || []).filter(
-      trade => trade.status === "OPEN"
-    ).length;
-
-
-  document.getElementById("openTrades").textContent =
-    openTrades;
-
-
-  if (!data || data.length === 0) {
-
-    area.innerHTML =
-      "<p class='empty'>No trades yet.</p>";
-
-    return;
-  }
-
-
-  let html = `
-    <table>
-
-      <thead>
-        <tr>
-          <th>Pair</th>
-          <th>Type</th>
-          <th>Units</th>
-          <th>Open Price</th>
-          <th>P/L</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-  `;
-
-
-  data.forEach(trade => {
-
-    html += `
-      <tr>
-
-        <td>${trade.pair || "-"}</td>
-
-        <td>${trade.trade_type || "-"}</td>
-
-        <td>${Number(trade.units || 0)}</td>
-
-        <td>
-          ${Number(trade.open_price || 0).toFixed(5)}
-        </td>
-
-        <td>
-          ${Number(trade.profit_loss || 0).toFixed(2)}
-        </td>
-
-        <td>
-          ${trade.status || "-"}
-        </td>
-
-      </tr>
-    `;
-
-  });
-
-
-  html += `
-      </tbody>
-    </table>
-  `;
-
-  area.innerHTML = html;
-}
-
-
-// =============================
-// DEMO TRADE
-// =============================
-
-async function demoTrade() {
-
-  if (!currentProfile) return;
-
-
-  if (
-    currentProfile.account_type &&
-    currentProfile.account_type !== "demo"
-  ) {
-
-    alert(
-      "Demo trading is available only on a Demo Account."
-    );
-
-    return;
-  }
-
-
-  const {
-    error
-  } = await supabaseClient
-    .from("trades")
-    .insert({
-
-      user_id: currentUser.id,
-
-      pair: "EURUSD",
-
-      trade_type: "BUY",
-
-      units: 1000,
-
-      open_price: 1.08000,
-
-      close_price: null,
-
-      profit_loss: 0,
-
-      status: "OPEN"
-
-    });
-
-
-  if (error) {
-
-    alert(
-      "Unable to create demo trade: " +
-      error.message
-    );
-
-    return;
-  }
-
-
-  alert("Demo trade created successfully.");
-
-  await loadTrades();
-}
-
-
-// =============================
-// LOGOUT
-// =============================
-
-async function logout() {
-
-  await supabaseClient.auth.signOut();
-
-  window.location.href =
-    "login.html";
-}
-
-
-/
+    .o
