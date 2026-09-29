@@ -4,50 +4,67 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crownspips Trading - Admin Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f3f5f8;
+  background:#07111f;
+  color:white;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   min-height:100vh;
 }
+
 .box{
   width:90%;
-  max-width:400px;
-  background:white;
+  max-width:420px;
+  background:#101d2e;
   padding:30px;
-  border-radius:15px;
-  box-shadow:0 4px 20px #0002;
-}
-h1{text-align:center}
-.gold{color:#d4af37}
-label{display:block;margin-top:15px}
-input{
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  border:1px solid #ddd;
-  border-radius:8px;
+  border-radius:16px;
   box-sizing:border-box;
 }
+
+h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+p{
+  text-align:center;
+  color:#aeb8c5;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  box-sizing:border-box;
+  border-radius:8px;
+  border:1px solid #334155;
+  background:#07111f;
+  color:white;
+}
+
 button{
   width:100%;
-  margin-top:20px;
-  padding:13px;
+  padding:14px;
+  margin-top:18px;
   border:0;
   border-radius:8px;
-  background:#111827;
+  background:#16a34a;
   color:white;
   font-weight:bold;
+  cursor:pointer;
 }
-.demo{
-  margin-top:15px;
+
+#error{
+  color:#f87171;
   text-align:center;
-  font-size:12px;
-  color:#777;
+  margin-top:15px;
 }
 </style>
 </head>
@@ -55,35 +72,71 @@ button{
 <body>
 
 <div class="box">
+  <h1>Admin Login</h1>
+  <p>Crownspips Trading</p>
 
-<h1>Crownspips <span class="gold">Trading</span></h1>
-<h2>Admin Login</h2>
+  <input id="email" type="email" placeholder="Admin email">
+  <input id="password" type="password" placeholder="Password">
 
-<form onsubmit="login(event)">
+  <button onclick="login()">Login</button>
 
-<label>Admin Email</label>
-<input type="email" id="email" required>
-
-<label>Password</label>
-<input type="password" id="password" required>
-
-<button type="submit">Admin Login</button>
-
-</form>
-
-<div class="demo">
-Demo administrator login only.
-</div>
-
+  <div id="error"></div>
 </div>
 
 <script>
-function login(event){
-  event.preventDefault();
+const SUPABASE_URL =
+"https://ghagrruxxqtnochooiaj.supabase.co";
 
-  alert("Demo admin login successful.");
+const SUPABASE_KEY =
+"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
-  window.location.href="admin.html";
+const supabaseClient =
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function login(){
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const error =
+    document.getElementById("error");
+
+  error.textContent = "";
+
+  if(!email || !password){
+    error.textContent = "Enter your email and password.";
+    return;
+  }
+
+  const { data, error:loginError } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(loginError){
+    error.textContent = loginError.message;
+    return;
+  }
+
+  const { data:admin, error:adminError } =
+    await supabaseClient
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", data.user.id)
+      .maybeSingle();
+
+  if(adminError || !admin){
+    await supabaseClient.auth.signOut();
+    error.textContent =
+      "This account does not have admin access.";
+    return;
+  }
+
+  window.location.href = "admin.html";
 }
 </script>
 
