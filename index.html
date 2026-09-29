@@ -125,6 +125,11 @@
       color: white;
     }
 
+    .withdraw {
+      background: #9333ea;
+      color: white;
+    }
+
     .trade {
       background: #2563eb;
       color: white;
@@ -151,7 +156,6 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      overflow-x: auto;
     }
 
     th,
@@ -188,6 +192,62 @@
       margin-top: 12px;
     }
 
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-box {
+      background: white;
+      width: 100%;
+      max-width: 430px;
+      padding: 25px;
+      border-radius: 14px;
+    }
+
+    .modal-box h2 {
+      margin-bottom: 15px;
+    }
+
+    .modal-box input,
+    .modal-box select {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+
+    .submit-withdraw {
+      width: 100%;
+      background: #9333ea;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .close-modal {
+      width: 100%;
+      background: #6b7280;
+      color: white;
+      margin-top: 8px;
+    }
+
+    .test-label {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 10px;
+      border-radius: 7px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
     .status {
       font-weight: bold;
     }
@@ -201,13 +261,13 @@
         padding: 15px;
       }
 
+      .section {
+        overflow-x: auto;
+      }
+
       th,
       td {
         white-space: nowrap;
-      }
-
-      .section {
-        overflow-x: auto;
       }
     }
   </style>
@@ -264,6 +324,10 @@
       💰 Deposit Funds
     </a>
 
+    <button class="withdraw" onclick="openWithdrawal()">
+      💸 Withdrawal Funds
+    </button>
+
     <button class="trade" onclick="demoTrade()">
       📈 Demo Trade
     </button>
@@ -277,8 +341,7 @@
   <div id="realNotice"></div>
 
   <div class="section">
-    <h2>💳 Deposit / Transaction History</h2>
-
+    <h2>💳 Deposit / Withdrawal History</h2>
     <div id="transactionArea">
       <p class="empty">Loading transactions...</p>
     </div>
@@ -286,7 +349,6 @@
 
   <div class="section">
     <h2>📊 Trading History</h2>
-
     <div id="tradeArea">
       <p class="empty">Loading trades...</p>
     </div>
@@ -300,12 +362,72 @@
     </p>
 
     <div class="notice">
-      Test deposits do not move real money. Real-money deposits, withdrawals
-      and live trading are not currently enabled.
+      Test deposits and withdrawals do not move real money.
+      Real-money services are not currently enabled.
     </div>
   </div>
 
 </div>
+
+
+<!-- WITHDRAWAL MODAL -->
+
+<div id="withdrawModal" class="modal">
+
+  <div class="modal-box">
+
+    <h2>💸 Withdrawal Funds</h2>
+
+    <div class="test-label">
+      🧪 TEST WITHDRAWAL MODE — No real money will be transferred.
+    </div>
+
+    <label>Currency</label>
+
+    <select id="withdrawCurrency">
+      <option value="USD">USD — US Dollar</option>
+      <option value="EUR">EUR — Euro</option>
+      <option value="GBP">GBP — British Pound</option>
+      <option value="NGN">NGN — Nigerian Naira</option>
+      <option value="CAD">CAD — Canadian Dollar</option>
+      <option value="AUD">AUD — Australian Dollar</option>
+    </select>
+
+    <label>Amount</label>
+
+    <input
+      type="number"
+      id="withdrawAmount"
+      placeholder="Enter withdrawal amount"
+      min="1"
+      step="0.01"
+    >
+
+    <label>Withdrawal Method</label>
+
+    <select id="withdrawMethod">
+      <option value="TEST_BANK">Test Bank Transfer</option>
+      <option value="TEST_WALLET">Test Wallet</option>
+    </select>
+
+    <button
+      class="button submit-withdraw"
+      onclick="submitWithdrawal()"
+    >
+      Submit Test Withdrawal
+    </button>
+
+    <button
+      class="button close-modal"
+      onclick="closeWithdrawal()"
+    >
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
 
 <script>
 
@@ -380,12 +502,7 @@ async function loadProfile() {
     .single();
 
   if (error) {
-
     console.log(error);
-
-    document.getElementById("userName").textContent =
-      "Trader";
-
     return;
   }
 
@@ -406,7 +523,6 @@ async function loadProfile() {
   document.getElementById("balance").textContent =
     "$" + balance.toFixed(2);
 
-
   const accountBox =
     document.getElementById("accountBox");
 
@@ -422,10 +538,6 @@ async function loadProfile() {
   const realNotice =
     document.getElementById("realNotice");
 
-
-  // =============================
-  // DEMO ACCOUNT
-  // =============================
 
   if (accountType === "demo") {
 
@@ -443,17 +555,13 @@ async function loadProfile() {
 
     realNotice.innerHTML = `
       <div class="notice">
-        🧪 Demo mode: all trading activity is simulated.
+        🧪 Demo mode: all trading and withdrawal activity is simulated.
       </div>
     `;
 
     return;
   }
 
-
-  // =============================
-  // REAL ACCOUNT PENDING
-  // =============================
 
   if (verification === "pending") {
 
@@ -472,17 +580,13 @@ async function loadProfile() {
     realNotice.innerHTML = `
       <div class="notice">
         ⏳ Your real-account application is pending verification.
-        Test deposits may be viewed, but real-money services are not enabled.
+        Test deposits and withdrawals remain simulated.
       </div>
     `;
 
     return;
   }
 
-
-  // =============================
-  // REAL ACCOUNT VERIFIED
-  // =============================
 
   if (verification === "verified") {
 
@@ -502,7 +606,7 @@ async function loadProfile() {
       <div class="success">
         ✅ Your account has been verified.
         <br><br>
-        Deposit and trading features shown here remain in TEST/DEMO mode.
+        Deposit and withdrawal features shown here remain in TEST mode.
         Real-money services are not enabled.
       </div>
     `;
@@ -510,10 +614,6 @@ async function loadProfile() {
     return;
   }
 
-
-  // =============================
-  // REJECTED
-  // =============================
 
   if (verification === "rejected") {
 
@@ -534,8 +634,117 @@ async function loadProfile() {
         Your application is currently marked as rejected.
       </div>
     `;
-
   }
+}
+
+
+// =============================
+// OPEN WITHDRAWAL
+// =============================
+
+function openWithdrawal() {
+
+  document.getElementById("withdrawModal").style.display =
+    "flex";
+
+}
+
+
+// =============================
+// CLOSE WITHDRAWAL
+// =============================
+
+function closeWithdrawal() {
+
+  document.getElementById("withdrawModal").style.display =
+    "none";
+
+}
+
+
+// =============================
+// SUBMIT TEST WITHDRAWAL
+// =============================
+
+async function submitWithdrawal() {
+
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const amount =
+    Number(
+      document.getElementById("withdrawAmount").value
+    );
+
+  const currency =
+    document.getElementById("withdrawCurrency").value;
+
+  const method =
+    document.getElementById("withdrawMethod").value;
+
+
+  if (!amount || amount <= 0) {
+
+    alert("Please enter a valid withdrawal amount.");
+
+    return;
+  }
+
+
+  const reference =
+    "TEST-WD-" +
+    Date.now();
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .insert({
+
+      user_id: currentUser.id,
+
+      transaction_type: "WITHDRAWAL",
+
+      amount: amount,
+
+      currency: currency,
+
+      status: "PENDING",
+
+      payment_method: method,
+
+      payment_reference: reference,
+
+      description:
+        "Simulated test withdrawal request"
+
+    });
+
+
+  if (error) {
+
+    alert(
+      "Unable to submit withdrawal: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document.getElementById("withdrawAmount").value =
+    "";
+
+  closeWithdrawal();
+
+  alert(
+    "Test withdrawal request submitted successfully."
+  );
+
+  await loadTransactions();
 
 }
 
@@ -606,15 +815,18 @@ async function loadTransactions() {
 
   let html = `
     <table>
+
       <thead>
         <tr>
           <th>Type</th>
           <th>Amount</th>
           <th>Currency</th>
           <th>Status</th>
+          <th>Method</th>
           <th>Date</th>
         </tr>
       </thead>
+
       <tbody>
   `;
 
@@ -630,7 +842,10 @@ async function loadTransactions() {
 
     html += `
       <tr>
-        <td>${transaction.transaction_type || "-"}</td>
+
+        <td>
+          ${transaction.transaction_type || "-"}
+        </td>
 
         <td>
           ${Number(transaction.amount || 0).toFixed(2)}
@@ -645,8 +860,13 @@ async function loadTransactions() {
         </td>
 
         <td>
+          ${transaction.payment_method || "-"}
+        </td>
+
+        <td>
           ${date}
         </td>
+
       </tr>
     `;
 
@@ -659,7 +879,6 @@ async function loadTransactions() {
   `;
 
   area.innerHTML = html;
-
 }
 
 
@@ -716,6 +935,7 @@ async function loadTrades() {
 
   let html = `
     <table>
+
       <thead>
         <tr>
           <th>Pair</th>
@@ -726,6 +946,7 @@ async function loadTrades() {
           <th>Status</th>
         </tr>
       </thead>
+
       <tbody>
   `;
 
@@ -735,17 +956,11 @@ async function loadTrades() {
     html += `
       <tr>
 
-        <td>
-          ${trade.pair || "-"}
-        </td>
+        <td>${trade.pair || "-"}</td>
 
-        <td>
-          ${trade.trade_type || "-"}
-        </td>
+        <td>${trade.trade_type || "-"}</td>
 
-        <td>
-          ${Number(trade.units || 0)}
-        </td>
+        <td>${Number(trade.units || 0)}</td>
 
         <td>
           ${Number(trade.open_price || 0).toFixed(5)}
@@ -771,7 +986,6 @@ async function loadTrades() {
   `;
 
   area.innerHTML = html;
-
 }
 
 
@@ -797,32 +1011,29 @@ async function demoTrade() {
   }
 
 
-  const trade = {
-
-    user_id: currentUser.id,
-
-    pair: "EURUSD",
-
-    trade_type: "BUY",
-
-    units: 1000,
-
-    open_price: 1.08000,
-
-    close_price: null,
-
-    profit_loss: 0,
-
-    status: "OPEN"
-
-  };
-
-
   const {
     error
   } = await supabaseClient
     .from("trades")
-    .insert(trade);
+    .insert({
+
+      user_id: currentUser.id,
+
+      pair: "EURUSD",
+
+      trade_type: "BUY",
+
+      units: 1000,
+
+      open_price: 1.08000,
+
+      close_price: null,
+
+      profit_loss: 0,
+
+      status: "OPEN"
+
+    });
 
 
   if (error) {
@@ -836,13 +1047,9 @@ async function demoTrade() {
   }
 
 
-  alert(
-    "Demo trade created successfully."
-  );
-
+  alert("Demo trade created successfully.");
 
   await loadTrades();
-
 }
 
 
@@ -856,7 +1063,6 @@ async function logout() {
 
   window.location.href =
     "login.html";
-
 }
 
 
@@ -887,4 +1093,4 @@ startDashboard();
 </script>
 
 </body>
-</html>
+  </html>
