@@ -1,261 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crownspips Trading - Deposit</title>
 
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<title>Crownspips - Deposit</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    body {
+      background: #f4f7fb;
+      color: #172033;
+    }
 
-<style>
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+    }
 
-*{
-  box-sizing:border-box;
-}
+    header h1 {
+      font-size: 21px;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f1f5f9;
-  color:#111827;
-}
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
 
-header{
-  background:#0f172a;
-  color:white;
-  padding:25px 20px;
-  text-align:center;
-}
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
 
-header h1{
-  margin:0;
-  font-size:32px;
-}
+    h2 {
+      margin-bottom: 15px;
+    }
 
-header span{
-  color:#d4af37;
-}
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
 
-.container{
-  max-width:600px;
-  margin:auto;
-  padding:20px;
-}
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+    }
 
-.card{
-  background:white;
-  border-radius:18px;
-  padding:25px;
-  margin-bottom:20px;
-  box-shadow:0 4px 18px rgba(0,0,0,.08);
-}
+    button,
+    .button {
+      display: block;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 12px;
+    }
 
-label{
-  display:block;
-  margin-top:18px;
-  font-weight:bold;
-}
+    .bank {
+      background: #059669;
+      color: white;
+    }
 
-input,
-select{
-  width:100%;
-  padding:14px;
-  margin-top:8px;
-  border:1px solid #d1d5db;
-  border-radius:9px;
-  font-size:16px;
-}
+    .test {
+      background: #2563eb;
+      color: white;
+    }
 
-.amount-preview{
-  margin-top:15px;
-  background:#f8fafc;
-  padding:15px;
-  border-radius:10px;
-}
+    .back {
+      background: #6b7280;
+      color: white;
+    }
 
-button{
-  width:100%;
-  border:0;
-  border-radius:9px;
-  padding:15px;
-  margin-top:20px;
-  background:#16a34a;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .bank-details {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 15px 0;
+      line-height: 1.8;
+    }
 
-.back{
-  background:#475569;
-}
+    .bank-details strong {
+      color: #065f46;
+    }
 
-.test-notice{
-  background:#fff7ed;
-  border-left:6px solid #f97316;
-  padding:15px;
-  border-radius:9px;
-  margin-bottom:20px;
-}
+    .notice {
+      background: #fff7ed;
+      color: #9a3412;
+      padding: 13px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
-.success{
-  background:#dcfce7;
-  border-left:6px solid #16a34a;
-  padding:15px;
-  border-radius:9px;
-  margin-top:20px;
-}
+    .success {
+      background: #ecfdf5;
+      color: #047857;
+      padding: 13px;
+      border-radius: 8px;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
 
-.error{
-  color:#dc2626;
-  margin-top:15px;
-  font-weight:bold;
-}
+    .hidden {
+      display: none;
+    }
 
-.hidden{
-  display:none;
-}
-
-.reference{
-  word-break:break-all;
-  font-weight:bold;
-}
-
-</style>
-
+    .reference {
+      font-weight: bold;
+      word-break: break-all;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-
-<h1>
-Crownspips <span>Trading</span>
-</h1>
-
+  <h1>👑 Crownspips Trading</h1>
 </header>
-
 
 <div class="container">
 
-<div class="card">
+  <div class="card">
 
-<h2>Deposit Funds</h2>
+    <h2>💰 Deposit Funds</h2>
 
-<div class="test-notice">
+    <p>
+      Choose your preferred deposit method below.
+    </p>
 
-<strong>TEST PAYMENT MODE</strong>
+    <label>Deposit Method</label>
 
-<p>
-This is a simulated payment environment.
-No real money or bank/card charge will occur.
-</p>
+    <select id="depositMethod" onchange="changeMethod()">
+      <option value="BANK_TRANSFER">
+        Bank Transfer — NGN
+      </option>
 
-</div>
+      <option value="TEST_PAYMENT">
+        Test Payment
+      </option>
+    </select>
 
-
-<label>
-Currency
-</label>
-
-<select id="currency">
-
-<option value="USD">🇺🇸 USD — US Dollar</option>
-<option value="EUR">🇪🇺 EUR — Euro</option>
-<option value="GBP">🇬🇧 GBP — British Pound</option>
-<option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
-<option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
-<option value="AUD">🇦🇺 AUD — Australian Dollar</option>
-
-</select>
+  </div>
 
 
-<label>
-Deposit Amount
-</label>
+  <!-- BANK TRANSFER -->
 
-<input
-  id="amount"
-  type="number"
-  min="1"
-  step="0.01"
-  placeholder="Enter amount"
->
+  <div id="bankSection" class="card">
+
+    <h2>🏦 Bank Transfer</h2>
+
+    <div class="notice">
+      Transfer the amount to the business payment account below.
+      After completing the transfer, submit your payment reference
+      for manual verification.
+    </div>
+
+    <div class="bank-details">
+
+      <p>
+        <strong>Bank:</strong>
+        Opay
+      </p>
+
+      <p>
+        <strong>Account Name:</strong>
+        Favour Chukwuebuka Chinkata
+      </p>
+
+      <p>
+        <strong>Account Number:</strong>
+        8123351714
+      </p>
+
+      <p>
+        <strong>Currency:</strong>
+        NGN
+      </p>
+
+    </div>
+
+    <label>Amount Sent (NGN)</label>
+
+    <input
+      type="number"
+      id="bankAmount"
+      min="1"
+      step="0.01"
+      placeholder="Enter amount transferred"
+    >
+
+    <label>Payment Reference</label>
+
+    <input
+      type="text"
+      id="bankReference"
+      placeholder="Enter your bank transfer reference"
+    >
+
+    <div class="notice">
+      Your submission will remain <strong>PENDING</strong> until an
+      administrator verifies the transfer. Your account balance will
+      not be credited automatically.
+    </div>
+
+    <button
+      class="button bank"
+      onclick="submitBankTransfer()"
+    >
+      Submit Bank Transfer for Verification
+    </button>
+
+    <div id="bankMessage"></div>
+
+  </div>
 
 
-<div class="amount-preview">
+  <!-- TEST PAYMENT -->
 
-<strong>Payment:</strong>
+  <div id="testSection" class="card hidden">
 
-<div id="preview">
-Choose a currency and enter an amount.
-</div>
+    <h2>🧪 Test Payment</h2>
 
-</div>
+    <div class="notice">
+      TEST PAYMENT MODE — No real money will be charged.
+    </div>
 
+    <label>Currency</label>
 
-<button onclick="startTestPayment()">
+    <select id="testCurrency">
+      <option value="USD">USD — US Dollar</option>
+      <option value="EUR">EUR — Euro</option>
+      <option value="GBP">GBP — British Pound</option>
+      <option value="NGN">NGN — Nigerian Naira</option>
+      <option value="CAD">CAD — Canadian Dollar</option>
+      <option value="AUD">AUD — Australian Dollar</option>
+    </select>
 
-Continue to Test Payment
+    <label>Amount</label>
 
-</button>
+    <input
+      type="number"
+      id="testAmount"
+      min="1"
+      step="0.01"
+      placeholder="Enter test amount"
+    >
 
+    <button
+      class="button test"
+      onclick="submitTestPayment()"
+    >
+      Submit Test Payment
+    </button>
 
-<button
-  class="back"
-  onclick="window.location.href='index.html'">
+    <div id="testMessage"></div>
 
-Back to Dashboard
-
-</button>
-
-
-<div id="message"></div>
-
-
-<div id="successBox"
-     class="success hidden">
-
-<h3>Test Payment Successful</h3>
-
-<p>
-Your simulated deposit has been recorded.
-</p>
-
-<p>
-<strong>Reference:</strong>
-</p>
-
-<div
-  id="reference"
-  class="reference">
-</div>
-
-<p>
-<strong>Status:</strong>
-COMPLETED
-</p>
-
-</div>
-
-</div>
+  </div>
 
 
-<div class="card">
-
-<h3>Supported Test Currencies</h3>
-
-<p>🇺🇸 USD — US Dollar</p>
-<p>🇪🇺 EUR — Euro</p>
-<p>🇬🇧 GBP — British Pound</p>
-<p>🇳🇬 NGN — Nigerian Naira</p>
-<p>🇨🇦 CAD — Canadian Dollar</p>
-<p>🇦🇺 AUD — Australian Dollar</p>
-
-</div>
+  <a href="index.html" class="button back">
+    ← Back to Dashboard
+  </a>
 
 </div>
 
@@ -263,206 +292,245 @@ COMPLETED
 <script>
 
 const SUPABASE_URL =
-"https://ghagrruxxqtnochooiaj.supabase.co";
+  "https://ghagrruxxqtnochooiaj.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+  "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
 const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 let currentUser = null;
 
 
-async function start(){
+// =============================
+// AUTHENTICATION
+// =============================
+
+async function startPage() {
 
   const {
-    data:{session}
-  } =
-  await supabaseClient.auth.getSession();
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
 
-
-  if(!session){
-
-    window.location.href="login.html";
-
+  if (error || !user) {
+    window.location.href = "login.html";
     return;
   }
 
-
-  currentUser =
-    session.user;
-
+  currentUser = user;
 }
 
 
-function updatePreview(){
+// =============================
+// CHANGE PAYMENT METHOD
+// =============================
 
-  const currency =
-    document.getElementById(
-      "currency"
-    ).value;
+function changeMethod() {
 
+  const method =
+    document.getElementById("depositMethod").value;
+
+  const bankSection =
+    document.getElementById("bankSection");
+
+  const testSection =
+    document.getElementById("testSection");
+
+
+  if (method === "BANK_TRANSFER") {
+
+    bankSection.classList.remove("hidden");
+    testSection.classList.add("hidden");
+
+  } else {
+
+    bankSection.classList.add("hidden");
+    testSection.classList.remove("hidden");
+
+  }
+}
+
+
+// =============================
+// BANK TRANSFER SUBMISSION
+// =============================
+
+async function submitBankTransfer() {
+
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
 
   const amount =
     Number(
-      document.getElementById(
-        "amount"
-      ).value
+      document.getElementById("bankAmount").value
     );
 
-
-  const preview =
-    document.getElementById(
-      "preview"
-    );
+  const reference =
+    document.getElementById("bankReference").value.trim();
 
 
-  if(!amount || amount <= 0){
+  if (!amount || amount <= 0) {
 
-    preview.textContent =
-      "Enter an amount.";
+    alert("Please enter the amount transferred.");
 
     return;
   }
 
 
-  preview.textContent =
-    amount.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    )
-    + " "
-    + currency;
+  if (!reference) {
 
-}
+    alert("Please enter your payment reference.");
 
+    return;
+  }
 
-document
-  .getElementById("currency")
-  .addEventListener(
-    "change",
-    updatePreview
-  );
-
-
-document
-  .getElementById("amount")
-  .addEventListener(
-    "input",
-    updatePreview
-  );
-
-
-async function startTestPayment(){
 
   const message =
-    document.getElementById(
-      "message"
+    document.getElementById("bankMessage");
+
+
+  const {
+    data: existing
+  } = await supabaseClient
+    .from("transactions")
+    .select("id")
+    .eq("payment_reference", reference)
+    .maybeSingle();
+
+
+  if (existing) {
+
+    alert(
+      "This payment reference has already been submitted."
     );
-
-
-  const successBox =
-    document.getElementById(
-      "successBox"
-    );
-
-
-  message.textContent = "";
-
-  successBox.classList.add(
-    "hidden"
-  );
-
-
-  const currency =
-    document.getElementById(
-      "currency"
-    ).value;
-
-
-  const amount =
-    Number(
-      document.getElementById(
-        "amount"
-      ).value
-    );
-
-
-  if(!amount || amount <= 0){
-
-    message.innerHTML =
-      '<div class="error">' +
-      'Please enter a valid amount.' +
-      '</div>';
 
     return;
   }
 
 
-  if(!currentUser){
+  const {
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .insert({
 
-    message.innerHTML =
-      '<div class="error">' +
-      'Please log in first.' +
-      '</div>';
+      user_id: currentUser.id,
+
+      transaction_type: "DEPOSIT",
+
+      amount: amount,
+
+      currency: "NGN",
+
+      status: "PENDING",
+
+      payment_method: "BANK_TRANSFER",
+
+      payment_reference: reference,
+
+      description:
+        "Manual NGN bank transfer deposit awaiting verification"
+
+    });
+
+
+  if (error) {
+
+    alert(
+      "Unable to submit deposit: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document.getElementById("bankAmount").value =
+    "";
+
+  document.getElementById("bankReference").value =
+    "";
+
+
+  message.innerHTML = `
+    <div class="success">
+      ✅ Bank transfer submitted successfully.
+      <br><br>
+      Your payment reference:
+      <br>
+      <span class="reference">
+        ${escapeHtml(reference)}
+      </span>
+      <br><br>
+      Status: <strong>PENDING</strong>
+      <br><br>
+      An administrator must verify the transfer before
+      your account balance is credited.
+    </div>
+  `;
+}
+
+
+// =============================
+// TEST PAYMENT
+// =============================
+
+async function submitTestPayment() {
+
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
+
+
+  const amount =
+    Number(
+      document.getElementById("testAmount").value
+    );
+
+  const currency =
+    document.getElementById("testCurrency").value;
+
+
+  if (!amount || amount <= 0) {
+
+    alert("Please enter a valid amount.");
 
     return;
   }
 
 
   const reference =
-    "TEST-"
-    + Date.now()
-    + "-"
-    + Math.random()
-        .toString(36)
-        .substring(2,8)
-        .toUpperCase();
-
-
-  /*
-   TEST PAYMENT ONLY
-
-   This records a simulated completed
-   deposit. It does NOT charge money.
-  */
+    "TEST-" +
+    Date.now();
 
 
   const {
     error
-  } =
-  await supabaseClient
+  } = await supabaseClient
     .from("transactions")
     .insert({
 
-      user_id:
-        currentUser.id,
+      user_id: currentUser.id,
 
-      transaction_type:
-        "DEPOSIT",
+      transaction_type: "DEPOSIT",
 
-      amount:
-        amount,
+      amount: amount,
 
-      currency:
-        currency,
+      currency: currency,
 
-      status:
-        "COMPLETED",
+      status: "COMPLETED",
 
-      payment_method:
-        "TEST_PAYMENT",
+      payment_method: "TEST_PAYMENT",
 
-      payment_reference:
-        reference,
+      payment_reference: reference,
 
       description:
         "Simulated international test deposit"
@@ -470,70 +538,54 @@ async function startTestPayment(){
     });
 
 
-  if(error){
+  if (error) {
 
-    message.innerHTML =
-      '<div class="error">' +
-      'Test payment failed: ' +
-      escapeHTML(
-        error.message
-      ) +
-      '</div>';
+    alert(
+      "Unable to process test payment: " +
+      error.message
+    );
 
     return;
   }
 
 
-  document
-    .getElementById(
-      "reference"
-    )
-    .textContent =
-    reference;
+  document.getElementById("testAmount").value =
+    "";
 
 
-  successBox.classList.remove(
-    "hidden"
-  );
-
+  document.getElementById("testMessage").innerHTML = `
+    <div class="success">
+      ✅ Test payment completed successfully.
+      <br><br>
+      Reference:
+      <strong>${escapeHtml(reference)}</strong>
+    </div>
+  `;
 }
 
 
-function escapeHTML(value){
+// =============================
+// HTML ESCAPE
+// =============================
+
+function escapeHtml(value) {
 
   return String(value)
-
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
-start();
+// =============================
+// START
+// =============================
+
+startPage();
 
 </script>
 
 </body>
-</html>
+          </html>
