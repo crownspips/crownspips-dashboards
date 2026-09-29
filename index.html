@@ -369,9 +369,6 @@
 
 </div>
 
-
-<!-- WITHDRAWAL MODAL -->
-
 <div id="withdrawModal" class="modal">
 
   <div class="modal-box">
@@ -427,7 +424,6 @@
   </div>
 
 </div>
-
 
 <script>
 
@@ -517,11 +513,33 @@ async function loadProfile() {
   const verification =
     data.verification_status || "pending";
 
-  const balance =
-    Number(data.balance || 0);
+
+  /*
+    BALANCE LOGIC
+
+    DEMO ACCOUNT:
+    Uses the normal demo balance.
+
+    VERIFIED REAL ACCOUNT:
+    Uses the separate real_balance field.
+
+    PENDING / REJECTED:
+    Keeps the demo balance display.
+  */
+
+  let displayBalance = Number(data.balance || 0);
+
+  if (
+    accountType === "real" &&
+    verification === "verified"
+  ) {
+    displayBalance =
+      Number(data.real_balance || 0);
+  }
 
   document.getElementById("balance").textContent =
-    "$" + balance.toFixed(2);
+    "$" + displayBalance.toFixed(2);
+
 
   const accountBox =
     document.getElementById("accountBox");
@@ -538,6 +556,10 @@ async function loadProfile() {
   const realNotice =
     document.getElementById("realNotice");
 
+
+  // =============================
+  // DEMO ACCOUNT
+  // =============================
 
   if (accountType === "demo") {
 
@@ -562,6 +584,10 @@ async function loadProfile() {
     return;
   }
 
+
+  // =============================
+  // REAL ACCOUNT - PENDING
+  // =============================
 
   if (verification === "pending") {
 
@@ -588,6 +614,10 @@ async function loadProfile() {
   }
 
 
+  // =============================
+  // REAL ACCOUNT - VERIFIED
+  // =============================
+
   if (verification === "verified") {
 
     accountBox.className =
@@ -606,6 +636,9 @@ async function loadProfile() {
       <div class="success">
         ✅ Your account has been verified.
         <br><br>
+        Your displayed balance is now the separate
+        Real Account Balance.
+        <br><br>
         Deposit and withdrawal features shown here remain in TEST mode.
         Real-money services are not enabled.
       </div>
@@ -614,6 +647,10 @@ async function loadProfile() {
     return;
   }
 
+
+  // =============================
+  // REAL ACCOUNT - REJECTED
+  // =============================
 
   if (verification === "rejected") {
 
@@ -1093,4 +1130,4 @@ startDashboard();
 </script>
 
 </body>
-  </html>
+</html>
