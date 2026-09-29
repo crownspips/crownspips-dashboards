@@ -1,874 +1,834 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crownspips Trading Dashboard</title>
 
-<title>Crownspips Trading</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-<style>
-*{
-  box-sizing:border-box;
-}
+    body {
+      background: #f4f7fb;
+      color: #172033;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f1f5f9;
-  color:#111827;
-}
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-header{
-  background:#0f172a;
-  color:white;
-  padding:28px 20px;
-  text-align:center;
-}
+    header h1 {
+      font-size: 21px;
+    }
 
-header h1{
-  margin:0;
-  font-size:38px;
-}
+    .logout {
+      background: #dc2626;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
 
-header h1 span{
-  color:#d4af37;
-}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
 
-.email{
-  margin-top:25px;
-  font-size:16px;
-  color:#d1d5db;
-}
+    .welcome {
+      margin-bottom: 20px;
+    }
 
-.logout{
-  margin-top:15px;
-  background:#ef2929;
-  color:white;
-  border:0;
-  padding:12px 25px;
-  border-radius:8px;
-  font-weight:bold;
-}
+    .account-box {
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      color: white;
+    }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
-}
+    .demo {
+      background: #2563eb;
+    }
 
-.card{
-  background:white;
-  border-radius:18px;
-  padding:25px;
-  margin-bottom:20px;
-  box-shadow:0 3px 15px rgba(0,0,0,.07);
-}
+    .real {
+      background: #059669;
+    }
 
-.notice{
-  border-left:7px solid #1597d3;
-  background:#e0f2fe;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
-}
+    .pending {
+      background: #d97706;
+    }
 
-.notice h2{
-  margin-top:0;
-}
+    .rejected {
+      background: #dc2626;
+    }
 
-.verified-notice{
-  border-left-color:#16a34a;
-  background:#dcfce7;
-}
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-.rejected-notice{
-  border-left-color:#dc2626;
-  background:#fee2e2;
-}
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
 
-.account-type{
-  font-size:20px;
-  font-weight:bold;
-}
+    .card h3 {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
 
-.badge{
-  display:inline-block;
-  padding:9px 16px;
-  border-radius:25px;
-  font-weight:bold;
-  margin-top:10px;
-}
+    .card p {
+      font-size: 23px;
+      font-weight: bold;
+    }
 
-.real{
-  background:#dbeafe;
-  color:#1d4ed8;
-}
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
 
-.demo{
-  background:#dcfce7;
-  color:#166534;
-}
+    button,
+    .button {
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      font-weight: bold;
+    }
 
-.status-pending{
-  background:#fef3c7;
-  color:#92400e;
-}
+    .deposit {
+      background: #16a34a;
+      color: white;
+    }
 
-.status-verified{
-  background:#dcfce7;
-  color:#166534;
-}
+    .trade {
+      background: #2563eb;
+      color: white;
+    }
 
-.status-rejected{
-  background:#fee2e2;
-  color:#991b1b;
-}
+    .refresh {
+      background: #6b7280;
+      color: white;
+    }
 
-.investor{
-  margin-top:20px;
-  font-size:18px;
-}
+    .section {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:18px;
-  margin-top:20px;
-}
+    .section h2 {
+      margin-bottom: 15px;
+      font-size: 19px;
+    }
 
-.stat{
-  background:#fff;
-  border-radius:18px;
-  padding:25px;
-  box-shadow:0 3px 15px rgba(0,0,0,.07);
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow-x: auto;
+    }
 
-.stat-title{
-  color:#6b7280;
-  font-size:15px;
-  font-weight:bold;
-}
+    th,
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 13px;
+    }
 
-.stat-value{
-  margin-top:12px;
-  font-size:30px;
-  font-weight:bold;
-}
+    th {
+      background: #f9fafb;
+    }
 
-.profit{
-  color:#16a34a;
-}
+    .empty {
+      color: #6b7280;
+      padding: 10px 0;
+    }
 
-.center{
-  text-align:center;
-}
+    .notice {
+      background: #fff7ed;
+      color: #9a3412;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
 
-.hidden{
-  display:none !important;
-}
+    .success {
+      background: #ecfdf5;
+      color: #047857;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
 
-select,
-input{
-  width:100%;
-  padding:13px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  margin-top:8px;
-}
+    .status {
+      font-weight: bold;
+    }
 
-.trade-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
+    @media(max-width: 600px) {
+      .container {
+        padding: 12px;
+      }
 
-.trade-button{
-  width:100%;
-  border:0;
-  padding:15px;
-  border-radius:8px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
+      header {
+        padding: 15px;
+      }
 
-.buy{
-  background:#16a34a;
-}
+      th,
+      td {
+        white-space: nowrap;
+      }
 
-.sell{
-  background:#dc2626;
-}
-
-.demo-warning{
-  background:#fff7ed;
-  border-left:6px solid #f97316;
-  padding:15px;
-  border-radius:8px;
-  margin-bottom:20px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,
-td{
-  padding:12px;
-  border-bottom:1px solid #e5e7eb;
-  text-align:left;
-}
-
-@media(max-width:600px){
-
-  header h1{
-    font-size:32px;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .trade-grid{
-    grid-template-columns:1fr;
-  }
-
-  .stat-value{
-    font-size:23px;
-  }
-
-  table{
-    min-width:650px;
-  }
-
-  .table-wrap{
-    overflow-x:auto;
-  }
-}
-</style>
+      .section {
+        overflow-x: auto;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-
-  <h1>
-    Crownspips <span>Trading</span>
-  </h1>
-
-  <div class="email" id="userEmail">
-    Loading...
-  </div>
-
-  <button class="logout" onclick="logout()">
-    Logout
-  </button>
-
+  <h1>👑 Crownspips Trading</h1>
+  <button class="logout" onclick="logout()">Logout</button>
 </header>
-
 
 <div class="container">
 
-  <!-- REAL ACCOUNT AREA -->
+  <div class="welcome">
+    <h2>Welcome, <span id="userName">Trader</span></h2>
+    <p id="userEmail"></p>
+  </div>
 
-  <div id="realAccountSection">
+  <div id="accountBox" class="account-box demo">
+    <h2 id="accountTitle">DEMO ACCOUNT</h2>
+    <p id="accountMessage">
+      You are currently using a simulated trading account.
+    </p>
+  </div>
 
-    <div id="pendingNotice" class="notice">
-
-      <h2>REAL ACCOUNT APPLICATION</h2>
-
-      <p>
-        Your account is registered as a real account.
-      </p>
-
-      <p>
-        Your application is currently pending verification.
-      </p>
-
-      <span class="badge status-pending">
-        PENDING VERIFICATION
-      </span>
-
-    </div>
-
-
-    <div id="verifiedNotice"
-         class="notice verified-notice hidden">
-
-      <h2>REAL ACCOUNT VERIFIED</h2>
-
-      <p>
-        Your real-account application has been verified by the
-        administrator.
-      </p>
-
-      <p>
-        Verification does not by itself activate real-money
-        deposits, withdrawals, or live trading.
-      </p>
-
-      <span class="badge status-verified">
-        VERIFIED
-      </span>
-
-    </div>
-
-
-    <div id="rejectedNotice"
-         class="notice rejected-notice hidden">
-
-      <h2>REAL ACCOUNT APPLICATION</h2>
-
-      <p>
-        Your application has not been approved at this time.
-      </p>
-
-      <span class="badge status-rejected">
-        REJECTED
-      </span>
-
-    </div>
-
+  <div class="cards">
 
     <div class="card">
-
-      <div class="account-type">
-        ACCOUNT TYPE
-      </div>
-
-      <span class="badge real">
-        REAL ACCOUNT
-      </span>
-
-      <div class="investor">
-        <strong>Investor:</strong>
-        <span id="investorName">
-          Loading...
-        </span>
-      </div>
-
+      <h3>Account Balance</h3>
+      <p id="balance">$0.00</p>
     </div>
 
+    <div class="card">
+      <h3>Total Deposits</h3>
+      <p id="totalDeposits">$0.00</p>
+    </div>
 
-    <div class="stats">
+    <div class="card">
+      <h3>Open Trades</h3>
+      <p id="openTrades">0</p>
+    </div>
 
-      <div class="stat">
-
-        <div class="stat-title">
-          ACCOUNT BALANCE
-        </div>
-
-        <div class="stat-value">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          EQUITY
-        </div>
-
-        <div class="stat-value">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          OPEN P/L
-        </div>
-
-        <div class="stat-value profit">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          CURRENCY
-        </div>
-
-        <div class="stat-value">
-          USD
-        </div>
-
-      </div>
-
+    <div class="card">
+      <h3>Account Status</h3>
+      <p id="accountStatus" style="font-size:16px;">DEMO</p>
     </div>
 
   </div>
 
+  <div class="actions">
 
-  <!-- DEMO ACCOUNT AREA -->
+    <a href="deposit.html" class="button deposit">
+      💰 Deposit Funds
+    </a>
 
-  <div id="demoAccountSection" class="hidden">
+    <button class="trade" onclick="demoTrade()">
+      📈 Demo Trade
+    </button>
 
-    <div class="demo-warning">
+    <button class="refresh" onclick="loadDashboard()">
+      🔄 Refresh Dashboard
+    </button>
 
-      <strong>DEMO ACCOUNT</strong>
+  </div>
 
-      <p>
-        All balances, prices, trades and profits shown here
-        are simulated and have no real monetary value.
-      </p>
+  <div id="realNotice"></div>
 
+  <div class="section">
+    <h2>💳 Deposit / Transaction History</h2>
+
+    <div id="transactionArea">
+      <p class="empty">Loading transactions...</p>
     </div>
+  </div>
 
+  <div class="section">
+    <h2>📊 Trading History</h2>
 
-    <div class="card">
-
-      <div class="account-type">
-        ACCOUNT TYPE
-      </div>
-
-      <span class="badge demo">
-        DEMO ACCOUNT
-      </span>
-
-      <div class="investor">
-        <strong>Investor:</strong>
-        <span id="demoInvestorName">
-          Loading...
-        </span>
-      </div>
-
+    <div id="tradeArea">
+      <p class="empty">Loading trades...</p>
     </div>
+  </div>
 
+  <div class="section">
+    <h2>ℹ️ Account Information</h2>
 
-    <div class="stats">
+    <p>
+      Crownspips Trading is currently operating in demonstration/test mode.
+    </p>
 
-      <div class="stat">
-
-        <div class="stat-title">
-          DEMO BALANCE
-        </div>
-
-        <div class="stat-value"
-             id="demoBalance">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          EQUITY
-        </div>
-
-        <div class="stat-value"
-             id="demoEquity">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          OPEN P/L
-        </div>
-
-        <div class="stat-value profit"
-             id="demoProfit">
-          $0.00
-        </div>
-
-      </div>
-
-
-      <div class="stat">
-
-        <div class="stat-title">
-          CURRENCY
-        </div>
-
-        <div class="stat-value">
-          USD
-        </div>
-
-      </div>
-
+    <div class="notice">
+      Test deposits do not move real money. Real-money deposits, withdrawals
+      and live trading are not currently enabled.
     </div>
-
-
-    <div class="card">
-
-      <h2>Demo Trading</h2>
-
-      <label>Currency Pair</label>
-
-      <select id="pair">
-
-        <option>EUR/USD</option>
-        <option>GBP/USD</option>
-        <option>USD/JPY</option>
-        <option>USD/CHF</option>
-        <option>AUD/USD</option>
-        <option>USD/CAD</option>
-        <option>NZD/USD</option>
-        <option>EUR/GBP</option>
-        <option>EUR/JPY</option>
-        <option>GBP/JPY</option>
-
-      </select>
-
-
-      <label>Units</label>
-
-      <input
-        id="units"
-        type="number"
-        value="1000"
-        min="1"
-      >
-
-
-      <div class="trade-grid">
-
-        <button
-          class="trade-button buy"
-          onclick="placeDemoTrade('BUY')">
-          BUY
-        </button>
-
-        <button
-          class="trade-button sell"
-          onclick="placeDemoTrade('SELL')">
-          SELL
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <h2>Demo Trade History</h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Pair</th>
-              <th>Type</th>
-              <th>Units</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-
-          </thead>
-
-          <tbody id="tradeHistory">
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
   </div>
 
 </div>
 
-
 <script>
 
 const SUPABASE_URL =
-"https://ghagrruxxqtnochooiaj.supabase.co";
+  "https://ghagrruxxqtnochooiaj.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+  "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
 const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 let currentUser = null;
 let currentProfile = null;
 
 
-async function start(){
+// =============================
+// START DASHBOARD
+// =============================
+
+async function startDashboard() {
 
   const {
-    data:{session}
-  } = await supabaseClient.auth.getSession();
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
 
-
-  if(!session){
-
-    window.location.href="login.html";
-
+  if (error || !user) {
+    window.location.href = "login.html";
     return;
   }
 
+  currentUser = user;
 
-  currentUser = session.user;
+  document.getElementById("userEmail").textContent =
+    user.email || "";
 
-
-  document.getElementById("userEmail")
-    .textContent =
-    currentUser.email;
-
-
-  await loadProfile();
-
+  await loadDashboard();
 }
 
 
-async function loadProfile(){
+// =============================
+// LOAD DASHBOARD
+// =============================
+
+async function loadDashboard() {
+
+  if (!currentUser) return;
+
+  await loadProfile();
+  await loadTransactions();
+  await loadTrades();
+}
+
+
+// =============================
+// LOAD PROFILE
+// =============================
+
+async function loadProfile() {
 
   const {
-    data:profile,
+    data,
     error
   } = await supabaseClient
     .from("profiles")
-    .select(`
-      id,
-      full_name,
-      email,
-      balance,
-      account_type,
-      verification_status,
-      created_at
-    `)
-    .eq("id",currentUser.id)
-    .maybeSingle();
+    .select("*")
+    .eq("id", currentUser.id)
+    .single();
 
+  if (error) {
 
-  if(error){
+    console.log(error);
 
-    console.error(error);
-
-    alert(
-      "Unable to load your account information."
-    );
+    document.getElementById("userName").textContent =
+      "Trader";
 
     return;
   }
 
+  currentProfile = data;
 
-  if(!profile){
+  document.getElementById("userName").textContent =
+    data.full_name || "Trader";
 
-    alert(
-      "Your profile could not be found."
-    );
+  const accountType =
+    data.account_type || "demo";
 
-    return;
-  }
-
-
-  currentProfile = profile;
-
-
-  document.getElementById("investorName")
-    .textContent =
-    profile.full_name || "Investor";
-
-
-  document.getElementById("demoInvestorName")
-    .textContent =
-    profile.full_name || "Demo Investor";
-
-
-  if(profile.account_type === "real"){
-
-    showRealAccount(profile);
-
-  }else{
-
-    showDemoAccount(profile);
-
-  }
-
-}
-
-
-function showRealAccount(profile){
-
-  document
-    .getElementById("realAccountSection")
-    .classList.remove("hidden");
-
-
-  document
-    .getElementById("demoAccountSection")
-    .classList.add("hidden");
-
-
-  const status =
-    profile.verification_status || "pending";
-
-
-  document
-    .getElementById("pendingNotice")
-    .classList.add("hidden");
-
-
-  document
-    .getElementById("verifiedNotice")
-    .classList.add("hidden");
-
-
-  document
-    .getElementById("rejectedNotice")
-    .classList.add("hidden");
-
-
-  if(status === "verified"){
-
-    document
-      .getElementById("verifiedNotice")
-      .classList.remove("hidden");
-
-  }
-
-  else if(status === "rejected"){
-
-    document
-      .getElementById("rejectedNotice")
-      .classList.remove("hidden");
-
-  }
-
-  else{
-
-    document
-      .getElementById("pendingNotice")
-      .classList.remove("hidden");
-
-  }
-
-}
-
-
-async function showDemoAccount(profile){
-
-  document
-    .getElementById("realAccountSection")
-    .classList.add("hidden");
-
-
-  document
-    .getElementById("demoAccountSection")
-    .classList.remove("hidden");
-
+  const verification =
+    data.verification_status || "pending";
 
   const balance =
-    Number(profile.balance || 0);
+    Number(data.balance || 0);
+
+  document.getElementById("balance").textContent =
+    "$" + balance.toFixed(2);
 
 
-  document
-    .getElementById("demoBalance")
-    .textContent =
-    "$" + balance.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
+  const accountBox =
+    document.getElementById("accountBox");
+
+  const accountTitle =
+    document.getElementById("accountTitle");
+
+  const accountMessage =
+    document.getElementById("accountMessage");
+
+  const accountStatus =
+    document.getElementById("accountStatus");
+
+  const realNotice =
+    document.getElementById("realNotice");
 
 
-  document
-    .getElementById("demoEquity")
-    .textContent =
-    "$" + balance.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
+  // =============================
+  // DEMO ACCOUNT
+  // =============================
+
+  if (accountType === "demo") {
+
+    accountBox.className =
+      "account-box demo";
+
+    accountTitle.textContent =
+      "DEMO ACCOUNT";
+
+    accountMessage.textContent =
+      "You are using a simulated trading account.";
+
+    accountStatus.textContent =
+      "DEMO";
+
+    realNotice.innerHTML = `
+      <div class="notice">
+        🧪 Demo mode: all trading activity is simulated.
+      </div>
+    `;
+
+    return;
+  }
 
 
-  await loadTradeHistory();
+  // =============================
+  // REAL ACCOUNT PENDING
+  // =============================
+
+  if (verification === "pending") {
+
+    accountBox.className =
+      "account-box pending";
+
+    accountTitle.textContent =
+      "REAL ACCOUNT — PENDING";
+
+    accountMessage.textContent =
+      "Your real-account application is waiting for verification.";
+
+    accountStatus.textContent =
+      "PENDING";
+
+    realNotice.innerHTML = `
+      <div class="notice">
+        ⏳ Your real-account application is pending verification.
+        Test deposits may be viewed, but real-money services are not enabled.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // =============================
+  // REAL ACCOUNT VERIFIED
+  // =============================
+
+  if (verification === "verified") {
+
+    accountBox.className =
+      "account-box real";
+
+    accountTitle.textContent =
+      "REAL ACCOUNT — VERIFIED";
+
+    accountMessage.textContent =
+      "Your account has been verified.";
+
+    accountStatus.textContent =
+      "VERIFIED";
+
+    realNotice.innerHTML = `
+      <div class="success">
+        ✅ Your account has been verified.
+        <br><br>
+        Deposit and trading features shown here remain in TEST/DEMO mode.
+        Real-money services are not enabled.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // =============================
+  // REJECTED
+  // =============================
+
+  if (verification === "rejected") {
+
+    accountBox.className =
+      "account-box rejected";
+
+    accountTitle.textContent =
+      "REAL ACCOUNT — REJECTED";
+
+    accountMessage.textContent =
+      "Your real-account application was not approved.";
+
+    accountStatus.textContent =
+      "REJECTED";
+
+    realNotice.innerHTML = `
+      <div class="notice">
+        Your application is currently marked as rejected.
+      </div>
+    `;
+
+  }
 
 }
 
 
-async function placeDemoTrade(type){
+// =============================
+// LOAD TRANSACTIONS
+// =============================
 
-  if(!currentUser){
+async function loadTransactions() {
+
+  const area =
+    document.getElementById("transactionArea");
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("transactions")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("created_at", {
+      ascending: false
+    });
+
+  if (error) {
+
+    console.log(error);
+
+    area.innerHTML =
+      "<p class='empty'>Unable to load transactions.</p>";
 
     return;
   }
 
 
-  const pair =
-    document.getElementById("pair").value;
+  if (!data || data.length === 0) {
+
+    area.innerHTML =
+      "<p class='empty'>No transactions yet.</p>";
+
+    document.getElementById("totalDeposits").textContent =
+      "$0.00";
+
+    return;
+  }
 
 
-  const units =
-    Number(
-      document.getElementById("units").value
-    );
+  let totalDeposits = 0;
+
+  data.forEach(transaction => {
+
+    if (
+      transaction.transaction_type === "DEPOSIT" &&
+      transaction.status === "COMPLETED"
+    ) {
+
+      totalDeposits +=
+        Number(transaction.amount || 0);
+
+    }
+
+  });
 
 
-  if(!units || units <= 0){
+  document.getElementById("totalDeposits").textContent =
+    "$" + totalDeposits.toFixed(2);
+
+
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Currency</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+
+  data.forEach(transaction => {
+
+    const date =
+      transaction.created_at
+        ? new Date(transaction.created_at)
+            .toLocaleString()
+        : "-";
+
+
+    html += `
+      <tr>
+        <td>${transaction.transaction_type || "-"}</td>
+
+        <td>
+          ${Number(transaction.amount || 0).toFixed(2)}
+        </td>
+
+        <td>
+          ${transaction.currency || "USD"}
+        </td>
+
+        <td class="status">
+          ${transaction.status || "PENDING"}
+        </td>
+
+        <td>
+          ${date}
+        </td>
+      </tr>
+    `;
+
+  });
+
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  area.innerHTML = html;
+
+}
+
+
+// =============================
+// LOAD TRADES
+// =============================
+
+async function loadTrades() {
+
+  const area =
+    document.getElementById("tradeArea");
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("trades")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("opened_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.log(error);
+
+    area.innerHTML =
+      "<p class='empty'>Unable to load trades.</p>";
+
+    return;
+  }
+
+
+  const openTrades =
+    (data || []).filter(
+      trade => trade.status === "OPEN"
+    ).length;
+
+
+  document.getElementById("openTrades").textContent =
+    openTrades;
+
+
+  if (!data || data.length === 0) {
+
+    area.innerHTML =
+      "<p class='empty'>No trades yet.</p>";
+
+    return;
+  }
+
+
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Pair</th>
+          <th>Type</th>
+          <th>Units</th>
+          <th>Open Price</th>
+          <th>P/L</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+
+  data.forEach(trade => {
+
+    html += `
+      <tr>
+
+        <td>
+          ${trade.pair || "-"}
+        </td>
+
+        <td>
+          ${trade.trade_type || "-"}
+        </td>
+
+        <td>
+          ${Number(trade.units || 0)}
+        </td>
+
+        <td>
+          ${Number(trade.open_price || 0).toFixed(5)}
+        </td>
+
+        <td>
+          ${Number(trade.profit_loss || 0).toFixed(2)}
+        </td>
+
+        <td>
+          ${trade.status || "-"}
+        </td>
+
+      </tr>
+    `;
+
+  });
+
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  area.innerHTML = html;
+
+}
+
+
+// =============================
+// DEMO TRADE
+// =============================
+
+async function demoTrade() {
+
+  if (!currentProfile) return;
+
+
+  if (
+    currentProfile.account_type &&
+    currentProfile.account_type !== "demo"
+  ) {
 
     alert(
-      "Enter a valid number of units."
+      "Demo trading is available only on a Demo Account."
     );
 
     return;
   }
 
 
-  const openPrice =
-    getDemoPrice();
+  const trade = {
+
+    user_id: currentUser.id,
+
+    pair: "EURUSD",
+
+    trade_type: "BUY",
+
+    units: 1000,
+
+    open_price: 1.08000,
+
+    close_price: null,
+
+    profit_loss: 0,
+
+    status: "OPEN"
+
+  };
 
 
   const {
     error
   } = await supabaseClient
     .from("trades")
-    .insert({
-
-      user_id:currentUser.id,
-
-      pair:pair,
-
-      trade_type:type,
-
-      units:units,
-
-      open_price:openPrice,
-
-      status:"OPEN",
-
-      profit_loss:0
-
-    });
+    .insert(trade);
 
 
-  if(error){
+  if (error) {
 
     alert(
-      "Trade could not be created: " +
+      "Unable to create demo trade: " +
       error.message
     );
 
@@ -877,123 +837,20 @@ async function placeDemoTrade(type){
 
 
   alert(
-    "Demo " +
-    type +
-    " trade placed successfully."
+    "Demo trade created successfully."
   );
 
 
-  await loadTradeHistory();
+  await loadTrades();
 
 }
 
 
-function getDemoPrice(){
+// =============================
+// LOGOUT
+// =============================
 
-  return Number(
-    (
-      1 +
-      Math.random() * 0.5
-    ).toFixed(5)
-  );
-
-}
-
-
-async function loadTradeHistory(){
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("trades")
-    .select(`
-      pair,
-      trade_type,
-      units,
-      status,
-      opened_at
-    `)
-    .eq("user_id",currentUser.id)
-    .order(
-      "opened_at",
-      {ascending:false}
-    )
-    .limit(20);
-
-
-  if(error){
-
-    console.error(error);
-
-    return;
-  }
-
-
-  const table =
-    document.getElementById(
-      "tradeHistory"
-    );
-
-
-  table.innerHTML = "";
-
-
-  if(!data || data.length === 0){
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="5">
-          No demo trades yet.
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-
-  data.forEach(trade=>{
-
-    const row =
-      document.createElement("tr");
-
-
-    row.innerHTML = `
-
-      <td>
-        ${escapeHTML(trade.pair)}
-      </td>
-
-      <td>
-        ${escapeHTML(trade.trade_type)}
-      </td>
-
-      <td>
-        ${Number(trade.units).toLocaleString()}
-      </td>
-
-      <td>
-        ${escapeHTML(trade.status)}
-      </td>
-
-      <td>
-        ${new Date(
-          trade.opened_at
-        ).toLocaleString()}
-      </td>
-
-    `;
-
-
-    table.appendChild(row);
-
-  });
-
-}
-
-
-async function logout(){
+async function logout() {
 
   await supabaseClient.auth.signOut();
 
@@ -1003,24 +860,29 @@ async function logout(){
 }
 
 
-function escapeHTML(value){
+// =============================
+// AUTH STATE
+// =============================
 
-  return String(value)
+supabaseClient.auth.onAuthStateChange(
+  (event, session) => {
 
-    .replace(/&/g,"&amp;")
+    if (!session) {
 
-    .replace(/</g,"&lt;")
+      window.location.href =
+        "login.html";
 
-    .replace(/>/g,"&gt;")
+    }
 
-    .replace(/"/g,"&quot;")
-
-    .replace(/'/g,"&#039;");
-
-}
+  }
+);
 
 
-start();
+// =============================
+// START
+// =============================
+
+startDashboard();
 
 </script>
 
