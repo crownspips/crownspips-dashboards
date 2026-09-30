@@ -42,6 +42,12 @@
       padding: 10px 15px;
       border-radius: 7px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    .logout:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .container {
@@ -102,12 +108,12 @@
       font-weight: bold;
     }
 
-    .ngn-card {
-      border-left: 4px solid #059669;
-    }
-
     .usd-card {
       border-left: 4px solid #2563eb;
+    }
+
+    .ngn-card {
+      border-left: 4px solid #059669;
     }
 
     .actions {
@@ -198,6 +204,7 @@
       padding: 12px;
       border-radius: 8px;
       margin-top: 12px;
+      font-size: 13px;
     }
 
     .modal {
@@ -260,6 +267,15 @@
       font-weight: bold;
     }
 
+    .error-box {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
     @media(max-width: 600px) {
       .container {
         padding: 12px;
@@ -285,10 +301,19 @@
 
 <header>
   <h1>👑 Crownspips Trading</h1>
-  <button class="logout" onclick="logout()">Logout</button>
+
+  <button
+    id="logoutButton"
+    class="logout"
+    onclick="logout()"
+  >
+    Logout
+  </button>
 </header>
 
 <div class="container">
+
+  <div id="errorBox" class="error-box"></div>
 
   <div class="welcome">
     <h2>Welcome, <span id="userName">Trader</span></h2>
@@ -296,61 +321,123 @@
   </div>
 
   <div id="accountBox" class="account-box demo">
-    <h2 id="accountTitle">DEMO ACCOUNT</h2>
+
+    <h2 id="accountTitle">
+      DEMO ACCOUNT
+    </h2>
+
     <p id="accountMessage">
       You are currently using a simulated trading account.
     </p>
+
   </div>
 
   <div class="cards">
 
     <div class="card usd-card">
-      <h3 id="usdBalanceTitle">Demo USD Balance</h3>
-      <p id="balance">$0.00</p>
+
+      <h3 id="usdBalanceTitle">
+        Demo USD Balance
+      </h3>
+
+      <p id="balance">
+        $0.00
+      </p>
+
     </div>
 
     <div class="card ngn-card">
-      <h3 id="ngnBalanceTitle">NGN Balance</h3>
-      <p id="ngnBalance">₦0.00</p>
+
+      <h3 id="ngnBalanceTitle">
+        NGN Balance
+      </h3>
+
+      <p id="ngnBalance">
+        ₦0.00
+      </p>
+
     </div>
 
     <div class="card">
-      <h3>USD Deposits</h3>
-      <p id="totalDeposits">$0.00</p>
+
+      <h3>
+        USD Deposits
+      </h3>
+
+      <p id="totalDeposits">
+        $0.00
+      </p>
+
     </div>
 
     <div class="card">
-      <h3>NGN Deposits</h3>
-      <p id="totalNgnDeposits">₦0.00</p>
+
+      <h3>
+        NGN Deposits
+      </h3>
+
+      <p id="totalNgnDeposits">
+        ₦0.00
+      </p>
+
     </div>
 
     <div class="card">
-      <h3>Open Trades</h3>
-      <p id="openTrades">0</p>
+
+      <h3>
+        Open Trades
+      </h3>
+
+      <p id="openTrades">
+        0
+      </p>
+
     </div>
 
     <div class="card">
-      <h3>Account Status</h3>
-      <p id="accountStatus" style="font-size:16px;">DEMO</p>
+
+      <h3>
+        Account Status
+      </h3>
+
+      <p
+        id="accountStatus"
+        style="font-size:16px;"
+      >
+        DEMO
+      </p>
+
     </div>
 
   </div>
 
   <div class="actions">
 
-    <a href="deposit.html" class="button deposit">
+    <a
+      href="deposit.html"
+      class="button deposit"
+    >
       💰 Deposit Funds
     </a>
 
-    <button class="withdraw" onclick="openWithdrawal()">
+    <button
+      class="withdraw"
+      onclick="openWithdrawal()"
+    >
       💸 Withdrawal Funds
     </button>
 
-    <button class="trade" onclick="demoTrade()">
+    <button
+      class="trade"
+      onclick="demoTrade()"
+    >
       📈 Demo Trade
     </button>
 
-    <button class="refresh" onclick="loadDashboard()">
+    <button
+      class="refresh"
+      onclick="loadDashboard()"
+    >
       🔄 Refresh Dashboard
     </button>
 
@@ -359,56 +446,114 @@
   <div id="realNotice"></div>
 
   <div class="section">
-    <h2>💳 Deposit / Withdrawal History</h2>
+
+    <h2>
+      💳 Deposit / Withdrawal History
+    </h2>
+
     <div id="transactionArea">
-      <p class="empty">Loading transactions...</p>
+
+      <p class="empty">
+        Loading transactions...
+      </p>
+
     </div>
+
   </div>
 
   <div class="section">
-    <h2>📊 Trading History</h2>
+
+    <h2>
+      📊 Trading History
+    </h2>
+
     <div id="tradeArea">
-      <p class="empty">Loading trades...</p>
+
+      <p class="empty">
+        Loading trades...
+      </p>
+
     </div>
+
   </div>
 
   <div class="section">
-    <h2>ℹ️ Account Information</h2>
+
+    <h2>
+      ℹ️ Account Information
+    </h2>
 
     <p id="accountInfoText">
-      Crownspips Trading is currently operating in demonstration/test mode.
+      Crownspips Trading demonstration account.
     </p>
 
-    <div class="notice" id="accountInfoNotice">
-      Test deposits and withdrawals do not move real money.
-      Real-money services are not currently enabled.
+    <div
+      class="notice"
+      id="accountInfoNotice"
+    >
+      Demo deposits, withdrawals and trades are simulated.
     </div>
+
   </div>
 
 </div>
 
-<div id="withdrawModal" class="modal">
+
+<!-- WITHDRAWAL MODAL -->
+
+<div
+  id="withdrawModal"
+  class="modal"
+>
 
   <div class="modal-box">
 
-    <h2>💸 Withdrawal Funds</h2>
+    <h2>
+      💸 Withdrawal Funds
+    </h2>
 
     <div class="test-label">
-      🧪 TEST WITHDRAWAL MODE — No real money will be transferred.
+
+      🧪 TEST WITHDRAWAL MODE —
+      No real money will be transferred.
+
     </div>
 
-    <label>Currency</label>
+    <label>
+      Currency
+    </label>
 
     <select id="withdrawCurrency">
-      <option value="USD">USD — US Dollar</option>
-      <option value="EUR">EUR — Euro</option>
-      <option value="GBP">GBP — British Pound</option>
-      <option value="NGN">NGN — Nigerian Naira</option>
-      <option value="CAD">CAD — Canadian Dollar</option>
-      <option value="AUD">AUD — Australian Dollar</option>
+
+      <option value="USD">
+        USD — US Dollar
+      </option>
+
+      <option value="EUR">
+        EUR — Euro
+      </option>
+
+      <option value="GBP">
+        GBP — British Pound
+      </option>
+
+      <option value="NGN">
+        NGN — Nigerian Naira
+      </option>
+
+      <option value="CAD">
+        CAD — Canadian Dollar
+      </option>
+
+      <option value="AUD">
+        AUD — Australian Dollar
+      </option>
+
     </select>
 
-    <label>Amount</label>
+    <label>
+      Amount
+    </label>
 
     <input
       type="number"
@@ -418,11 +563,20 @@
       step="0.01"
     >
 
-    <label>Withdrawal Method</label>
+    <label>
+      Withdrawal Method
+    </label>
 
     <select id="withdrawMethod">
-      <option value="TEST_BANK">Test Bank Transfer</option>
-      <option value="TEST_WALLET">Test Wallet</option>
+
+      <option value="TEST_BANK">
+        Test Bank Transfer
+      </option>
+
+      <option value="TEST_WALLET">
+        Test Wallet
+      </option>
+
     </select>
 
     <button
@@ -443,6 +597,7 @@
 
 </div>
 
+
 <script>
 
 const SUPABASE_URL =
@@ -461,48 +616,104 @@ let currentUser = null;
 let currentProfile = null;
 
 
-// =============================
+// ========================================
+// SHOW ERROR
+// ========================================
+
+function showError(message) {
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = message;
+
+  box.style.display = "block";
+}
+
+
+// ========================================
+// HIDE ERROR
+// ========================================
+
+function hideError() {
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.style.display = "none";
+}
+
+
+// ========================================
 // START DASHBOARD
-// =============================
+// ========================================
 
 async function startDashboard() {
 
+  hideError();
+
   const {
-    data: { user },
+    data,
     error
   } = await supabaseClient.auth.getUser();
 
-  if (error || !user) {
-    window.location.href = "login.html";
+  if (error) {
+
+    console.log(error);
+
+    window.location.href =
+      "login.html";
+
     return;
   }
 
-  currentUser = user;
+  const user =
+    data.user;
 
-  document.getElementById("userEmail").textContent =
+  if (!user) {
+
+    window.location.href =
+      "login.html";
+
+    return;
+  }
+
+  currentUser =
+    user;
+
+  document.getElementById(
+    "userEmail"
+  ).textContent =
     user.email || "";
 
   await loadDashboard();
 }
 
 
-// =============================
+// ========================================
 // LOAD DASHBOARD
-// =============================
+// ========================================
 
 async function loadDashboard() {
 
-  if (!currentUser) return;
+  if (!currentUser) {
+
+    await startDashboard();
+
+    return;
+  }
 
   await loadProfile();
+
   await loadTransactions();
+
   await loadTrades();
 }
 
 
-// =============================
+// ========================================
 // LOAD PROFILE
-// =============================
+// ========================================
 
 async function loadProfile() {
 
@@ -513,180 +724,268 @@ async function loadProfile() {
     .from("profiles")
     .select("*")
     .eq("id", currentUser.id)
-    .single();
+    .maybeSingle();
+
 
   if (error) {
+
     console.log(error);
+
+    showError(
+      "Unable to load your profile: " +
+      error.message
+    );
+
     return;
   }
 
-  currentProfile = data;
 
-  document.getElementById("userName").textContent =
+  if (!data) {
+
+    showError(
+      "No profile was found for this account."
+    );
+
+    return;
+  }
+
+
+  currentProfile =
+    data;
+
+
+  document.getElementById(
+    "userName"
+  ).textContent =
     data.full_name || "Trader";
 
+
   const accountType =
-    data.account_type || "demo";
+    String(
+      data.account_type || "demo"
+    ).toLowerCase();
+
 
   const verification =
-    data.verification_status || "pending";
+    String(
+      data.verification_status || "pending"
+    ).toLowerCase();
 
-  const balanceElement =
-    document.getElementById("balance");
-
-  const ngnBalanceElement =
-    document.getElementById("ngnBalance");
-
-  const usdTitle =
-    document.getElementById("usdBalanceTitle");
-
-  const ngnTitle =
-    document.getElementById("ngnBalanceTitle");
 
   const accountBox =
-    document.getElementById("accountBox");
+    document.getElementById(
+      "accountBox"
+    );
 
   const accountTitle =
-    document.getElementById("accountTitle");
+    document.getElementById(
+      "accountTitle"
+    );
 
   const accountMessage =
-    document.getElementById("accountMessage");
+    document.getElementById(
+      "accountMessage"
+    );
 
   const accountStatus =
-    document.getElementById("accountStatus");
+    document.getElementById(
+      "accountStatus"
+    );
+
+  const balance =
+    document.getElementById(
+      "balance"
+    );
+
+  const ngnBalance =
+    document.getElementById(
+      "ngnBalance"
+    );
+
+  const usdTitle =
+    document.getElementById(
+      "usdBalanceTitle"
+    );
+
+  const ngnTitle =
+    document.getElementById(
+      "ngnBalanceTitle"
+    );
 
   const realNotice =
-    document.getElementById("realNotice");
+    document.getElementById(
+      "realNotice"
+    );
 
   const accountInfoText =
-    document.getElementById("accountInfoText");
+    document.getElementById(
+      "accountInfoText"
+    );
 
   const accountInfoNotice =
-    document.getElementById("accountInfoNotice");
+    document.getElementById(
+      "accountInfoNotice"
+    );
 
 
-  // =============================
+  // ========================================
   // DEMO ACCOUNT
-  // =============================
+  // ========================================
 
   if (accountType === "demo") {
 
     const demoBalance =
-      Number(data.balance || 0);
+      Number(
+        data.balance || 0
+      );
 
-    balanceElement.textContent =
-      "$" + demoBalance.toFixed(2);
 
-    ngnBalanceElement.textContent =
+    balance.textContent =
+      "$" +
+      demoBalance.toFixed(2);
+
+
+    ngnBalance.textContent =
       "₦0.00";
+
 
     usdTitle.textContent =
       "Demo USD Balance";
 
+
     ngnTitle.textContent =
       "NGN Balance";
+
 
     accountBox.className =
       "account-box demo";
 
+
     accountTitle.textContent =
       "DEMO ACCOUNT";
+
 
     accountMessage.textContent =
       "You are using a simulated trading account.";
 
+
     accountStatus.textContent =
       "DEMO";
 
+
     realNotice.innerHTML = `
       <div class="notice">
-        🧪 Demo mode: your balance is simulated.
+        🧪 Demo mode is active.
         <br><br>
-        Your demo balance is completely separate from any real-account balance.
+        Your demo balance is completely separate
+        from real-account balances.
       </div>
     `;
+
 
     accountInfoText.textContent =
       "Crownspips Trading demonstration account.";
 
+
     accountInfoNotice.textContent =
-      "Demo deposits, withdrawals and trades are simulated and do not move real money.";
+      "Demo deposits, withdrawals and trades are simulated.";
+
 
     return;
   }
 
 
-  // =============================
-  // REAL ACCOUNT - PENDING
-  // =============================
+  // ========================================
+  // REAL ACCOUNT — PENDING
+  // ========================================
 
   if (
     accountType === "real" &&
     verification === "pending"
   ) {
 
-    balanceElement.textContent =
+    balance.textContent =
       "$0.00";
 
-    ngnBalanceElement.textContent =
+
+    ngnBalance.textContent =
       "₦0.00";
+
 
     usdTitle.textContent =
       "Real USD Balance";
 
+
     ngnTitle.textContent =
       "Real NGN Balance";
+
 
     accountBox.className =
       "account-box pending";
 
+
     accountTitle.textContent =
       "REAL ACCOUNT — PENDING";
+
 
     accountMessage.textContent =
       "Your real-account application is waiting for verification.";
 
+
     accountStatus.textContent =
       "PENDING";
+
 
     realNotice.innerHTML = `
       <div class="notice">
         ⏳ Your real-account application is pending verification.
         <br><br>
-        Real balances are not displayed or credited until verification is completed.
+        Real-account balances are currently unavailable.
       </div>
     `;
+
 
     accountInfoText.textContent =
       "Your real-account application is currently under review.";
 
+
     accountInfoNotice.textContent =
-      "Your demo balance remains separate. It cannot be transferred into the real account.";
+      "Your demo balance remains completely separate from the real account.";
+
 
     return;
   }
 
 
-  // =============================
-  // REAL ACCOUNT - VERIFIED
-  // =============================
+  // ========================================
+  // REAL ACCOUNT — VERIFIED
+  // ========================================
 
   if (
     accountType === "real" &&
     verification === "verified"
   ) {
 
-    const realUsdBalance =
-      Number(data.real_balance || 0);
+    const realUsd =
+      Number(
+        data.real_balance || 0
+      );
 
-    const realNgnBalance =
-      Number(data.ngn_balance || 0);
 
-    balanceElement.textContent =
-      "$" + realUsdBalance.toFixed(2);
+    const realNgn =
+      Number(
+        data.ngn_balance || 0
+      );
 
-    ngnBalanceElement.textContent =
-      "₦" + realNgnBalance.toLocaleString(
+
+    balance.textContent =
+      "$" +
+      realUsd.toFixed(2);
+
+
+    ngnBalance.textContent =
+      "₦" +
+      realNgn.toLocaleString(
         undefined,
         {
           minimumFractionDigits: 2,
@@ -694,144 +993,193 @@ async function loadProfile() {
         }
       );
 
+
     usdTitle.textContent =
       "Real USD Balance";
+
 
     ngnTitle.textContent =
       "Real NGN Balance";
 
+
     accountBox.className =
       "account-box real";
+
 
     accountTitle.textContent =
       "REAL ACCOUNT — VERIFIED";
 
+
     accountMessage.textContent =
-      "Your account has been verified.";
+      "Your real account has been verified.";
+
 
     accountStatus.textContent =
       "VERIFIED";
 
+
     realNotice.innerHTML = `
       <div class="success">
-        ✅ Verified real account.
+        ✅ REAL ACCOUNT — VERIFIED
         <br><br>
-        USD and NGN balances are stored separately.
+        USD Balance:
+        $${realUsd.toFixed(2)}
         <br><br>
-        Your demo balance is completely separate and cannot be transferred into these balances.
+        NGN Balance:
+        ₦${realNgn.toLocaleString(
+          undefined,
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }
+        )}
+        <br><br>
+        Your demo balance is completely separate.
       </div>
     `;
+
 
     accountInfoText.textContent =
       "Verified account balance information.";
 
+
     accountInfoNotice.textContent =
-      "USD transactions affect the USD balance. NGN transactions affect the NGN balance. The two balances are kept separate.";
+      "USD and NGN balances are stored separately.";
+
 
     return;
   }
 
 
-  // =============================
-  // REAL ACCOUNT - REJECTED
-  // =============================
+  // ========================================
+  // REAL ACCOUNT — REJECTED
+  // ========================================
 
   if (
     accountType === "real" &&
     verification === "rejected"
   ) {
 
-    balanceElement.textContent =
+    balance.textContent =
       "$0.00";
 
-    ngnBalanceElement.textContent =
+
+    ngnBalance.textContent =
       "₦0.00";
+
 
     usdTitle.textContent =
       "Real USD Balance";
 
+
     ngnTitle.textContent =
       "Real NGN Balance";
+
 
     accountBox.className =
       "account-box rejected";
 
+
     accountTitle.textContent =
       "REAL ACCOUNT — REJECTED";
+
 
     accountMessage.textContent =
       "Your real-account application was not approved.";
 
+
     accountStatus.textContent =
       "REJECTED";
+
 
     realNotice.innerHTML = `
       <div class="notice">
         Your real-account application is currently marked as rejected.
-        <br><br>
-        No real-account balance is displayed or credited.
       </div>
     `;
 
+
     accountInfoText.textContent =
-      "Your real-account application is currently marked as rejected.";
+      "Your real-account application was not approved.";
+
 
     accountInfoNotice.textContent =
-      "Your demo account balance remains completely separate from the real-account system.";
+      "Your demo balance remains separate from the real account.";
   }
+
 }
 
 
-// =============================
+// ========================================
 // OPEN WITHDRAWAL
-// =============================
+// ========================================
 
 function openWithdrawal() {
 
-  document.getElementById("withdrawModal").style.display =
+  document.getElementById(
+    "withdrawModal"
+  ).style.display =
     "flex";
-
 }
 
 
-// =============================
+// ========================================
 // CLOSE WITHDRAWAL
-// =============================
+// ========================================
 
 function closeWithdrawal() {
 
-  document.getElementById("withdrawModal").style.display =
+  document.getElementById(
+    "withdrawModal"
+  ).style.display =
     "none";
-
 }
 
 
-// =============================
+// ========================================
 // SUBMIT TEST WITHDRAWAL
-// =============================
+// ========================================
 
 async function submitWithdrawal() {
 
   if (!currentUser) {
-    alert("Please log in first.");
+
+    alert(
+      "Please log in first."
+    );
+
     return;
   }
 
+
   const amount =
     Number(
-      document.getElementById("withdrawAmount").value
+      document.getElementById(
+        "withdrawAmount"
+      ).value
     );
 
+
   const currency =
-    document.getElementById("withdrawCurrency").value;
+    document.getElementById(
+      "withdrawCurrency"
+    ).value;
+
 
   const method =
-    document.getElementById("withdrawMethod").value;
+    document.getElementById(
+      "withdrawMethod"
+    ).value;
 
 
-  if (!amount || amount <= 0) {
+  if (
+    !amount ||
+    amount <= 0
+  ) {
 
-    alert("Please enter a valid withdrawal amount.");
+    alert(
+      "Please enter a valid withdrawal amount."
+    );
 
     return;
   }
@@ -848,19 +1196,26 @@ async function submitWithdrawal() {
     .from("transactions")
     .insert({
 
-      user_id: currentUser.id,
+      user_id:
+        currentUser.id,
 
-      transaction_type: "WITHDRAWAL",
+      transaction_type:
+        "WITHDRAWAL",
 
-      amount: amount,
+      amount:
+        amount,
 
-      currency: currency,
+      currency:
+        currency,
 
-      status: "PENDING",
+      status:
+        "PENDING",
 
-      payment_method: method,
+      payment_method:
+        method,
 
-      payment_reference: reference,
+      payment_reference:
+        reference,
 
       description:
         "Simulated test withdrawal request"
@@ -879,27 +1234,35 @@ async function submitWithdrawal() {
   }
 
 
-  document.getElementById("withdrawAmount").value =
+  document.getElementById(
+    "withdrawAmount"
+  ).value =
     "";
 
+
   closeWithdrawal();
+
 
   alert(
     "Test withdrawal request submitted successfully."
   );
 
+
   await loadTransactions();
 }
 
 
-// =============================
+// ========================================
 // LOAD TRANSACTIONS
-// =============================
+// ========================================
 
 async function loadTransactions() {
 
   const area =
-    document.getElementById("transactionArea");
+    document.getElementById(
+      "transactionArea"
+    );
+
 
   const {
     data,
@@ -907,10 +1270,16 @@ async function loadTransactions() {
   } = await supabaseClient
     .from("transactions")
     .select("*")
-    .eq("user_id", currentUser.id)
-    .order("created_at", {
-      ascending: false
-    });
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
 
 
   if (error) {
@@ -924,153 +1293,9 @@ async function loadTransactions() {
   }
 
 
-  if (!data || data.length === 0) {
-
-    area.innerHTML =
-      "<p class='empty'>No transactions yet.</p>";
-
-    document.getElementById("totalDeposits").textContent =
-      "$0.00";
-
-    document.getElementById("totalNgnDeposits").textContent =
-      "₦0.00";
-
-    return;
-  }
-
-
   let totalUsdDeposits = 0;
+
   let totalNgnDeposits = 0;
 
 
-  data.forEach(transaction => {
-
-    if (
-      transaction.transaction_type === "DEPOSIT" &&
-      transaction.status === "COMPLETED"
-    ) {
-
-      const amount =
-        Number(transaction.amount || 0);
-
-      const currency =
-        String(
-          transaction.currency || "USD"
-        ).toUpperCase();
-
-
-      if (currency === "NGN") {
-
-        totalNgnDeposits += amount;
-
-      } else if (currency === "USD") {
-
-        totalUsdDeposits += amount;
-
-      }
-
-    }
-
-  });
-
-
-  document.getElementById("totalDeposits").textContent =
-    "$" + totalUsdDeposits.toFixed(2);
-
-
-  document.getElementById("totalNgnDeposits").textContent =
-    "₦" + totalNgnDeposits.toLocaleString(
-      undefined,
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }
-    );
-
-
-  let html = `
-    <table>
-
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Status</th>
-          <th>Method</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-
-      <tbody>
-  `;
-
-
-  data.forEach(transaction => {
-
-    const date =
-      transaction.created_at
-        ? new Date(transaction.created_at)
-            .toLocaleString()
-        : "-";
-
-
-    html += `
-      <tr>
-
-        <td>
-          ${transaction.transaction_type || "-"}
-        </td>
-
-        <td>
-          ${Number(transaction.amount || 0).toFixed(2)}
-        </td>
-
-        <td>
-          ${transaction.currency || "USD"}
-        </td>
-
-        <td class="status">
-          ${transaction.status || "PENDING"}
-        </td>
-
-        <td>
-          ${transaction.payment_method || "-"}
-        </td>
-
-        <td>
-          ${date}
-        </td>
-
-      </tr>
-    `;
-
-  });
-
-
-  html += `
-      </tbody>
-    </table>
-  `;
-
-  area.innerHTML = html;
-}
-
-
-// =============================
-// LOAD TRADES
-// =============================
-
-async function loadTrades() {
-
-  const area =
-    document.getElementById("tradeArea");
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("trades")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .o
+ 
