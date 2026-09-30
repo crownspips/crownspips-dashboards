@@ -9,9 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
     margin:0;
@@ -33,14 +31,8 @@ body{
     box-shadow:0 5px 20px #0002;
 }
 
-h1{
-    text-align:center;
-    margin-bottom:5px;
-}
-
-.gold{
-    color:#d4af37;
-}
+h1{text-align:center;margin-bottom:5px}
+.gold{color:#d4af37}
 
 .subtitle{
     text-align:center;
@@ -55,7 +47,9 @@ label{
     font-size:14px;
 }
 
-input{
+input[type="text"],
+input[type="email"],
+input[type="password"]{
     width:100%;
     padding:13px;
     margin-top:7px;
@@ -161,7 +155,6 @@ footer{
 <body>
 
 <div class="container">
-
 <div class="box">
 
 <h1>
@@ -236,7 +229,6 @@ No real money is involved.
 
 </label>
 
-
 <label class="account-option">
 
 <input
@@ -250,9 +242,9 @@ Real Account
 </span>
 
 <div class="account-description">
-Apply for a real investor account. Real-money services are
-not currently active and will require verification and the
-necessary financial infrastructure before funds can be accepted.
+Apply for a real investor account. Real-money services
+require verification and the appropriate financial
+infrastructure before funds can be accepted.
 </div>
 
 </label>
@@ -268,14 +260,12 @@ Create Account
 
 </form>
 
-<div
-    id="message"
-    class="message"
-></div>
+<div id="message" class="message"></div>
 
 <button
     class="login"
-    onclick="window.location.href='login.html'"
+    type="button"
+    id="loginButton"
 >
 Already have an account? Login
 </button>
@@ -285,7 +275,7 @@ Already have an account? Login
 <strong>Important</strong><br>
 
 Demo accounts use simulated funds.
-Real accounts are currently applications only.
+Real accounts are applications and require verification.
 Crownspips Trading does not currently accept real deposits
 or process real withdrawals through this website.
 
@@ -299,12 +289,7 @@ or process real withdrawals through this website.
 
 </div>
 
-
 <script>
-
-/* =========================
-   SUPABASE CONNECTION
-========================= */
 
 const SUPABASE_URL =
 "https://ghagrruxxqtnochooiaj.supabase.co";
@@ -318,67 +303,65 @@ window.supabase.createClient(
     SUPABASE_KEY
 );
 
-
-/* =========================
-   MESSAGE
-========================= */
-
 function showMessage(text,type){
 
     const message =
     document.getElementById("message");
 
-    message.textContent=text;
+    message.textContent = text;
 
-    message.className=
-    "message "+type;
+    message.className =
+    "message " + type;
 
-    message.style.display="block";
+    message.style.display = "block";
 }
 
+document
+.getElementById("loginButton")
+.addEventListener("click",function(){
 
-/* =========================
-   REGISTRATION
-========================= */
+    window.location.href = "login.html";
+
+});
 
 document
 .getElementById("registerForm")
-.addEventListener(
-"submit",
-async function(e){
+.addEventListener("submit",async function(e){
 
     e.preventDefault();
 
     const fullName =
-    document
-    .getElementById("fullName")
-    .value
-    .trim();
+    document.getElementById("fullName").value.trim();
 
     const email =
-    document
-    .getElementById("email")
-    .value
-    .trim();
+    document.getElementById("email").value.trim();
 
     const password =
-    document
-    .getElementById("password")
-    .value;
+    document.getElementById("password").value;
 
     const confirmPassword =
-    document
-    .getElementById("confirmPassword")
-    .value;
+    document.getElementById("confirmPassword").value;
 
-    const accountType =
+    const selectedAccount =
     document.querySelector(
         'input[name="accountType"]:checked'
-    ).value;
+    );
 
     const button =
     document.getElementById("registerButton");
 
+    if(!selectedAccount){
+
+        showMessage(
+            "Please choose an account type.",
+            "error"
+        );
+
+        return;
+    }
+
+    const accountType =
+    selectedAccount.value;
 
     if(password !== confirmPassword){
 
@@ -390,7 +373,6 @@ async function(e){
         return;
     }
 
-
     if(password.length < 6){
 
         showMessage(
@@ -401,128 +383,76 @@ async function(e){
         return;
     }
 
+    button.disabled = true;
+    button.textContent = "Creating Account...";
 
-    button.disabled=true;
-    button.textContent="Creating Account...";
+    try{
 
+        const {data,error} =
+        await supabaseClient.auth.signUp({
 
-    /* Create authentication account */
+            email: email,
 
-    const {data,error} =
-    await supabaseClient.auth.signUp({
+            password: password,
 
-        email:email,
-
-        password:password,
-
-        options:{
-            data:{
-                full_name:fullName,
-                account_type:accountType
+            options:{
+                data:{
+                    full_name: fullName,
+                    account_type: accountType
+                }
             }
+
+        });
+
+        if(error){
+
+            throw error;
+
         }
 
-    });
+        if(!data || !data.user){
 
-
-    if(error){
-
-        showMessage(
-            error.message,
-            "error"
-        );
-
-        button.disabled=false;
-        button.textContent="Create Account";
-
-        return;
-    }
-
-
-    const user=data.user;
-
-
-    if(!user){
-
-        showMessage(
-            "Account creation was not completed. Please try again.",
-            "error"
-        );
-
-        button.disabled=false;
-        button.textContent="Create Account";
-
-        return;
-    }
-
-
-    /* Create investor profile */
-
-    const {error:profileError} =
-    await supabaseClient
-    .from("profiles")
-    .insert({
-
-        id:user.id,
-
-        full_name:fullName,
-
-        email:email,
-
-        balance:10000,
-
-        account_type:accountType
-
-    });
-
-
-    if(profileError){
-
-        if(
-            !profileError.message
-            .toLowerCase()
-            .includes("duplicate")
-        ){
-
-            showMessage(
-                "Account was created, but the investor profile could not be created: "+
-                profileError.message,
-                "error"
+            throw new Error(
+                "Account creation was not completed. Please try again."
             );
 
-            button.disabled=false;
-            button.textContent="Create Account";
-
-            return;
         }
-    }
 
+        if(accountType === "real"){
 
-    if(accountType==="demo"){
+            showMessage(
+                "Real account application created successfully. Your account is pending verification.",
+                "success"
+            );
+
+        }else{
+
+            showMessage(
+                "Demo account created successfully. You can now log in.",
+                "success"
+            );
+
+        }
+
+        button.textContent = "Account Created";
+
+        setTimeout(function(){
+
+            window.location.href = "login.html";
+
+        },1800);
+
+    }catch(error){
 
         showMessage(
-            "Demo account created successfully! You can now log in.",
-            "success"
+            error.message || "Unable to create account.",
+            "error"
         );
 
-    }else{
-
-        showMessage(
-            "Real account application created successfully. Your account is pending verification.",
-            "success"
-        );
+        button.disabled = false;
+        button.textContent = "Create Account";
 
     }
-
-
-    button.textContent="Account Created";
-
-
-    setTimeout(function(){
-
-        window.location.href="login.html";
-
-    },1800);
 
 });
 
