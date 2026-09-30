@@ -42,18 +42,10 @@
       cursor: pointer;
     }
 
-    #logoutBtn:disabled {
-      opacity: .7;
-    }
-
     main {
       max-width: 1000px;
       margin: auto;
       padding: 25px 20px 50px;
-    }
-
-    h2 {
-      font-size: 30px;
     }
 
     #loading {
@@ -155,13 +147,10 @@
     .withdraw { background: #7c3aed; }
     .trade { background: #2563eb; }
     .verify { background: #d97706; }
-    .disabledBtn {
+
+    .disabled {
       background: #94a3b8 !important;
       cursor: not-allowed !important;
-    }
-
-    section h3 {
-      margin-top: 0;
     }
 
     .item {
@@ -171,15 +160,6 @@
 
     .muted {
       color: #64748b;
-    }
-
-    .notice {
-      background: #f8fafc;
-      border-left: 4px solid #64748b;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 8px;
-      line-height: 1.5;
     }
 
     @media (max-width: 700px) {
@@ -262,21 +242,15 @@
 
     <div class="buttons">
 
-      <button id="depositBtn"
-        class="deposit"
-        type="button">
+      <button id="depositBtn" class="deposit" type="button">
         Deposit
       </button>
 
-      <button id="withdrawBtn"
-        class="withdraw"
-        type="button">
+      <button id="withdrawBtn" class="withdraw" type="button">
         Withdraw
       </button>
 
-      <button id="demoTrade"
-        class="trade"
-        type="button">
+      <button id="demoTrade" class="trade" type="button">
         Demo Trade
       </button>
 
@@ -291,21 +265,20 @@
 
     <section>
       <h3>Recent Transactions</h3>
-      <div id="transactions">
-        No transactions yet.
-      </div>
+      <div id="transactions">No transactions yet.</div>
     </section>
 
     <section>
       <h3>Trades</h3>
-      <div id="trades">
-        No trades yet.
-      </div>
+      <div id="trades">No trades yet.</div>
     </section>
 
   </div>
 
 </main>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 (function () {
@@ -319,11 +292,6 @@
   let client = null;
   let user = null;
   let profile = null;
-
-
-  /* =========================
-     ELEMENTS
-  ========================= */
 
   const logoutBtn =
     document.getElementById("logoutBtn");
@@ -343,100 +311,78 @@
 
   /* =========================
      LOGOUT
-  ========================= */
+     ========================= */
 
-  logoutBtn.onclick = async function () {
+  logoutBtn.addEventListener("click", async function () {
 
     logoutBtn.disabled = true;
     logoutBtn.textContent = "Logging out...";
 
+    /*
+      Clear the Supabase session locally first.
+      This makes logout work even if the
+      Supabase server is temporarily unavailable.
+    */
+
     try {
+      Object.keys(localStorage).forEach(function (key) {
+
+        if (
+          key.startsWith("sb-") &&
+          key.endsWith("-auth-token")
+        ) {
+          localStorage.removeItem(key);
+        }
+
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+
       if (client) {
         await client.auth.signOut();
       }
+
     } catch (e) {
-      console.log("Logout:", e);
+      console.log("Supabase logout:", e);
     }
 
-    window.location.href = "login.html";
-  };
+    window.location.replace("login.html");
+  });
 
 
   /* =========================
      ERROR
-  ========================= */
+     ========================= */
 
   function showError(message) {
 
-    document.getElementById("loading").style.display =
-      "none";
+    document.getElementById("loading")
+      .style.display = "none";
 
-    const box =
+    const error =
       document.getElementById("error");
 
-    box.style.display = "block";
+    error.style.display = "block";
 
-    box.innerHTML =
+    error.innerHTML =
       "<strong>Dashboard error:</strong><br>" +
-      message;
+      message +
+      "<br><br>" +
+      "<button onclick=\"location.reload()\" " +
+      "style=\"padding:10px 16px;border:0;" +
+      "border-radius:8px;background:#991b1b;" +
+      "color:white;font-weight:bold;\">" +
+      "Reload Dashboard" +
+      "</button>";
   }
 
 
   /* =========================
-     LOAD SUPABASE
-  ========================= */
-
-  function loadSupabase() {
-
-    return new Promise(function(resolve, reject) {
-
-      if (
-        window.supabase &&
-        typeof window.supabase.createClient === "function"
-      ) {
-        resolve();
-        return;
-      }
-
-      const script =
-        document.createElement("script");
-
-      script.src =
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-
-      script.onload = function () {
-
-        if (
-          window.supabase &&
-          typeof window.supabase.createClient === "function"
-        ) {
-          resolve();
-        } else {
-          reject(
-            new Error(
-              "Supabase library loaded incorrectly."
-            )
-          );
-        }
-      };
-
-      script.onerror = function () {
-
-        reject(
-          new Error(
-            "Could not load Supabase."
-          )
-        );
-      };
-
-      document.head.appendChild(script);
-    });
-  }
-
-
-  /* =========================
-     FORMAT MONEY
-  ========================= */
+     FORMAT
+     ========================= */
 
   function usd(value) {
 
@@ -459,16 +405,19 @@
 
 
   /* =========================
-     ACCOUNT CONTROLS
-  ========================= */
+     DISABLE REAL FUNCTIONS
+     ========================= */
 
-  function disableRealControls(message) {
+  function disableRealFunctions(message) {
 
-    depositBtn.classList.add("disabledBtn");
-    withdrawBtn.classList.add("disabledBtn");
+    depositBtn.classList.add("disabled");
+    withdrawBtn.classList.add("disabled");
 
-    depositBtn.textContent = "Deposit unavailable";
-    withdrawBtn.textContent = "Withdraw unavailable";
+    depositBtn.textContent =
+      "Deposit Unavailable";
+
+    withdrawBtn.textContent =
+      "Withdraw Unavailable";
 
     depositBtn.onclick = function () {
       alert(message);
@@ -476,37 +425,508 @@
 
     withdrawBtn.onclick = function () {
       alert(message);
-    };
-  }
-
-
-  function enableRealControls() {
-
-    depositBtn.classList.remove("disabledBtn");
-    withdrawBtn.classList.remove("disabledBtn");
-
-    depositBtn.textContent = "Deposit";
-    withdrawBtn.textContent = "Withdraw";
-
-    depositBtn.onclick = function () {
-      window.location.href = "deposit.html";
-    };
-
-    withdrawBtn.onclick = function () {
-      requestWithdrawal();
     };
   }
 
 
   /* =========================
+     ENABLE REAL FUNCTIONS
+     ========================= */
+
+  function enableRealFunctions() {
+
+    depositBtn.classList.remove("disabled");
+    withdrawBtn.classList.remove("disabled");
+
+    depositBtn.textContent = "Deposit";
+    withdrawBtn.textContent = "Withdraw";
+
+    depositBtn.onclick = function () {
+      location.href = "deposit.html";
+    };
+
+    withdrawBtn.onclick = function () {
+
+      alert(
+        "Withdrawal request section is available for your verified real account."
+      );
+
+    };
+  }
+
+
+  /* =========================
+     LOAD PROFILE
+     ========================= */
+
+  async function loadProfile() {
+
+    const result =
+      await client
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (!result.data) {
+      throw new Error(
+        "No profile was found for this account."
+      );
+    }
+
+    profile = result.data;
+
+    const type =
+      String(
+        profile.account_type || "demo"
+      ).toLowerCase();
+
+    const verification =
+      String(
+        profile.verification_status || "pending"
+      ).toLowerCase();
+
+
+    document.getElementById("name")
+      .textContent =
+      profile.full_name || "Trader";
+
+    document.getElementById("email")
+      .textContent =
+      profile.email || user.email || "";
+
+    document.getElementById("accountType")
+      .textContent =
+      type.toUpperCase();
+
+    document.getElementById("verification")
+      .textContent =
+      verification.toUpperCase();
+
+
+    const banner =
+      document.getElementById("banner");
+
+
+    /* VERIFIED REAL */
+
+    if (
+      type === "real" &&
+      verification === "verified"
+    ) {
+
+      banner.className = "banner real";
+
+      banner.innerHTML =
+        "<h3>REAL ACCOUNT — ACTIVE</h3>" +
+        "<p>Your real account has been verified and is active.</p>";
+
+      document.getElementById("usdLabel")
+        .textContent =
+        "Real USD Balance";
+
+      document.getElementById("usdBalance")
+        .textContent =
+        usd(profile.real_balance);
+
+      document.getElementById("ngnBalance")
+        .textContent =
+        ngn(profile.ngn_balance);
+
+      document.getElementById("status")
+        .textContent =
+        "ACTIVE";
+
+      demoTradeBtn.style.display = "none";
+      verifyBtn.style.display = "none";
+
+      enableRealFunctions();
+
+      return;
+    }
+
+
+    /* PENDING REAL */
+
+    if (
+      type === "real" &&
+      verification === "pending"
+    ) {
+
+      banner.className = "banner pending";
+
+      banner.innerHTML =
+        "<h3>REAL ACCOUNT — PENDING</h3>" +
+        "<p>Your real account application is awaiting admin verification.</p>";
+
+      document.getElementById("usdLabel")
+        .textContent =
+        "Real USD Balance";
+
+      document.getElementById("usdBalance")
+        .textContent =
+        "$0.00";
+
+      document.getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
+
+      document.getElementById("status")
+        .textContent =
+        "PENDING";
+
+      demoTradeBtn.style.display = "none";
+
+      verifyBtn.style.display = "inline-block";
+
+      verifyBtn.textContent =
+        "Complete Verification";
+
+      verifyBtn.onclick = function () {
+        location.href = "verification.html";
+      };
+
+      disableRealFunctions(
+        "Your real account is still pending verification."
+      );
+
+      return;
+    }
+
+
+    /* REJECTED REAL */
+
+    if (
+      type === "real" &&
+      verification === "rejected"
+    ) {
+
+      banner.className = "banner rejected";
+
+      banner.innerHTML =
+        "<h3>REAL ACCOUNT — REJECTED</h3>" +
+        "<p>Your real account application was not approved. You can update your verification information and submit it again.</p>";
+
+      document.getElementById("usdLabel")
+        .textContent =
+        "Real USD Balance";
+
+      document.getElementById("usdBalance")
+        .textContent =
+        "$0.00";
+
+      document.getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
+
+      document.getElementById("status")
+        .textContent =
+        "REJECTED";
+
+      demoTradeBtn.style.display = "none";
+
+      verifyBtn.style.display = "inline-block";
+
+      verifyBtn.textContent =
+        "Update Verification";
+
+      verifyBtn.onclick = function () {
+        location.href = "verification.html";
+      };
+
+      disableRealFunctions(
+        "Your real account is currently rejected."
+      );
+
+      return;
+    }
+
+
+    /* DEMO */
+
+    banner.className = "banner demo";
+
+    banner.innerHTML =
+      "<h3>DEMO ACCOUNT</h3>" +
+      "<p>You are using a simulated trading account. Demo funds are completely separate from real-account funds.</p>";
+
+    document.getElementById("usdLabel")
+      .textContent =
+      "Demo USD Balance";
+
+    document.getElementById("usdBalance")
+      .textContent =
+      usd(profile.balance);
+
+    document.getElementById("ngnBalance")
+      .textContent =
+      "₦0.00";
+
+    document.getElementById("status")
+      .textContent =
+      "DEMO";
+
+    demoTradeBtn.style.display =
+      "inline-block";
+
+    verifyBtn.style.display =
+      "none";
+
+    disableRealFunctions(
+      "Real deposits and withdrawals are available only on an active verified real account."
+    );
+  }
+
+
+  /* =========================
+     TRANSACTIONS
+     ========================= */
+
+  async function loadTransactions() {
+
+    const result =
+      await client
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", {
+          ascending: false
+        })
+        .limit(20);
+
+    if (result.error) {
+
+      document.getElementById("transactions")
+        .textContent =
+        "Unable to load transactions.";
+
+      return;
+    }
+
+    const transactions =
+      result.data || [];
+
+    const box =
+      document.getElementById("transactions");
+
+    let usdTotal = 0;
+    let ngnTotal = 0;
+
+    if (!transactions.length) {
+
+      box.textContent =
+        "No transactions yet.";
+
+      return;
+    }
+
+    box.innerHTML = "";
+
+    transactions.forEach(function (tx) {
+
+      const currency =
+        String(
+          tx.currency || "USD"
+        ).toUpperCase();
+
+      if (
+        tx.transaction_type === "DEPOSIT" &&
+        tx.status === "COMPLETED"
+      ) {
+
+        if (currency === "NGN") {
+          ngnTotal += Number(tx.amount || 0);
+        } else {
+          usdTotal += Number(tx.amount || 0);
+        }
+      }
+
+      const div =
+        document.createElement("div");
+
+      div.className = "item";
+
+      const symbol =
+        currency === "NGN"
+          ? "₦"
+          : "$";
+
+      div.innerHTML =
+        "<strong>" +
+        (tx.transaction_type || "") +
+        "</strong> " +
+        symbol +
+        Number(tx.amount || 0).toLocaleString() +
+        "<br><small class='muted'>" +
+        currency +
+        " • " +
+        (tx.status || "") +
+        "</small>";
+
+      box.appendChild(div);
+    });
+
+    document.getElementById("usdDeposits")
+      .textContent =
+      usd(usdTotal);
+
+    document.getElementById("ngnDeposits")
+      .textContent =
+      ngn(ngnTotal);
+  }
+
+
+  /* =========================
+     TRADES
+     ========================= */
+
+  async function loadTrades() {
+
+    const result =
+      await client
+        .from("trades")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("opened_at", {
+          ascending: false
+        });
+
+    if (result.error) {
+
+      document.getElementById("trades")
+        .textContent =
+        "Unable to load trades.";
+
+      return;
+    }
+
+    const trades =
+      result.data || [];
+
+    const open =
+      trades.filter(function (trade) {
+        return String(trade.status)
+          .toUpperCase() === "OPEN";
+      });
+
+    document.getElementById("openTrades")
+      .textContent =
+      open.length;
+
+    const box =
+      document.getElementById("trades");
+
+    if (!trades.length) {
+
+      box.textContent =
+        "No trades yet.";
+
+      return;
+    }
+
+    box.innerHTML = "";
+
+    trades.slice(0, 20)
+      .forEach(function (trade) {
+
+        const div =
+          document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML =
+          "<strong>" +
+          trade.pair +
+          "</strong> — " +
+          trade.trade_type +
+          "<br><small class='muted'>" +
+          "Units: " +
+          trade.units +
+          " • Open: " +
+          trade.open_price +
+          " • " +
+          trade.status +
+          "</small>";
+
+        box.appendChild(div);
+      });
+  }
+
+
+  /* =========================
+     DEMO TRADE
+     ========================= */
+
+  demoTradeBtn.onclick = async function () {
+
+    if (!profile) return;
+
+    if (
+      String(profile.account_type)
+        .toLowerCase() !== "demo"
+    ) {
+
+      alert(
+        "Demo trading is only available on a demo account."
+      );
+
+      return;
+    }
+
+    const result =
+      await client
+        .from("trades")
+        .insert({
+          user_id: user.id,
+          pair: "EUR/USD",
+          trade_type: "BUY",
+          units: 1000,
+          open_price: 1.1000,
+          status: "OPEN"
+        });
+
+    if (result.error) {
+
+      alert(
+        "Demo trade failed: " +
+        result.error.message
+      );
+
+      return;
+    }
+
+    alert("Demo trade opened.");
+
+    await loadTrades();
+  };
+
+
+  /* =========================
      START
-  ========================= */
+     ========================= */
 
   async function start() {
 
     try {
 
-      await loadSupabase();
+      /*
+        Check that Supabase actually loaded.
+      */
+
+      if (
+        !window.supabase ||
+        typeof window.supabase.createClient !== "function"
+      ) {
+
+        throw new Error(
+          "Supabase could not load. Please check your internet connection and reload the page."
+        );
+      }
+
 
       client =
         window.supabase.createClient(
@@ -526,8 +946,9 @@
 
       if (!result.data.session) {
 
-        window.location.href =
-          "login.html";
+        window.location.replace(
+          "login.html"
+        );
 
         return;
       }
@@ -550,8 +971,9 @@
       document.getElementById("dashboard")
         .style.display = "block";
 
-
     } catch (error) {
+
+      console.error(error);
 
       showError(
         error.message ||
@@ -561,561 +983,17 @@
   }
 
 
-  /* =========================
-     PROFILE
-  ========================= */
-
-  async function loadProfile() {
-
-    const result =
-      await client
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-
-    if (result.error) {
-      throw result.error;
-    }
-
-
-    if (!result.data) {
-
-      throw new Error(
-        "No profile exists for this account."
-      );
-    }
-
-
-    profile = result.data;
-
-
-    const type =
-      String(
-        profile.account_type || "demo"
-      ).toLowerCase();
-
-
-    const verification =
-      String(
-        profile.verification_status || "pending"
-      ).toLowerCase();
-
-
-    document.getElementById("name")
-      .textContent =
-      profile.full_name || "Trader";
-
-
-    document.getElementById("email")
-      .textContent =
-      profile.email || user.email || "";
-
-
-    document.getElementById("accountType")
-      .textContent =
-      type.toUpperCase();
-
-
-    document.getElementById("verification")
-      .textContent =
-      verification.toUpperCase();
-
-
-    const banner =
-      document.getElementById("banner");
-
-
-    /* =========================
-       VERIFIED REAL ACCOUNT
-    ========================= */
-
-    if (
-      type === "real" &&
-      verification === "verified"
-    ) {
-
-      banner.className =
-        "banner real";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — ACTIVE</h3>" +
-        "<p>Your real account has been verified " +
-        "and is active.</p>";
-
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-
-      document.getElementById("usdBalance")
-        .textContent =
-        usd(profile.real_balance);
-
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        ngn(profile.ngn_balance);
-
-
-      document.getElementById("status")
-        .textContent =
-        "ACTIVE";
-
-
-      demoTradeBtn.style.display =
-        "none";
-
-
-      verifyBtn.style.display =
-        "none";
-
-
-      enableRealControls();
-
-      return;
-    }
-
-
-    /* =========================
-       PENDING REAL ACCOUNT
-    ========================= */
-
-    if (
-      type === "real" &&
-      verification === "pending"
-    ) {
-
-      banner.className =
-        "banner pending";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — PENDING</h3>" +
-        "<p>Your real account application is " +
-        "awaiting admin verification. " +
-        "Real trading and real-money account functions " +
-        "are unavailable until verification is completed.</p>";
-
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-
-      document.getElementById("usdBalance")
-        .textContent =
-        "$0.00";
-
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        "₦0.00";
-
-
-      document.getElementById("status")
-        .textContent =
-        "PENDING";
-
-
-      demoTradeBtn.style.display =
-        "none";
-
-
-      verifyBtn.style.display =
-        "inline-block";
-
-
-      disableRealControls(
-        "Your real account is still pending verification."
-      );
-
-
-      verifyBtn.onclick = function () {
-        window.location.href =
-          "verification.html";
-      };
-
-      return;
-    }
-
-
-    /* =========================
-       REJECTED REAL ACCOUNT
-    ========================= */
-
-    if (
-      type === "real" &&
-      verification === "rejected"
-    ) {
-
-      banner.className =
-        "banner rejected";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — REJECTED</h3>" +
-        "<p>Your real account application was not approved. " +
-        "You can update your verification information and submit it again.</p>";
-
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-
-      document.getElementById("usdBalance")
-        .textContent =
-        "$0.00";
-
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        "₦0.00";
-
-
-      document.getElementById("status")
-        .textContent =
-        "REJECTED";
-
-
-      demoTradeBtn.style.display =
-        "none";
-
-
-      verifyBtn.style.display =
-        "inline-block";
-
-
-      verifyBtn.textContent =
-        "Update Verification";
-
-
-      disableRealControls(
-        "Your real account has been rejected. Please update your verification information first."
-      );
-
-
-      verifyBtn.onclick = function () {
-        window.location.href =
-          "verification.html";
-      };
-
-      return;
-    }
-
-
-    /* =========================
-       DEMO ACCOUNT
-    ========================= */
-
-    banner.className =
-      "banner demo";
-
-    banner.innerHTML =
-      "<h3>DEMO ACCOUNT</h3>" +
-      "<p>You are currently using a simulated " +
-      "trading account. Demo funds are completely " +
-      "separate from real-account funds.</p>";
-
-
-    document.getElementById("usdLabel")
-      .textContent =
-      "Demo USD Balance";
-
-
-    document.getElementById("usdBalance")
-      .textContent =
-      usd(profile.balance);
-
-
-    document.getElementById("ngnBalance")
-      .textContent =
-      "₦0.00";
-
-
-    document.getElementById("status")
-      .textContent =
-      "DEMO";
-
-
-    demoTradeBtn.style.display =
-      "inline-block";
-
-
-    verifyBtn.style.display =
-      "none";
-
-
-    /*
-      Demo accounts can use simulated
-      trading. Real-money controls are
-      disabled.
-    */
-
-    depositBtn.classList.add("disabledBtn");
-    withdrawBtn.classList.add("disabledBtn");
-
-    depositBtn.textContent =
-      "Real Deposit Unavailable";
-
-    withdrawBtn.textContent =
-      "Real Withdrawal Unavailable";
-
-
-    depositBtn.onclick = function () {
-      alert(
-        "Real deposits are available only on an active verified real account."
-      );
-    };
-
-
-    withdrawBtn.onclick = function () {
-      alert(
-        "Real withdrawals are available only on an active verified real account."
-      );
-    };
-  }
-
-
-  /* =========================
-     TRANSACTIONS
-  ========================= */
-
-  async function loadTransactions() {
-
-    const result =
-      await client
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", {
-          ascending: false
-        })
-        .limit(20);
-
-
-    if (result.error) {
-
-      document.getElementById("transactions")
-        .textContent =
-        "Unable to load transactions.";
-
-      return;
-    }
-
-
-    const transactions =
-      result.data || [];
-
-
-    const container =
-      document.getElementById("transactions");
-
-
-    if (!transactions.length) {
-
-      container.textContent =
-        "No transactions yet.";
-
-      document.getElementById("usdDeposits")
-        .textContent =
-        "$0.00";
-
-      document.getElementById("ngnDeposits")
-        .textContent =
-        "₦0.00";
-
-      return;
-    }
-
-
-    let usdTotal = 0;
-    let ngnTotal = 0;
-
-
-    container.innerHTML = "";
-
-
-    transactions.forEach(function(tx) {
-
-      const currency =
-        String(
-          tx.currency || "USD"
-        ).toUpperCase();
-
-
-      if (
-        tx.transaction_type === "DEPOSIT" &&
-        tx.status === "COMPLETED"
-      ) {
-
-        if (currency === "NGN") {
-          ngnTotal += Number(tx.amount || 0);
-        } else {
-          usdTotal += Number(tx.amount || 0);
-        }
-      }
-
-
-      const div =
-        document.createElement("div");
-
-      div.className = "item";
-
-
-      const symbol =
-        currency === "NGN"
-          ? "₦"
-          : "$";
-
-
-      div.innerHTML =
-        "<strong>" +
-        (tx.transaction_type || "") +
-        "</strong> " +
-
-        symbol +
-        Number(tx.amount || 0)
-          .toLocaleString() +
-
-        "<br><small class='muted'>" +
-        currency +
-        " • " +
-        (tx.status || "") +
-        "</small>";
-
-
-      container.appendChild(div);
-
-    });
-
-
-    document.getElementById("usdDeposits")
-      .textContent =
-      usd(usdTotal);
-
-
-    document.getElementById("ngnDeposits")
-      .textContent =
-      ngn(ngnTotal);
-  }
-
-
-  /* =========================
-     TRADES
-  ========================= */
-
-  async function loadTrades() {
-
-    const result =
-      await client
-        .from("trades")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("opened_at", {
-          ascending: false
-        });
-
-
-    if (result.error) {
-
-      document.getElementById("trades")
-        .textContent =
-        "Unable to load trades.";
-
-      return;
-    }
-
-
-    const trades =
-      result.data || [];
-
-
-    const open =
-      trades.filter(function(t) {
-
-        return String(t.status)
-          .toUpperCase() === "OPEN";
-
-      });
-
-
-    document.getElementById("openTrades")
-      .textContent =
-      open.length;
-
-
-    const box =
-      document.getElementById("trades");
-
-
-    if (!trades.length) {
-
-      box.textContent =
-        "No trades yet.";
-
-      return;
-    }
-
-
-    box.innerHTML = "";
-
-
-    trades.slice(0, 20).forEach(function(t) {
-
-      const div =
-        document.createElement("div");
-
-      div.className = "item";
-
-      div.innerHTML =
-        "<strong>" +
-        t.pair +
-        "</strong> — " +
-        t.trade_type +
-        "<br><small class='muted'>" +
-        "Units: " +
-        t.units +
-        " • Open: " +
-        t.open_price +
-        " • " +
-        t.status +
-        "</small>";
-
-      box.appendChild(div);
-
-    });
-  }
-
-
-  /* =========================
-     DEMO TRADE
-  ========================= */
-
-  demoTradeBtn.onclick = async function() {
-
-    if (!profile) return;
-
-
-    if (
-      String(profile.account_type)
-        .toLowerCase() !== "demo"
-    ) {
-
-      alert(
-        "Demo trading is only available on a demo account."
-      );
-
-      return;
-    }
-
-
-    const result =
-      await client
-        .from("trades")
-        .insert({
-          user_id: user.id,
-          pair: "EUR/USD",
-          trade_type: "BUY",
-       
+  /*
+    Give the browser a moment to finish
+    loading the Supabase script.
+  */
+
+  window.addEventListener("load", function () {
+    start();
+  });
+
+})();
+</script>
+
+</body>
+  </html>
