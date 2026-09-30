@@ -39,6 +39,11 @@
       border-radius: 10px;
       font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
+    }
+
+    #logoutBtn:disabled {
+      opacity: .7;
     }
 
     main {
@@ -143,11 +148,17 @@
       color: white;
       font-weight: bold;
       font-size: 16px;
+      cursor: pointer;
     }
 
     .deposit { background: #16a34a; }
     .withdraw { background: #7c3aed; }
     .trade { background: #2563eb; }
+    .verify { background: #d97706; }
+    .disabledBtn {
+      background: #94a3b8 !important;
+      cursor: not-allowed !important;
+    }
 
     section h3 {
       margin-top: 0;
@@ -160,6 +171,15 @@
 
     .muted {
       color: #64748b;
+    }
+
+    .notice {
+      background: #f8fafc;
+      border-left: 4px solid #64748b;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      line-height: 1.5;
     }
 
     @media (max-width: 700px) {
@@ -242,20 +262,29 @@
 
     <div class="buttons">
 
-      <button class="deposit"
-        onclick="location.href='deposit.html'">
+      <button id="depositBtn"
+        class="deposit"
+        type="button">
         Deposit
       </button>
 
-      <button class="withdraw"
-        onclick="requestWithdrawal()">
+      <button id="withdrawBtn"
+        class="withdraw"
+        type="button">
         Withdraw
       </button>
 
       <button id="demoTrade"
         class="trade"
-        onclick="demoTrade()">
+        type="button">
         Demo Trade
+      </button>
+
+      <button id="verifyBtn"
+        class="verify"
+        type="button"
+        style="display:none;">
+        Complete Verification
       </button>
 
     </div>
@@ -293,35 +322,44 @@
 
 
   /* =========================
+     ELEMENTS
+  ========================= */
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+  const depositBtn =
+    document.getElementById("depositBtn");
+
+  const withdrawBtn =
+    document.getElementById("withdrawBtn");
+
+  const demoTradeBtn =
+    document.getElementById("demoTrade");
+
+  const verifyBtn =
+    document.getElementById("verifyBtn");
+
+
+  /* =========================
      LOGOUT
   ========================= */
 
-  document
-    .getElementById("logoutBtn")
-    .onclick = async function () {
+  logoutBtn.onclick = async function () {
 
-      const button = this;
+    logoutBtn.disabled = true;
+    logoutBtn.textContent = "Logging out...";
 
-      button.disabled = true;
-      button.textContent = "Logging out...";
-
-      try {
-
-        if (client) {
-          await client.auth.signOut();
-        }
-
-      } catch (e) {
-        console.log("Logout:", e);
+    try {
+      if (client) {
+        await client.auth.signOut();
       }
+    } catch (e) {
+      console.log("Logout:", e);
+    }
 
-      /*
-        Always redirect, even if Supabase
-        has an error.
-      */
-
-      window.location.href = "login.html";
-    };
+    window.location.href = "login.html";
+  };
 
 
   /* =========================
@@ -386,14 +424,77 @@
 
         reject(
           new Error(
-            "Could not load Supabase. Check your internet connection."
+            "Could not load Supabase."
           )
         );
       };
 
       document.head.appendChild(script);
-
     });
+  }
+
+
+  /* =========================
+     FORMAT MONEY
+  ========================= */
+
+  function usd(value) {
+
+    return "$" +
+      Number(value || 0).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+  }
+
+
+  function ngn(value) {
+
+    return "₦" +
+      Number(value || 0).toLocaleString("en-NG", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+  }
+
+
+  /* =========================
+     ACCOUNT CONTROLS
+  ========================= */
+
+  function disableRealControls(message) {
+
+    depositBtn.classList.add("disabledBtn");
+    withdrawBtn.classList.add("disabledBtn");
+
+    depositBtn.textContent = "Deposit unavailable";
+    withdrawBtn.textContent = "Withdraw unavailable";
+
+    depositBtn.onclick = function () {
+      alert(message);
+    };
+
+    withdrawBtn.onclick = function () {
+      alert(message);
+    };
+  }
+
+
+  function enableRealControls() {
+
+    depositBtn.classList.remove("disabledBtn");
+    withdrawBtn.classList.remove("disabledBtn");
+
+    depositBtn.textContent = "Deposit";
+    withdrawBtn.textContent = "Withdraw";
+
+    depositBtn.onclick = function () {
+      window.location.href = "deposit.html";
+    };
+
+    withdrawBtn.onclick = function () {
+      requestWithdrawal();
+    };
   }
 
 
@@ -456,7 +557,6 @@
         error.message ||
         "Unable to load your account."
       );
-
     }
   }
 
@@ -483,8 +583,7 @@
     if (!result.data) {
 
       throw new Error(
-        "No profile exists for this logged-in account. " +
-        "User ID: " + user.id
+        "No profile exists for this account."
       );
     }
 
@@ -528,6 +627,10 @@
       document.getElementById("banner");
 
 
+    /* =========================
+       VERIFIED REAL ACCOUNT
+    ========================= */
+
     if (
       type === "real" &&
       verification === "verified"
@@ -537,10 +640,9 @@
         "banner real";
 
       banner.innerHTML =
-        "<h3>REAL ACCOUNT</h3>" +
-        "<p>Your real account is verified. " +
-        "Your USD and NGN balances are separate " +
-        "from your demo account.</p>";
+        "<h3>REAL ACCOUNT — ACTIVE</h3>" +
+        "<p>Your real account has been verified " +
+        "and is active.</p>";
 
 
       document.getElementById("usdLabel")
@@ -550,36 +652,36 @@
 
       document.getElementById("usdBalance")
         .textContent =
-        "$" +
-        Number(profile.real_balance || 0)
-          .toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });
+        usd(profile.real_balance);
 
 
       document.getElementById("ngnBalance")
         .textContent =
-        "₦" +
-        Number(profile.ngn_balance || 0)
-          .toLocaleString("en-NG", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });
+        ngn(profile.ngn_balance);
 
 
       document.getElementById("status")
         .textContent =
-        "VERIFIED";
+        "ACTIVE";
 
 
-      document.getElementById("demoTrade")
-        .style.display =
+      demoTradeBtn.style.display =
         "none";
+
+
+      verifyBtn.style.display =
+        "none";
+
+
+      enableRealControls();
 
       return;
     }
 
+
+    /* =========================
+       PENDING REAL ACCOUNT
+    ========================= */
 
     if (
       type === "real" &&
@@ -591,8 +693,10 @@
 
       banner.innerHTML =
         "<h3>REAL ACCOUNT — PENDING</h3>" +
-        "<p>Your real account application " +
-        "is awaiting verification.</p>";
+        "<p>Your real account application is " +
+        "awaiting admin verification. " +
+        "Real trading and real-money account functions " +
+        "are unavailable until verification is completed.</p>";
 
 
       document.getElementById("usdLabel")
@@ -615,13 +719,31 @@
         "PENDING";
 
 
-      document.getElementById("demoTrade")
-        .style.display =
+      demoTradeBtn.style.display =
         "none";
+
+
+      verifyBtn.style.display =
+        "inline-block";
+
+
+      disableRealControls(
+        "Your real account is still pending verification."
+      );
+
+
+      verifyBtn.onclick = function () {
+        window.location.href =
+          "verification.html";
+      };
 
       return;
     }
 
+
+    /* =========================
+       REJECTED REAL ACCOUNT
+    ========================= */
 
     if (
       type === "real" &&
@@ -633,18 +755,59 @@
 
       banner.innerHTML =
         "<h3>REAL ACCOUNT — REJECTED</h3>" +
-        "<p>Your real account application " +
-        "was not approved.</p>";
+        "<p>Your real account application was not approved. " +
+        "You can update your verification information and submit it again.</p>";
+
+
+      document.getElementById("usdLabel")
+        .textContent =
+        "Real USD Balance";
+
+
+      document.getElementById("usdBalance")
+        .textContent =
+        "$0.00";
+
+
+      document.getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
 
 
       document.getElementById("status")
         .textContent =
         "REJECTED";
 
+
+      demoTradeBtn.style.display =
+        "none";
+
+
+      verifyBtn.style.display =
+        "inline-block";
+
+
+      verifyBtn.textContent =
+        "Update Verification";
+
+
+      disableRealControls(
+        "Your real account has been rejected. Please update your verification information first."
+      );
+
+
+      verifyBtn.onclick = function () {
+        window.location.href =
+          "verification.html";
+      };
+
+      return;
     }
 
 
-    /* DEMO */
+    /* =========================
+       DEMO ACCOUNT
+    ========================= */
 
     banner.className =
       "banner demo";
@@ -652,7 +815,8 @@
     banner.innerHTML =
       "<h3>DEMO ACCOUNT</h3>" +
       "<p>You are currently using a simulated " +
-      "trading account.</p>";
+      "trading account. Demo funds are completely " +
+      "separate from real-account funds.</p>";
 
 
     document.getElementById("usdLabel")
@@ -662,12 +826,7 @@
 
     document.getElementById("usdBalance")
       .textContent =
-      "$" +
-      Number(profile.balance || 0)
-        .toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
+      usd(profile.balance);
 
 
     document.getElementById("ngnBalance")
@@ -679,6 +838,43 @@
       .textContent =
       "DEMO";
 
+
+    demoTradeBtn.style.display =
+      "inline-block";
+
+
+    verifyBtn.style.display =
+      "none";
+
+
+    /*
+      Demo accounts can use simulated
+      trading. Real-money controls are
+      disabled.
+    */
+
+    depositBtn.classList.add("disabledBtn");
+    withdrawBtn.classList.add("disabledBtn");
+
+    depositBtn.textContent =
+      "Real Deposit Unavailable";
+
+    withdrawBtn.textContent =
+      "Real Withdrawal Unavailable";
+
+
+    depositBtn.onclick = function () {
+      alert(
+        "Real deposits are available only on an active verified real account."
+      );
+    };
+
+
+    withdrawBtn.onclick = function () {
+      alert(
+        "Real withdrawals are available only on an active verified real account."
+      );
+    };
   }
 
 
@@ -709,27 +905,39 @@
     }
 
 
-    let usd = 0;
-    let ngn = 0;
+    const transactions =
+      result.data || [];
 
 
     const container =
       document.getElementById("transactions");
 
 
-    if (!result.data.length) {
+    if (!transactions.length) {
 
       container.textContent =
         "No transactions yet.";
+
+      document.getElementById("usdDeposits")
+        .textContent =
+        "$0.00";
+
+      document.getElementById("ngnDeposits")
+        .textContent =
+        "₦0.00";
 
       return;
     }
 
 
+    let usdTotal = 0;
+    let ngnTotal = 0;
+
+
     container.innerHTML = "";
 
 
-    result.data.forEach(function(tx) {
+    transactions.forEach(function(tx) {
 
       const currency =
         String(
@@ -743,9 +951,9 @@
       ) {
 
         if (currency === "NGN") {
-          ngn += Number(tx.amount || 0);
+          ngnTotal += Number(tx.amount || 0);
         } else {
-          usd += Number(tx.amount || 0);
+          usdTotal += Number(tx.amount || 0);
         }
       }
 
@@ -785,17 +993,12 @@
 
     document.getElementById("usdDeposits")
       .textContent =
-      "$" + usd.toLocaleString("en-US", {
-        minimumFractionDigits: 2
-      });
+      usd(usdTotal);
 
 
     document.getElementById("ngnDeposits")
       .textContent =
-      "₦" + ngn.toLocaleString("en-NG", {
-        minimumFractionDigits: 2
-      });
-
+      ngn(ngnTotal);
   }
 
 
@@ -831,8 +1034,10 @@
 
     const open =
       trades.filter(function(t) {
+
         return String(t.status)
           .toUpperCase() === "OPEN";
+
       });
 
 
@@ -881,7 +1086,6 @@
       box.appendChild(div);
 
     });
-
   }
 
 
@@ -889,7 +1093,7 @@
      DEMO TRADE
   ========================= */
 
-  window.demoTrade = async function() {
+  demoTradeBtn.onclick = async function() {
 
     if (!profile) return;
 
@@ -914,50 +1118,4 @@
           user_id: user.id,
           pair: "EUR/USD",
           trade_type: "BUY",
-          units: 1000,
-          open_price: 1.1000,
-          status: "OPEN"
-        });
-
-
-    if (result.error) {
-
-      alert(
-        "Demo trade failed: " +
-        result.error.message
-      );
-
-      return;
-    }
-
-
-    alert("Demo trade opened.");
-
-    await loadTrades();
-  };
-
-
-  /* =========================
-     WITHDRAWAL
-  ========================= */
-
-  window.requestWithdrawal = function() {
-
-    alert(
-      "Withdrawal requests can be submitted from the withdrawal section."
-    );
-
-  };
-
-
-  /* =========================
-     START
-  ========================= */
-
-  start();
-
-})();
-</script>
-
-</body>
-  </html>
+       
