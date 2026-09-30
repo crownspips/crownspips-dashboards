@@ -16,55 +16,50 @@
     }
 
     body {
-      background: #f4f7fb;
+      background: #f1f5f9;
       color: #172033;
     }
 
     header {
       background: #111827;
       color: white;
-      padding: 18px;
+      padding: 18px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
     }
 
     header h1 {
-      font-size: 21px;
+      font-size: 24px;
     }
 
-    .logout {
+    #logoutBtn {
       background: #dc2626;
+      color: white;
       border: none;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 7px;
-      cursor: pointer;
+      padding: 13px 22px;
+      border-radius: 10px;
       font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    .logout:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .container {
-      max-width: 1100px;
+    main {
+      max-width: 1000px;
       margin: auto;
-      padding: 20px;
+      padding: 25px 20px 50px;
     }
 
-    .welcome {
-      margin-bottom: 20px;
+    h2 {
+      margin-bottom: 25px;
+      font-size: 32px;
     }
 
-    .account-box {
-      padding: 18px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+    .account-banner {
+      padding: 28px;
+      border-radius: 18px;
       color: white;
+      margin-bottom: 25px;
     }
 
     .demo {
@@ -83,55 +78,75 @@
       background: #dc2626;
     }
 
+    .account-banner h3 {
+      font-size: 32px;
+      margin-bottom: 6px;
+    }
+
+    .account-banner p {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .user-info {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+    .user-info p {
+      margin: 6px 0;
+      color: #475569;
+    }
+
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
     }
 
     .card {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.06);
     }
 
-    .card h3 {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 8px;
+    .card h4 {
+      color: #64748b;
+      margin-bottom: 15px;
+      font-size: 18px;
     }
 
-    .card p {
-      font-size: 23px;
+    .balance {
+      font-size: 32px;
       font-weight: bold;
     }
 
-    .usd-card {
-      border-left: 4px solid #2563eb;
+    .usd {
+      border-left: 5px solid #2563eb;
     }
 
-    .ngn-card {
-      border-left: 4px solid #059669;
+    .ngn {
+      border-left: 5px solid #059669;
     }
 
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 25px;
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin: 25px 0;
+      flex-wrap: wrap;
     }
 
-    button,
-    .button {
+    button.action {
       border: none;
-      padding: 13px;
-      border-radius: 8px;
+      padding: 15px 25px;
+      border-radius: 10px;
       cursor: pointer;
-      text-decoration: none;
-      text-align: center;
       font-weight: bold;
+      font-size: 16px;
     }
 
     .deposit {
@@ -140,7 +155,7 @@
     }
 
     .withdraw {
-      background: #9333ea;
+      background: #7c3aed;
       color: white;
     }
 
@@ -149,71 +164,62 @@
       color: white;
     }
 
-    .refresh {
-      background: #6b7280;
-      color: white;
+    section {
+      background: white;
+      margin-top: 25px;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
     }
 
-    .section {
-      background: white;
-      padding: 20px;
+    section h3 {
+      margin-bottom: 18px;
+    }
+
+    .transaction {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 0;
+    }
+
+    .transaction:last-child {
+      border-bottom: none;
+    }
+
+    .positive {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .negative {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .muted {
+      color: #64748b;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 20px;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 18px;
       border-radius: 12px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    .section h2 {
-      margin-bottom: 15px;
-      font-size: 19px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 12px 8px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-      font-size: 13px;
-    }
-
-    th {
-      background: #f9fafb;
-    }
-
-    .empty {
-      color: #6b7280;
-      padding: 10px 0;
-    }
-
-    .notice {
-      background: #fff7ed;
-      color: #9a3412;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    .success {
-      background: #ecfdf5;
-      color: #047857;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 12px;
-      font-size: 13px;
     }
 
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.55);
-      justify-content: center;
+      background: rgba(0,0,0,.6);
       align-items: center;
+      justify-content: center;
       padding: 20px;
       z-index: 1000;
     }
@@ -221,77 +227,64 @@
     .modal-box {
       background: white;
       width: 100%;
-      max-width: 430px;
+      max-width: 450px;
+      border-radius: 18px;
       padding: 25px;
-      border-radius: 14px;
     }
 
-    .modal-box h2 {
-      margin-bottom: 15px;
+    .modal-box h3 {
+      margin-bottom: 20px;
     }
 
     .modal-box input,
     .modal-box select {
       width: 100%;
+      padding: 14px;
+      margin: 8px 0 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
       padding: 13px;
-      margin: 8px 0;
-      border: 1px solid #d1d5db;
-      border-radius: 7px;
-      font-size: 15px;
-    }
-
-    .submit-withdraw {
-      width: 100%;
-      background: #9333ea;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .close-modal {
-      width: 100%;
-      background: #6b7280;
-      color: white;
-      margin-top: 8px;
-    }
-
-    .test-label {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 10px;
-      border-radius: 7px;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .status {
+      border: none;
+      border-radius: 9px;
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .error-box {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: none;
+    .confirm {
+      background: #16a34a;
+      color: white;
     }
 
-    @media(max-width: 600px) {
-      .container {
-        padding: 12px;
+    .cancel {
+      background: #e2e8f0;
+      color: #172033;
+    }
+
+    @media (max-width: 700px) {
+      .cards {
+        grid-template-columns: 1fr;
       }
 
-      header {
-        padding: 15px;
+      header h1 {
+        font-size: 20px;
       }
 
-      .section {
-        overflow-x: auto;
+      h2 {
+        font-size: 28px;
       }
 
-      th,
-      td {
-        white-space: nowrap;
+      .account-banner h3 {
+        font-size: 28px;
       }
     }
   </style>
@@ -301,297 +294,138 @@
 
 <header>
   <h1>👑 Crownspips Trading</h1>
-
-  <button
-    id="logoutButton"
-    class="logout"
-    onclick="logout()"
-  >
-    Logout
-  </button>
+  <button id="logoutBtn">Logout</button>
 </header>
 
-<div class="container">
+<main>
 
-  <div id="errorBox" class="error-box"></div>
+  <div id="loading" class="loading">
+    Loading your account...
+  </div>
 
-  <div class="welcome">
+  <div id="dashboard" style="display:none;">
+
     <h2>Welcome, <span id="userName">Trader</span></h2>
-    <p id="userEmail"></p>
-  </div>
 
-  <div id="accountBox" class="account-box demo">
+    <div id="accountBanner" class="account-banner"></div>
 
-    <h2 id="accountTitle">
-      DEMO ACCOUNT
-    </h2>
+    <div class="user-info">
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
+      <p><strong>Account Type:</strong> <span id="accountType"></span></p>
+      <p><strong>Verification:</strong> <span id="verificationStatus"></span></p>
+    </div>
 
-    <p id="accountMessage">
-      You are currently using a simulated trading account.
-    </p>
+    <div class="cards">
 
-  </div>
+      <div class="card usd">
+        <h4 id="usdTitle">USD Balance</h4>
+        <div class="balance" id="usdBalance">$0.00</div>
+      </div>
 
-  <div class="cards">
+      <div class="card ngn">
+        <h4>NGN Balance</h4>
+        <div class="balance" id="ngnBalance">₦0.00</div>
+      </div>
 
-    <div class="card usd-card">
+      <div class="card">
+        <h4>USD Deposits</h4>
+        <div class="balance" id="usdDeposits">$0.00</div>
+      </div>
 
-      <h3 id="usdBalanceTitle">
-        Demo USD Balance
-      </h3>
+      <div class="card">
+        <h4>NGN Deposits</h4>
+        <div class="balance" id="ngnDeposits">₦0.00</div>
+      </div>
 
-      <p id="balance">
-        $0.00
-      </p>
+      <div class="card">
+        <h4>Open Trades</h4>
+        <div class="balance" id="openTrades">0</div>
+      </div>
+
+      <div class="card">
+        <h4>Account Status</h4>
+        <div class="balance" id="statusText">-</div>
+      </div>
 
     </div>
 
-    <div class="card ngn-card">
+    <div class="buttons">
 
-      <h3 id="ngnBalanceTitle">
-        NGN Balance
-      </h3>
+      <button class="action deposit"
+        onclick="window.location.href='deposit.html'">
+        Deposit
+      </button>
 
-      <p id="ngnBalance">
-        ₦0.00
-      </p>
+      <button class="action withdraw"
+        onclick="openWithdrawal()">
+        Withdraw
+      </button>
 
-    </div>
-
-    <div class="card">
-
-      <h3>
-        USD Deposits
-      </h3>
-
-      <p id="totalDeposits">
-        $0.00
-      </p>
+      <button
+        id="demoTradeBtn"
+        class="action trade"
+        onclick="createDemoTrade()">
+        Demo Trade
+      </button>
 
     </div>
 
-    <div class="card">
-
-      <h3>
-        NGN Deposits
-      </h3>
-
-      <p id="totalNgnDeposits">
-        ₦0.00
-      </p>
-
-    </div>
-
-    <div class="card">
-
-      <h3>
-        Open Trades
-      </h3>
-
-      <p id="openTrades">
-        0
-      </p>
-
-    </div>
-
-    <div class="card">
-
-      <h3>
-        Account Status
-      </h3>
-
-      <p
-        id="accountStatus"
-        style="font-size:16px;"
-      >
-        DEMO
-      </p>
-
-    </div>
-
-  </div>
-
-  <div class="actions">
-
-    <a
-      href="deposit.html"
-      class="button deposit"
-    >
-      💰 Deposit Funds
-    </a>
-
-    <button
-      class="withdraw"
-      onclick="openWithdrawal()"
-    >
-      💸 Withdrawal Funds
-    </button>
-
-    <button
-      class="trade"
-      onclick="demoTrade()"
-    >
-      📈 Demo Trade
-    </button>
-
-    <button
-      class="refresh"
-      onclick="loadDashboard()"
-    >
-      🔄 Refresh Dashboard
-    </button>
-
-  </div>
-
-  <div id="realNotice"></div>
-
-  <div class="section">
-
-    <h2>
-      💳 Deposit / Withdrawal History
-    </h2>
-
-    <div id="transactionArea">
-
-      <p class="empty">
+    <section>
+      <h3>Recent Transactions</h3>
+      <div id="transactions">
         Loading transactions...
-      </p>
+      </div>
+    </section>
 
-    </div>
-
-  </div>
-
-  <div class="section">
-
-    <h2>
-      📊 Trading History
-    </h2>
-
-    <div id="tradeArea">
-
-      <p class="empty">
+    <section>
+      <h3>Open Trades</h3>
+      <div id="trades">
         Loading trades...
-      </p>
-
-    </div>
-
-  </div>
-
-  <div class="section">
-
-    <h2>
-      ℹ️ Account Information
-    </h2>
-
-    <p id="accountInfoText">
-      Crownspips Trading demonstration account.
-    </p>
-
-    <div
-      class="notice"
-      id="accountInfoNotice"
-    >
-      Demo deposits, withdrawals and trades are simulated.
-    </div>
+      </div>
+    </section>
 
   </div>
 
-</div>
+  <div id="errorBox" style="display:none;" class="error"></div>
+
+</main>
 
 
 <!-- WITHDRAWAL MODAL -->
 
-<div
-  id="withdrawModal"
-  class="modal"
->
+<div id="withdrawModal" class="modal">
 
   <div class="modal-box">
 
-    <h2>
-      💸 Withdrawal Funds
-    </h2>
+    <h3>Request Withdrawal</h3>
 
-    <div class="test-label">
-
-      🧪 TEST WITHDRAWAL MODE —
-      No real money will be transferred.
-
-    </div>
-
-    <label>
-      Currency
-    </label>
+    <label>Currency</label>
 
     <select id="withdrawCurrency">
-
-      <option value="USD">
-        USD — US Dollar
-      </option>
-
-      <option value="EUR">
-        EUR — Euro
-      </option>
-
-      <option value="GBP">
-        GBP — British Pound
-      </option>
-
-      <option value="NGN">
-        NGN — Nigerian Naira
-      </option>
-
-      <option value="CAD">
-        CAD — Canadian Dollar
-      </option>
-
-      <option value="AUD">
-        AUD — Australian Dollar
-      </option>
-
+      <option value="USD">USD</option>
+      <option value="NGN">NGN</option>
     </select>
 
-    <label>
-      Amount
-    </label>
+    <label>Amount</label>
 
     <input
       type="number"
       id="withdrawAmount"
-      placeholder="Enter withdrawal amount"
+      placeholder="Enter amount"
       min="1"
-      step="0.01"
-    >
+      step="0.01">
 
-    <label>
-      Withdrawal Method
-    </label>
+    <div class="modal-buttons">
 
-    <select id="withdrawMethod">
+      <button class="cancel" onclick="closeWithdrawal()">
+        Cancel
+      </button>
 
-      <option value="TEST_BANK">
-        Test Bank Transfer
-      </option>
+      <button class="confirm" onclick="submitWithdrawal()">
+        Submit
+      </button>
 
-      <option value="TEST_WALLET">
-        Test Wallet
-      </option>
-
-    </select>
-
-    <button
-      class="button submit-withdraw"
-      onclick="submitWithdrawal()"
-    >
-      Submit Test Withdrawal
-    </button>
-
-    <button
-      class="button close-modal"
-      onclick="closeWithdrawal()"
-    >
-      Cancel
-    </button>
+    </div>
 
   </div>
 
@@ -600,393 +434,537 @@
 
 <script>
 
-const SUPABASE_URL =
-  "https://ghagrruxxqtnochooiaj.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-let currentUser = null;
-let currentProfile = null;
-
-
-// ========================================
-// SHOW ERROR
-// ========================================
-
-function showError(message) {
-
-  const box =
-    document.getElementById("errorBox");
-
-  box.textContent = message;
-
-  box.style.display = "block";
-}
-
-
-// ========================================
-// HIDE ERROR
-// ========================================
-
-function hideError() {
-
-  const box =
-    document.getElementById("errorBox");
-
-  box.style.display = "none";
-}
-
-
-// ========================================
-// START DASHBOARD
-// ========================================
-
-async function startDashboard() {
-
-  hideError();
-
-  const {
-    data,
-    error
-  } = await supabaseClient.auth.getUser();
-
-  if (error) {
-
-    console.log(error);
-
-    window.location.href =
-      "login.html";
-
-    return;
-  }
-
-  const user =
-    data.user;
-
-  if (!user) {
-
-    window.location.href =
-      "login.html";
-
-    return;
-  }
-
-  currentUser =
-    user;
-
-  document.getElementById(
-    "userEmail"
-  ).textContent =
-    user.email || "";
-
-  await loadDashboard();
-}
-
-
-// ========================================
-// LOAD DASHBOARD
-// ========================================
-
-async function loadDashboard() {
-
-  if (!currentUser) {
-
-    await startDashboard();
-
-    return;
-  }
-
-  await loadProfile();
-
-  await loadTransactions();
-
-  await loadTrades();
-}
-
-
-// ========================================
-// LOAD PROFILE
-// ========================================
-
-async function loadProfile() {
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("profiles")
-    .select("*")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-
-  if (error) {
-
-    console.log(error);
-
-    showError(
-      "Unable to load your profile: " +
-      error.message
-    );
-
-    return;
-  }
-
-
-  if (!data) {
-
-    showError(
-      "No profile was found for this account."
-    );
-
-    return;
-  }
-
-
-  currentProfile =
-    data;
-
-
-  document.getElementById(
-    "userName"
-  ).textContent =
-    data.full_name || "Trader";
-
-
-  const accountType =
-    String(
-      data.account_type || "demo"
-    ).toLowerCase();
-
-
-  const verification =
-    String(
-      data.verification_status || "pending"
-    ).toLowerCase();
-
-
-  const accountBox =
-    document.getElementById(
-      "accountBox"
-    );
-
-  const accountTitle =
-    document.getElementById(
-      "accountTitle"
-    );
-
-  const accountMessage =
-    document.getElementById(
-      "accountMessage"
-    );
-
-  const accountStatus =
-    document.getElementById(
-      "accountStatus"
-    );
-
-  const balance =
-    document.getElementById(
-      "balance"
-    );
-
-  const ngnBalance =
-    document.getElementById(
-      "ngnBalance"
-    );
-
-  const usdTitle =
-    document.getElementById(
-      "usdBalanceTitle"
-    );
-
-  const ngnTitle =
-    document.getElementById(
-      "ngnBalanceTitle"
-    );
-
-  const realNotice =
-    document.getElementById(
-      "realNotice"
-    );
-
-  const accountInfoText =
-    document.getElementById(
-      "accountInfoText"
-    );
-
-  const accountInfoNotice =
-    document.getElementById(
-      "accountInfoNotice"
+  const SUPABASE_URL =
+    "https://ghagrruxxqtnochooiaj.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
     );
 
 
-  // ========================================
-  // DEMO ACCOUNT
-  // ========================================
+  let currentUser = null;
+  let currentProfile = null;
 
-  if (accountType === "demo") {
 
-    const demoBalance =
-      Number(
-        data.balance || 0
+  /* =========================
+     LOGOUT
+  ========================= */
+
+  document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async function () {
+
+      this.disabled = true;
+      this.textContent = "Logging out...";
+
+      const { error } =
+        await supabaseClient.auth.signOut();
+
+      if (error) {
+        alert("Logout failed: " + error.message);
+
+        this.disabled = false;
+        this.textContent = "Logout";
+
+        return;
+      }
+
+      window.location.replace("login.html");
+    });
+
+
+  /* =========================
+     START DASHBOARD
+  ========================= */
+
+  async function startDashboard() {
+
+    try {
+
+      const {
+        data: {
+          session
+        }
+      } = await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+
+        window.location.replace("login.html");
+
+        return;
+      }
+
+
+      currentUser = session.user;
+
+
+      await loadProfile();
+
+      await loadTransactions();
+
+      await loadTrades();
+
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+      document
+        .getElementById("dashboard")
+        .style.display = "block";
+
+
+    } catch (error) {
+
+      showError(
+        "Unable to load your dashboard: " +
+        error.message
       );
 
+    }
 
-    balance.textContent =
+  }
+
+
+  /* =========================
+     LOAD PROFILE
+  ========================= */
+
+  async function loadProfile() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+
+    if (error) {
+
+      throw new Error(
+        "Profile error: " +
+        error.message
+      );
+
+    }
+
+
+    if (!data) {
+
+      throw new Error(
+        "No profile was found for this logged-in account. " +
+        "User ID: " +
+        currentUser.id
+      );
+
+    }
+
+
+    currentProfile = data;
+
+
+    document
+      .getElementById("userName")
+      .textContent =
+        data.full_name || "Trader";
+
+
+    document
+      .getElementById("userEmail")
+      .textContent =
+        data.email || currentUser.email || "";
+
+
+    const accountType =
+      (data.account_type || "demo")
+      .toLowerCase();
+
+
+    const verification =
+      (data.verification_status || "pending")
+      .toLowerCase();
+
+
+    document
+      .getElementById("accountType")
+      .textContent =
+        accountType.toUpperCase();
+
+
+    document
+      .getElementById("verificationStatus")
+      .textContent =
+        verification.toUpperCase();
+
+
+    const banner =
+      document.getElementById("accountBanner");
+
+
+    const usdBalance =
+      document.getElementById("usdBalance");
+
+
+    const usdTitle =
+      document.getElementById("usdTitle");
+
+
+    const demoTradeBtn =
+      document.getElementById("demoTradeBtn");
+
+
+    if (
+      accountType === "real" &&
+      verification === "verified"
+    ) {
+
+      banner.className =
+        "account-banner real";
+
+      banner.innerHTML = `
+        <h3>REAL ACCOUNT</h3>
+        <p>
+          Your real trading account is verified.
+          Your real USD and NGN balances are kept
+          separately from your demo account.
+        </p>
+      `;
+
+
+      usdTitle.textContent =
+        "Real USD Balance";
+
+
+      usdBalance.textContent =
+        "$" +
+        Number(data.real_balance || 0)
+          .toLocaleString(
+            "en-US",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          );
+
+
+      document
+        .getElementById("ngnBalance")
+        .textContent =
+          "₦" +
+          Number(data.ngn_balance || 0)
+            .toLocaleString(
+              "en-NG",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }
+            );
+
+
+      document
+        .getElementById("statusText")
+        .textContent =
+          "VERIFIED";
+
+
+      demoTradeBtn.style.display =
+        "none";
+
+    }
+
+
+    else if (
+      accountType === "real" &&
+      verification === "pending"
+    ) {
+
+      banner.className =
+        "account-banner pending";
+
+      banner.innerHTML = `
+        <h3>REAL ACCOUNT — PENDING</h3>
+        <p>
+          Your real account application is awaiting
+          verification.
+        </p>
+      `;
+
+
+      usdTitle.textContent =
+        "Real USD Balance";
+
+
+      usdBalance.textContent =
+        "$0.00";
+
+
+      document
+        .getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
+
+
+      document
+        .getElementById("statusText")
+        .textContent =
+        "PENDING";
+
+
+      demoTradeBtn.style.display =
+        "none";
+
+    }
+
+
+    else if (
+      accountType === "real" &&
+      verification === "rejected"
+    ) {
+
+      banner.className =
+        "account-banner rejected";
+
+      banner.innerHTML = `
+        <h3>REAL ACCOUNT — REJECTED</h3>
+        <p>
+          Your real account application has not been
+          approved.
+        </p>
+      `;
+
+
+      usdTitle.textContent =
+        "Demo USD Balance";
+
+
+      usdBalance.textContent =
+        "$" +
+        Number(data.balance || 0)
+          .toLocaleString(
+            "en-US",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          );
+
+
+      document
+        .getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
+
+
+      document
+        .getElementById("statusText")
+        .textContent =
+        "REJECTED";
+
+    }
+
+
+    else {
+
+      banner.className =
+        "account-banner demo";
+
+      banner.innerHTML = `
+        <h3>DEMO ACCOUNT</h3>
+        <p>
+          You are currently using a simulated
+          trading account.
+        </p>
+      `;
+
+
+      usdTitle.textContent =
+        "Demo USD Balance";
+
+
+      usdBalance.textContent =
+        "$" +
+        Number(data.balance || 0)
+          .toLocaleString(
+            "en-US",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          );
+
+
+      document
+        .getElementById("ngnBalance")
+        .textContent =
+        "₦0.00";
+
+
+      document
+        .getElementById("statusText")
+        .textContent =
+        "DEMO";
+
+    }
+
+  }
+
+
+  /* =========================
+     TRANSACTIONS
+  ========================= */
+
+  async function loadTransactions() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("transactions")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("created_at", {
+        ascending: false
+      })
+      .limit(20);
+
+
+    if (error) {
+
+      document
+        .getElementById("transactions")
+        .innerHTML =
+          "<p>Unable to load transactions.</p>";
+
+      return;
+    }
+
+
+    let usdDeposits = 0;
+    let ngnDeposits = 0;
+
+
+    const container =
+      document.getElementById("transactions");
+
+
+    if (!data || data.length === 0) {
+
+      container.innerHTML =
+        '<p class="muted">No transactions yet.</p>';
+
+      document
+        .getElementById("usdDeposits")
+        .textContent =
+        "$0.00";
+
+      document
+        .getElementById("ngnDeposits")
+        .textContent =
+        "₦0.00";
+
+      return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    data.forEach(tx => {
+
+      const currency =
+        (tx.currency || "USD").toUpperCase();
+
+
+      if (
+        tx.transaction_type === "DEPOSIT" &&
+        tx.status === "COMPLETED"
+      ) {
+
+        if (currency === "NGN") {
+
+          ngnDeposits +=
+            Number(tx.amount || 0);
+
+        } else {
+
+          usdDeposits +=
+            Number(tx.amount || 0);
+
+        }
+
+      }
+
+
+      const amount =
+        Number(tx.amount || 0);
+
+
+      const symbol =
+        currency === "NGN"
+          ? "₦"
+          : "$";
+
+
+      const cls =
+        tx.transaction_type === "DEPOSIT"
+          ? "positive"
+          : "negative";
+
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "transaction";
+
+
+      item.innerHTML = `
+        <strong>
+          ${tx.transaction_type || ""}
+        </strong>
+
+        <span class="${cls}">
+          ${symbol}${amount.toLocaleString(
+            "en-US",
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+          )}
+        </span>
+
+        <br>
+
+        <small class="muted">
+          ${currency} •
+          ${tx.status || ""} •
+          ${new Date(
+            tx.created_at
+          ).toLocaleString()}
+        </small>
+      `;
+
+
+      container.appendChild(item);
+
+    });
+
+
+    document
+      .getElementById("usdDeposits")
+      .textContent =
       "$" +
-      demoBalance.toFixed(2);
-
-
-    ngnBalance.textContent =
-      "₦0.00";
-
-
-    usdTitle.textContent =
-      "Demo USD Balance";
-
-
-    ngnTitle.textContent =
-      "NGN Balance";
-
-
-    accountBox.className =
-      "account-box demo";
-
-
-    accountTitle.textContent =
-      "DEMO ACCOUNT";
-
-
-    accountMessage.textContent =
-      "You are using a simulated trading account.";
-
-
-    accountStatus.textContent =
-      "DEMO";
-
-
-    realNotice.innerHTML = `
-      <div class="notice">
-        🧪 Demo mode is active.
-        <br><br>
-        Your demo balance is completely separate
-        from real-account balances.
-      </div>
-    `;
-
-
-    accountInfoText.textContent =
-      "Crownspips Trading demonstration account.";
-
-
-    accountInfoNotice.textContent =
-      "Demo deposits, withdrawals and trades are simulated.";
-
-
-    return;
-  }
-
-
-  // ========================================
-  // REAL ACCOUNT — PENDING
-  // ========================================
-
-  if (
-    accountType === "real" &&
-    verification === "pending"
-  ) {
-
-    balance.textContent =
-      "$0.00";
-
-
-    ngnBalance.textContent =
-      "₦0.00";
-
-
-    usdTitle.textContent =
-      "Real USD Balance";
-
-
-    ngnTitle.textContent =
-      "Real NGN Balance";
-
-
-    accountBox.className =
-      "account-box pending";
-
-
-    accountTitle.textContent =
-      "REAL ACCOUNT — PENDING";
-
-
-    accountMessage.textContent =
-      "Your real-account application is waiting for verification.";
-
-
-    accountStatus.textContent =
-      "PENDING";
-
-
-    realNotice.innerHTML = `
-      <div class="notice">
-        ⏳ Your real-account application is pending verification.
-        <br><br>
-        Real-account balances are currently unavailable.
-      </div>
-    `;
-
-
-    accountInfoText.textContent =
-      "Your real-account application is currently under review.";
-
-
-    accountInfoNotice.textContent =
-      "Your demo balance remains completely separate from the real account.";
-
-
-    return;
-  }
-
-
-  // ========================================
-  // REAL ACCOUNT — VERIFIED
-  // ========================================
-
-  if (
-    accountType === "real" &&
-    verification === "verified"
-  ) {
-
-    const realUsd =
-      Number(
-        data.real_balance || 0
-      );
-
-
-    const realNgn =
-      Number(
-        data.ngn_balance || 0
-      );
-
-
-    balance.textContent =
-      "$" +
-      realUsd.toFixed(2);
-
-
-    ngnBalance.textContent =
-      "₦" +
-      realNgn.toLocaleString(
-        undefined,
+      usdDeposits.toLocaleString(
+        "en-US",
         {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
@@ -994,308 +972,222 @@ async function loadProfile() {
       );
 
 
-    usdTitle.textContent =
-      "Real USD Balance";
+    document
+      .getElementById("ngnDeposits")
+      .textContent =
+      "₦" +
+      ngnDeposits.toLocaleString(
+        "en-NG",
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }
+      );
 
-
-    ngnTitle.textContent =
-      "Real NGN Balance";
-
-
-    accountBox.className =
-      "account-box real";
-
-
-    accountTitle.textContent =
-      "REAL ACCOUNT — VERIFIED";
-
-
-    accountMessage.textContent =
-      "Your real account has been verified.";
-
-
-    accountStatus.textContent =
-      "VERIFIED";
-
-
-    realNotice.innerHTML = `
-      <div class="success">
-        ✅ REAL ACCOUNT — VERIFIED
-        <br><br>
-        USD Balance:
-        $${realUsd.toFixed(2)}
-        <br><br>
-        NGN Balance:
-        ₦${realNgn.toLocaleString(
-          undefined,
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          }
-        )}
-        <br><br>
-        Your demo balance is completely separate.
-      </div>
-    `;
-
-
-    accountInfoText.textContent =
-      "Verified account balance information.";
-
-
-    accountInfoNotice.textContent =
-      "USD and NGN balances are stored separately.";
-
-
-    return;
   }
 
 
-  // ========================================
-  // REAL ACCOUNT — REJECTED
-  // ========================================
+  /* =========================
+     TRADES
+  ========================= */
 
-  if (
-    accountType === "real" &&
-    verification === "rejected"
-  ) {
+  async function loadTrades() {
 
-    balance.textContent =
-      "$0.00";
-
-
-    ngnBalance.textContent =
-      "₦0.00";
-
-
-    usdTitle.textContent =
-      "Real USD Balance";
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("trades")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("opened_at", {
+        ascending: false
+      });
 
 
-    ngnTitle.textContent =
-      "Real NGN Balance";
+    if (error) {
+
+      document
+        .getElementById("trades")
+        .innerHTML =
+        "<p>Unable to load trades.</p>";
+
+      return;
+    }
 
 
-    accountBox.className =
-      "account-box rejected";
+    const openTrades =
+      (data || [])
+      .filter(
+        trade =>
+          String(trade.status)
+            .toUpperCase() === "OPEN"
+      );
 
 
-    accountTitle.textContent =
-      "REAL ACCOUNT — REJECTED";
+    document
+      .getElementById("openTrades")
+      .textContent =
+      openTrades.length;
 
 
-    accountMessage.textContent =
-      "Your real-account application was not approved.";
+    const container =
+      document.getElementById("trades");
 
 
-    accountStatus.textContent =
-      "REJECTED";
+    if (!data || data.length === 0) {
+
+      container.innerHTML =
+        '<p class="muted">No trades yet.</p>';
+
+      return;
+    }
 
 
-    realNotice.innerHTML = `
-      <div class="notice">
-        Your real-account application is currently marked as rejected.
-      </div>
-    `;
+    container.innerHTML = "";
 
 
-    accountInfoText.textContent =
-      "Your real-account application was not approved.";
+    data.slice(0, 20).forEach(trade => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "transaction";
 
 
-    accountInfoNotice.textContent =
-      "Your demo balance remains separate from the real account.";
-  }
+      item.innerHTML = `
+        <strong>
+          ${trade.pair}
+        </strong>
 
-}
+        — ${trade.trade_type}
 
+        <br>
 
-// ========================================
-// OPEN WITHDRAWAL
-// ========================================
-
-function openWithdrawal() {
-
-  document.getElementById(
-    "withdrawModal"
-  ).style.display =
-    "flex";
-}
+        <small class="muted">
+          Units: ${trade.units}
+          • Open: ${trade.open_price}
+          • Status: ${trade.status}
+        </small>
+      `;
 
 
-// ========================================
-// CLOSE WITHDRAWAL
-// ========================================
-
-function closeWithdrawal() {
-
-  document.getElementById(
-    "withdrawModal"
-  ).style.display =
-    "none";
-}
-
-
-// ========================================
-// SUBMIT TEST WITHDRAWAL
-// ========================================
-
-async function submitWithdrawal() {
-
-  if (!currentUser) {
-
-    alert(
-      "Please log in first."
-    );
-
-    return;
-  }
-
-
-  const amount =
-    Number(
-      document.getElementById(
-        "withdrawAmount"
-      ).value
-    );
-
-
-  const currency =
-    document.getElementById(
-      "withdrawCurrency"
-    ).value;
-
-
-  const method =
-    document.getElementById(
-      "withdrawMethod"
-    ).value;
-
-
-  if (
-    !amount ||
-    amount <= 0
-  ) {
-
-    alert(
-      "Please enter a valid withdrawal amount."
-    );
-
-    return;
-  }
-
-
-  const reference =
-    "TEST-WD-" +
-    Date.now();
-
-
-  const {
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .insert({
-
-      user_id:
-        currentUser.id,
-
-      transaction_type:
-        "WITHDRAWAL",
-
-      amount:
-        amount,
-
-      currency:
-        currency,
-
-      status:
-        "PENDING",
-
-      payment_method:
-        method,
-
-      payment_reference:
-        reference,
-
-      description:
-        "Simulated test withdrawal request"
+      container.appendChild(item);
 
     });
 
-
-  if (error) {
-
-    alert(
-      "Unable to submit withdrawal: " +
-      error.message
-    );
-
-    return;
   }
 
 
-  document.getElementById(
-    "withdrawAmount"
-  ).value =
-    "";
+  /* =========================
+     DEMO TRADE
+  ========================= */
+
+  async function createDemoTrade() {
+
+    if (!currentProfile) {
+
+      alert("Your profile has not loaded yet.");
+
+      return;
+    }
 
 
-  closeWithdrawal();
+    if (
+      String(currentProfile.account_type)
+        .toLowerCase() !== "demo"
+    ) {
+
+      alert(
+        "Demo trading is only available on a demo account."
+      );
+
+      return;
+    }
 
 
-  alert(
-    "Test withdrawal request submitted successfully."
-  );
+    const trade = {
+
+      user_id: currentUser.id,
+
+      pair: "EUR/USD",
+
+      trade_type: "BUY",
+
+      units: 1000,
+
+      open_price: 1.1000,
+
+      status: "OPEN"
+
+    };
 
 
-  await loadTransactions();
-}
+    const {
+      error
+    } = await supabaseClient
+      .from("trades")
+      .insert(trade);
 
 
-// ========================================
-// LOAD TRANSACTIONS
-// ========================================
+    if (error) {
 
-async function loadTransactions() {
+      alert(
+        "Could not create demo trade: " +
+        error.message
+      );
 
-  const area =
-    document.getElementById(
-      "transactionArea"
-    );
-
-
-  const {
-    data,
-    error
-  } = await supabaseClient
-    .from("transactions")
-    .select("*")
-    .eq(
-      "user_id",
-      currentUser.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending: false
-      }
-    );
+      return;
+    }
 
 
-  if (error) {
+    alert("Demo trade opened successfully.");
 
-    console.log(error);
+    await loadTrades();
 
-    area.innerHTML =
-      "<p class='empty'>Unable to load transactions.</p>";
-
-    return;
   }
 
 
-  let totalUsdDeposits = 0;
+  /* =========================
+     WITHDRAWAL
+  ========================= */
 
-  let totalNgnDeposits = 0;
+  function openWithdrawal() {
+
+    document
+      .getElementById("withdrawModal")
+      .style.display =
+      "flex";
+
+  }
 
 
- 
+  function closeWithdrawal() {
+
+    document
+      .getElementById("withdrawModal")
+      .style.display =
+      "none";
+
+  }
+
+
+  async function submitWithdrawal() {
+
+    const currency =
+      document
+        .getElementById("withdrawCurrency")
+        .value;
+
+
+    const amount =
+      Number(
+        document
+          .getElementById("withdrawAmount")
+          .value
+      );
+
+
+    if (
+      !Number.isFini
