@@ -1,999 +1,1195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crownspips Trading Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
+<title>Crownspips Trading Terminal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#07111f;
+    color:#fff;
+}
+
+button,select,input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 50% 0%,#162842 0,#07111f 48%,#040b14 100%);
+}
+
+/* TOP BAR */
+
+.topbar{
+    height:72px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 14px;
+    border-bottom:1px solid #24354b;
+    background:#0b1728;
+    overflow-x:auto;
+}
+
+.brand{
+    min-width:170px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.brand span{
+    color:#d4af37;
+}
+
+.asset-tabs{
+    display:flex;
+    gap:8px;
+    flex:1;
+    overflow-x:auto;
+}
+
+.asset-tab{
+    min-width:145px;
+    padding:10px 13px;
+    background:#101f34;
+    border:1px solid #253952;
+    border-radius:8px;
+    color:#fff;
+    text-align:left;
+}
+
+.asset-tab.active{
+    border-color:#d4af37;
+    background:#172b45;
+}
+
+.asset-name{
+    font-weight:bold;
+    font-size:14px;
+}
+
+.asset-price{
+    font-size:12px;
+    color:#8ea0b6;
+    margin-top:3px;
+}
+
+.balance-box{
+    min-width:150px;
+    text-align:right;
+}
+
+.balance-label{
+    font-size:11px;
+    color:#8ea0b6;
+}
+
+.balance{
+    font-size:19px;
+    font-weight:bold;
+    color:#d4af37;
+}
+
+.deposit-btn{
+    border:1px solid #16a66a;
+    color:#36d68c;
+    background:#0d2a24;
+    padding:12px 18px;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+.logout-btn{
+    border:1px solid #52627a;
+    background:#17253a;
+    color:#fff;
+    padding:11px 14px;
+    border-radius:7px;
+}
+
+/* LAYOUT */
+
+.main{
+    display:grid;
+    grid-template-columns:70px minmax(0,1fr) 260px;
+    min-height:calc(100vh - 72px);
+}
+
+/* SIDE */
+
+.side{
+    border-right:1px solid #24354b;
+    background:#091625;
+    padding:15px 7px;
+}
+
+.side-item{
+    padding:14px 4px;
+    margin-bottom:9px;
+    border-radius:8px;
+    text-align:center;
+    color:#8092a9;
+    font-size:10px;
+}
+
+.side-item.active{
+    background:#162941;
+    color:#fff;
+}
+
+.side-icon{
+    display:block;
+    font-size:22px;
+    margin-bottom:6px;
+}
+
+/* CENTER */
+
+.center{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.marketbar{
+    min-height:58px;
+    padding:10px 14px;
+    border-bottom:1px solid #24354b;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    background:#0a1627;
+}
+
+.market-select{
+    background:#101f34;
+    border:1px solid #334964;
+    color:#fff;
+    padding:10px 12px;
+    border-radius:7px;
+    min-width:140px;
+}
+
+.market-status{
+    color:#8fa1b8;
+    font-size:12px;
+}
+
+.demo-badge{
+    background:#163c61;
+    color:#58b8ff;
+    border:1px solid #24699e;
+    padding:7px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.real-badge{
+    background:#123b2c;
+    color:#42e29a;
+    border:1px solid #1b8058;
+    padding:7px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+/* CHART */
+
+.chart-area{
+    position:relative;
+    flex:1;
+    min-height:420px;
+    background:#0a1525;
+    overflow:hidden;
+}
+
+.grid{
+    position:absolute;
+    inset:0;
+    background-image:
+        linear-gradient(#1c3047 1px,transparent 1px),
+        linear-gradient(90deg,#1c3047 1px,transparent 1px);
+    background-size:70px 55px;
+    opacity:.5;
+}
+
+canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+.chart-info{
+    position:absolute;
+    top:14px;
+    left:15px;
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+    z-index:2;
+}
+
+.info-pill{
+    background:#101e31dd;
+    border:1px solid #263c56;
+    padding:7px 10px;
+    border-radius:6px;
+    font-size:11px;
+}
+
+.chart-bottom{
+    position:absolute;
+    bottom:8px;
+    left:10px;
+    right:10px;
+    display:flex;
+    justify-content:space-between;
+    color:#71849d;
+    font-size:10px;
+}
+
+/* BOTTOM */
+
+.bottom-panel{
+    border-top:1px solid #263a52;
+    background:#0b1728;
+}
+
+.panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:11px 15px;
+    border-bottom:1px solid #24354b;
+}
+
+.panel-title{
+    font-weight:bold;
+    font-size:13px;
+}
+
+.pnl{
+    color:#f05d5d;
+    font-weight:bold;
+}
+
+.positions{
+    padding:10px 15px;
+    min-height:70px;
+}
+
+.empty{
+    color:#657990;
+    font-size:12px;
+    padding:10px 0;
+}
+
+/* RIGHT */
+
+.trade-panel{
+    border-left:1px solid #24354b;
+    background:#091625;
+    padding:15px;
+}
+
+.trade-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.field-label{
+    display:block;
+    color:#8496ad;
+    font-size:11px;
+    margin-bottom:6px;
+}
+
+.amount-wrap{
+    display:flex;
+    background:#101f34;
+    border:1px solid #334964;
+    border-radius:7px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.amount-wrap input{
+    flex:1;
+    min-width:0;
+    background:transparent;
+    color:#fff;
+    border:0;
+    outline:0;
+    padding:13px;
+    font-weight:bold;
+}
+
+.amount-wrap button{
+    width:40px;
+    border:0;
+    border-left:1px solid #334964;
+    background:#15273e;
+    color:#fff;
+}
+
+.timer-select{
+    width:100%;
+    padding:13px;
+    background:#101f34;
+    color:#fff;
+    border:1px solid #334964;
+    border-radius:7px;
+    margin-bottom:15px;
+}
+
+.profit-box{
+    background:#101f34;
+    border:1px solid #293f59;
+    border-radius:8px;
+    padding:13px;
+    margin-bottom:15px;
+}
+
+.profit-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#91a2b8;
+    margin:7px 0;
+}
+
+.profit-value{
+    color:#45df98;
+    font-weight:bold;
+}
+
+.trade-button{
+    width:100%;
+    border:0;
+    border-radius:8px;
+    padding:17px 10px;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.higher{
+    background:#10a968;
+}
+
+.lower{
+    background:#d84a43;
+}
+
+.trade-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.trade-note{
+    text-align:center;
+    color:#71839a;
+    font-size:10px;
+    line-height:1.5;
+    margin-top:12px;
+}
+
+.account-info{
+    border-top:1px solid #24354b;
+    margin-top:18px;
+    padding-top:15px;
+}
+
+.account-row{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+    font-size:12px;
+}
+
+.account-row span:first-child{
+    color:#788ca5;
+}
+
+/* TIMER */
+
+.countdown{
+    position:absolute;
+    right:15px;
+    top:14px;
+    z-index:3;
+    display:none;
+    padding:8px 12px;
+    background:#121f33;
+    border:1px solid #52657d;
+    border-radius:7px;
+    font-weight:bold;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .main{
+        grid-template-columns:55px minmax(0,1fr);
     }
 
-    body {
-      margin: 0;
-      background: #f1f5f9;
-      color: #172033;
+    .trade-panel{
+        grid-column:1 / -1;
+        border-left:0;
+        border-top:1px solid #24354b;
     }
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .chart-area{
+        min-height:390px;
+    }
+}
+
+@media(max-width:600px){
+
+    .topbar{
+        height:auto;
+        min-height:65px;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
+    .brand{
+        min-width:145px;
+        font-size:17px;
     }
 
-    #logoutBtn {
-      background: #dc2626;
-      color: white;
-      border: 0;
-      padding: 14px 22px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
+    .balance-box{
+        min-width:115px;
     }
 
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 25px 20px 50px;
+    .balance{
+        font-size:16px;
     }
 
-    #loading {
-      text-align: center;
-      padding: 80px 10px;
-      font-size: 24px;
+    .deposit-btn{
+        padding:10px 12px;
     }
 
-    #error {
-      display: none;
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 30px;
-      line-height: 1.5;
+    .logout-btn{
+        padding:10px;
     }
 
-    .banner {
-      color: white;
-      padding: 28px;
-      border-radius: 18px;
-      margin-bottom: 20px;
+    .main{
+        grid-template-columns:52px minmax(0,1fr);
     }
 
-    .demo { background: #2563eb; }
-    .real { background: #059669; }
-    .pending { background: #d97706; }
-    .rejected { background: #dc2626; }
-
-    .banner h3 {
-      margin: 0 0 8px;
-      font-size: 30px;
+    .chart-area{
+        min-height:330px;
     }
 
-    .banner p {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.5;
+    .marketbar{
+        padding:8px;
     }
-
-    .info,
-    .card,
-    section {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 15px rgba(0,0,0,.05);
-    }
-
-    .info p {
-      margin: 8px 0;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    .card h4 {
-      margin: 0 0 15px;
-      color: #64748b;
-      font-size: 18px;
-    }
-
-    .balance {
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    .usd {
-      border-left: 5px solid #2563eb;
-    }
-
-    .ngn {
-      border-left: 5px solid #059669;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 25px 0;
-    }
-
-    .buttons button {
-      border: 0;
-      padding: 15px 22px;
-      border-radius: 10px;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .deposit { background: #16a34a; }
-    .withdraw { background: #7c3aed; }
-    .trade { background: #2563eb; }
-    .verify { background: #d97706; }
-
-    .disabled {
-      background: #94a3b8 !important;
-      cursor: not-allowed !important;
-    }
-
-    .item {
-      padding: 14px 0;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .muted {
-      color: #64748b;
-    }
-
-    @media (max-width: 700px) {
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      header h1 {
-        font-size: 20px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1>👑 Crownspips Trading</h1>
+<div class="app">
 
-  <button id="logoutBtn" type="button">
-    Logout
-  </button>
+<header class="topbar">
+
+    <div class="brand">
+        Crownspips <span>Trading</span>
+    </div>
+
+    <div class="asset-tabs" id="assetTabs"></div>
+
+    <div class="balance-box">
+        <div class="balance-label" id="balanceLabel">
+            ACCOUNT BALANCE
+        </div>
+
+        <div class="balance" id="topBalance">
+            $0.00
+        </div>
+    </div>
+
+    <button class="deposit-btn" id="depositButton">
+        Deposit
+    </button>
+
+    <button class="logout-btn" id="logoutButton">
+        Logout
+    </button>
+
 </header>
 
-<main>
 
-  <div id="loading">
-    Loading your account...
-  </div>
+<div class="main">
 
-  <div id="error"></div>
+    <aside class="side">
 
-  <div id="dashboard" style="display:none;">
+        <div class="side-item active">
+            <span class="side-icon">📊</span>
+            Portfolio
+        </div>
 
-    <h2>
-      Welcome, <span id="name">Trader</span>
-    </h2>
+        <div class="side-item">
+            <span class="side-icon">◷</span>
+            History
+        </div>
 
-    <div id="banner" class="banner"></div>
+        <div class="side-item">
+            <span class="side-icon">📈</span>
+            Markets
+        </div>
 
-    <div class="info">
-      <p><strong>Email:</strong> <span id="email"></span></p>
-      <p><strong>Account Type:</strong> <span id="accountType"></span></p>
-      <p><strong>Verification:</strong> <span id="verification"></span></p>
-    </div>
+        <div class="side-item">
+            <span class="side-icon">🏆</span>
+            Tournaments
+        </div>
 
-    <div class="cards">
+        <div class="side-item">
+            <span class="side-icon">⚙️</span>
+            Settings
+        </div>
 
-      <div class="card usd">
-        <h4 id="usdLabel">Demo USD Balance</h4>
-        <div class="balance" id="usdBalance">$0.00</div>
-      </div>
+    </aside>
 
-      <div class="card ngn">
-        <h4>NGN Balance</h4>
-        <div class="balance" id="ngnBalance">₦0.00</div>
-      </div>
 
-      <div class="card">
-        <h4>USD Deposits</h4>
-        <div class="balance" id="usdDeposits">$0.00</div>
-      </div>
+    <section class="center">
 
-      <div class="card">
-        <h4>NGN Deposits</h4>
-        <div class="balance" id="ngnDeposits">₦0.00</div>
-      </div>
+        <div class="marketbar">
 
-      <div class="card">
-        <h4>Open Trades</h4>
-        <div class="balance" id="openTrades">0</div>
-      </div>
+            <select id="assetSelect" class="market-select">
+                <option value="EUR/USD">EUR/USD</option>
+                <option value="GBP/USD">GBP/USD</option>
+                <option value="USD/JPY">USD/JPY</option>
+                <option value="AUD/USD">AUD/USD</option>
+                <option value="USD/CAD">USD/CAD</option>
+                <option value="USD/CHF">USD/CHF</option>
+                <option value="NZD/USD">NZD/USD</option>
+            </select>
 
-      <div class="card">
-        <h4>Status</h4>
-        <div class="balance" id="status">-</div>
-      </div>
+            <span class="market-status" id="priceText">
+                Loading market...
+            </span>
 
-    </div>
+            <span id="accountBadge" class="demo-badge">
+                DEMO
+            </span>
 
-    <div class="buttons">
+        </div>
 
-      <button id="depositBtn" class="deposit" type="button">
-        Deposit
-      </button>
 
-      <button id="withdrawBtn" class="withdraw" type="button">
-        Withdraw
-      </button>
+        <div class="chart-area">
 
-      <button id="demoTrade" class="trade" type="button">
-        Demo Trade
-      </button>
+            <div class="grid"></div>
 
-      <button id="verifyBtn"
-        class="verify"
-        type="button"
-        style="display:none;">
-        Complete Verification
-      </button>
+            <canvas id="chart"></canvas>
 
-    </div>
+            <div class="chart-info">
 
-    <section>
-      <h3>Recent Transactions</h3>
-      <div id="transactions">No transactions yet.</div>
+                <div class="info-pill">
+                    PRICE <strong id="chartPrice">1.08500</strong>
+                </div>
+
+                <div class="info-pill">
+                    MARKET <strong>OPEN</strong>
+                </div>
+
+            </div>
+
+            <div class="countdown" id="countdown">
+                00:00
+            </div>
+
+            <div class="chart-bottom">
+                <span>1m</span>
+                <span>5m</span>
+                <span>15m</span>
+                <span>1h</span>
+            </div>
+
+        </div>
+
+
+        <div class="bottom-panel">
+
+            <div class="panel-head">
+
+                <div class="panel-title">
+                    Open Positions
+                </div>
+
+                <div class="pnl" id="totalPnl">
+                    P/L $0.00
+                </div>
+
+            </div>
+
+            <div class="positions" id="positions">
+                <div class="empty">
+                    No open positions.
+                </div>
+            </div>
+
+        </div>
+
     </section>
 
-    <section>
-      <h3>Trades</h3>
-      <div id="trades">No trades yet.</div>
-    </section>
 
-  </div>
+    <aside class="trade-panel">
 
-</main>
+        <div class="trade-title">
+            Trade
+        </div>
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+        <label class="field-label">
+            Investment
+        </label>
+
+        <div class="amount-wrap">
+
+            <button type="button" id="minus">
+                −
+            </button>
+
+            <input
+                id="amount"
+                type="number"
+                value="100"
+                min="1"
+                step="10"
+            >
+
+            <button type="button" id="plus">
+                +
+            </button>
+
+        </div>
+
+
+        <label class="field-label">
+            Expiration
+        </label>
+
+        <select id="timer" class="timer-select">
+
+            <option value="5">5 seconds</option>
+            <option value="10">10 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="60">1 minute</option>
+            <option value="300">5 minutes</option>
+            <option value="600">10 minutes</option>
+
+        </select>
+
+
+        <div class="profit-box">
+
+            <div class="profit-row">
+                <span>Expected Profit</span>
+                <span class="profit-value">87%</span>
+            </div>
+
+            <div class="profit-row">
+                <span>Potential Return</span>
+                <span class="profit-value" id="potential">
+                    $187.00
+                </span>
+            </div>
+
+        </div>
+
+
+        <button
+            class="trade-button higher"
+            id="higherButton"
+        >
+            ▲ HIGHER
+        </button>
+
+
+        <button
+            class="trade-button lower"
+            id="lowerButton"
+        >
+            ▼ LOWER
+        </button>
+
+
+        <div class="trade-note" id="tradeNote">
+            Demo trading uses simulated funds.
+        </div>
+
+
+        <div class="account-info">
+
+            <div class="account-row">
+                <span>Account</span>
+                <strong id="accountType">
+                    DEMO
+                </strong>
+            </div>
+
+            <div class="account-row">
+                <span>Verification</span>
+                <strong id="verification">
+                    —
+                </strong>
+            </div>
+
+            <div class="account-row">
+                <span>USD</span>
+                <strong id="usdBalance">
+                    $0.00
+                </strong>
+            </div>
+
+            <div class="account-row">
+                <span>NGN</span>
+                <strong id="ngnBalance">
+                    ₦0.00
+                </strong>
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+</div>
+
 
 <script>
-(function () {
 
-  const SUPABASE_URL =
-    "https://ghagrruxxqtnochooiaj.supabase.co";
+/* ================================
+   SUPABASE
+================================ */
 
-  const SUPABASE_KEY =
-    "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
+const SUPABASE_URL =
+"https://ghagrruxxqtnochooiaj.supabase.co";
 
-  let client = null;
-  let user = null;
-  let profile = null;
+const SUPABASE_KEY =
+"sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
-  const logoutBtn =
-    document.getElementById("logoutBtn");
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-  const depositBtn =
-    document.getElementById("depositBtn");
 
-  const withdrawBtn =
-    document.getElementById("withdrawBtn");
+/* ================================
+   STATE
+================================ */
 
-  const demoTradeBtn =
-    document.getElementById("demoTrade");
+let currentUser = null;
+let profile = null;
 
-  const verifyBtn =
-    document.getElementById("verifyBtn");
+let price = 1.08500;
 
+let candles = [];
 
-  /* =========================
-     LOGOUT
-     ========================= */
+let positions = [];
 
-  logoutBtn.addEventListener("click", async function () {
+let timerInterval = null;
 
-    logoutBtn.disabled = true;
-    logoutBtn.textContent = "Logging out...";
 
-    /*
-      Clear the Supabase session locally first.
-      This makes logout work even if the
-      Supabase server is temporarily unavailable.
-    */
+/* ================================
+   ELEMENTS
+================================ */
 
-    try {
-      Object.keys(localStorage).forEach(function (key) {
+const canvas =
+document.getElementById("chart");
 
-        if (
-          key.startsWith("sb-") &&
-          key.endsWith("-auth-token")
-        ) {
-          localStorage.removeItem(key);
-        }
+const ctx =
+canvas.getContext("2d");
 
-      });
-    } catch (e) {
-      console.log(e);
-    }
+const topBalance =
+document.getElementById("topBalance");
 
-    try {
+const usdBalance =
+document.getElementById("usdBalance");
 
-      if (client) {
-        await client.auth.signOut();
-      }
+const ngnBalance =
+document.getElementById("ngnBalance");
 
-    } catch (e) {
-      console.log("Supabase logout:", e);
-    }
+const accountType =
+document.getElementById("accountType");
 
-    window.location.replace("login.html");
-  });
+const verification =
+document.getElementById("verification");
 
+const accountBadge =
+document.getElementById("accountBadge");
 
-  /* =========================
-     ERROR
-     ========================= */
+const tradeNote =
+document.getElementById("tradeNote");
 
-  function showError(message) {
+const amountInput =
+document.getElementById("amount");
 
-    document.getElementById("loading")
-      .style.display = "none";
+const potential =
+document.getElementById("potential");
 
-    const error =
-      document.getElementById("error");
+const positionsBox =
+document.getElementById("positions");
 
-    error.style.display = "block";
+const totalPnl =
+document.getElementById("totalPnl");
 
-    error.innerHTML =
-      "<strong>Dashboard error:</strong><br>" +
-      message +
-      "<br><br>" +
-      "<button onclick=\"location.reload()\" " +
-      "style=\"padding:10px 16px;border:0;" +
-      "border-radius:8px;background:#991b1b;" +
-      "color:white;font-weight:bold;\">" +
-      "Reload Dashboard" +
-      "</button>";
-  }
+const countdown =
+document.getElementById("countdown");
 
+const higherButton =
+document.getElementById("higherButton");
 
-  /* =========================
-     FORMAT
-     ========================= */
+const lowerButton =
+document.getElementById("lowerButton");
 
-  function usd(value) {
 
-    return "$" +
-      Number(value || 0).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-  }
+/* ================================
+   RESIZE CHART
+================================ */
 
+function resizeCanvas(){
 
-  function ngn(value) {
+    const rect =
+    canvas.parentElement.getBoundingClientRect();
 
-    return "₦" +
-      Number(value || 0).toLocaleString("en-NG", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-  }
+    const ratio =
+    window.devicePixelRatio || 1;
 
-
-  /* =========================
-     DISABLE REAL FUNCTIONS
-     ========================= */
-
-  function disableRealFunctions(message) {
-
-    depositBtn.classList.add("disabled");
-    withdrawBtn.classList.add("disabled");
-
-    depositBtn.textContent =
-      "Deposit Unavailable";
-
-    withdrawBtn.textContent =
-      "Withdraw Unavailable";
-
-    depositBtn.onclick = function () {
-      alert(message);
-    };
-
-    withdrawBtn.onclick = function () {
-      alert(message);
-    };
-  }
-
-
-  /* =========================
-     ENABLE REAL FUNCTIONS
-     ========================= */
-
-  function enableRealFunctions() {
-
-    depositBtn.classList.remove("disabled");
-    withdrawBtn.classList.remove("disabled");
-
-    depositBtn.textContent = "Deposit";
-    withdrawBtn.textContent = "Withdraw";
-
-    depositBtn.onclick = function () {
-      location.href = "deposit.html";
-    };
-
-    withdrawBtn.onclick = function () {
-
-      alert(
-        "Withdrawal request section is available for your verified real account."
-      );
-
-    };
-  }
-
-
-  /* =========================
-     LOAD PROFILE
-     ========================= */
-
-  async function loadProfile() {
-
-    const result =
-      await client
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-    if (result.error) {
-      throw result.error;
-    }
-
-    if (!result.data) {
-      throw new Error(
-        "No profile was found for this account."
-      );
-    }
-
-    profile = result.data;
-
-    const type =
-      String(
-        profile.account_type || "demo"
-      ).toLowerCase();
-
-    const verification =
-      String(
-        profile.verification_status || "pending"
-      ).toLowerCase();
-
-
-    document.getElementById("name")
-      .textContent =
-      profile.full_name || "Trader";
-
-    document.getElementById("email")
-      .textContent =
-      profile.email || user.email || "";
-
-    document.getElementById("accountType")
-      .textContent =
-      type.toUpperCase();
-
-    document.getElementById("verification")
-      .textContent =
-      verification.toUpperCase();
-
-
-    const banner =
-      document.getElementById("banner");
-
-
-    /* VERIFIED REAL */
-
-    if (
-      type === "real" &&
-      verification === "verified"
-    ) {
-
-      banner.className = "banner real";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — ACTIVE</h3>" +
-        "<p>Your real account has been verified and is active.</p>";
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-      document.getElementById("usdBalance")
-        .textContent =
-        usd(profile.real_balance);
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        ngn(profile.ngn_balance);
-
-      document.getElementById("status")
-        .textContent =
-        "ACTIVE";
-
-      demoTradeBtn.style.display = "none";
-      verifyBtn.style.display = "none";
-
-      enableRealFunctions();
-
-      return;
-    }
-
-
-    /* PENDING REAL */
-
-    if (
-      type === "real" &&
-      verification === "pending"
-    ) {
-
-      banner.className = "banner pending";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — PENDING</h3>" +
-        "<p>Your real account application is awaiting admin verification.</p>";
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-      document.getElementById("usdBalance")
-        .textContent =
-        "$0.00";
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        "₦0.00";
-
-      document.getElementById("status")
-        .textContent =
-        "PENDING";
-
-      demoTradeBtn.style.display = "none";
-
-      verifyBtn.style.display = "inline-block";
-
-      verifyBtn.textContent =
-        "Complete Verification";
-
-      verifyBtn.onclick = function () {
-        location.href = "verification.html";
-      };
-
-      disableRealFunctions(
-        "Your real account is still pending verification."
-      );
-
-      return;
-    }
-
-
-    /* REJECTED REAL */
-
-    if (
-      type === "real" &&
-      verification === "rejected"
-    ) {
-
-      banner.className = "banner rejected";
-
-      banner.innerHTML =
-        "<h3>REAL ACCOUNT — REJECTED</h3>" +
-        "<p>Your real account application was not approved. You can update your verification information and submit it again.</p>";
-
-      document.getElementById("usdLabel")
-        .textContent =
-        "Real USD Balance";
-
-      document.getElementById("usdBalance")
-        .textContent =
-        "$0.00";
-
-      document.getElementById("ngnBalance")
-        .textContent =
-        "₦0.00";
-
-      document.getElementById("status")
-        .textContent =
-        "REJECTED";
-
-      demoTradeBtn.style.display = "none";
-
-      verifyBtn.style.display = "inline-block";
-
-      verifyBtn.textContent =
-        "Update Verification";
-
-      verifyBtn.onclick = function () {
-        location.href = "verification.html";
-      };
-
-      disableRealFunctions(
-        "Your real account is currently rejected."
-      );
-
-      return;
-    }
-
-
-    /* DEMO */
-
-    banner.className = "banner demo";
-
-    banner.innerHTML =
-      "<h3>DEMO ACCOUNT</h3>" +
-      "<p>You are using a simulated trading account. Demo funds are completely separate from real-account funds.</p>";
-
-    document.getElementById("usdLabel")
-      .textContent =
-      "Demo USD Balance";
-
-    document.getElementById("usdBalance")
-      .textContent =
-      usd(profile.balance);
-
-    document.getElementById("ngnBalance")
-      .textContent =
-      "₦0.00";
-
-    document.getElementById("status")
-      .textContent =
-      "DEMO";
-
-    demoTradeBtn.style.display =
-      "inline-block";
-
-    verifyBtn.style.display =
-      "none";
-
-    disableRealFunctions(
-      "Real deposits and withdrawals are available only on an active verified real account."
+    canvas.width =
+    rect.width * ratio;
+
+    canvas.height =
+    rect.height * ratio;
+
+    canvas.style.width =
+    rect.width + "px";
+
+    canvas.style.height =
+    rect.height + "px";
+
+    ctx.setTransform(
+        ratio,
+        0,
+        0,
+        ratio,
+        0,
+        0
     );
-  }
+
+    drawChart();
+}
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
 
-  /* =========================
-     TRANSACTIONS
-     ========================= */
+/* ================================
+   CREATE INITIAL CANDLES
+================================ */
 
-  async function loadTransactions() {
+function createCandles(){
 
-    const result =
-      await client
-        .from("transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", {
-          ascending: false
-        })
-        .limit(20);
+    candles = [];
 
-    if (result.error) {
+    let p = price;
 
-      document.getElementById("transactions")
-        .textContent =
-        "Unable to load transactions.";
+    for(let i=0;i<80;i++){
 
-      return;
+        const open = p;
+
+        const change =
+        (Math.random() - 0.48) * 0.004;
+
+        const close =
+        open + change;
+
+        const high =
+        Math.max(open,close)
+        + Math.random() * 0.002;
+
+        const low =
+        Math.min(open,close)
+        - Math.random() * 0.002;
+
+        candles.push({
+            open,
+            close,
+            high,
+            low
+        });
+
+        p = close;
     }
 
-    const transactions =
-      result.data || [];
+    price = p;
+}
 
-    const box =
-      document.getElementById("transactions");
 
-    let usdTotal = 0;
-    let ngnTotal = 0;
+/* ================================
+   UPDATE MARKET
+================================ */
 
-    if (!transactions.length) {
+function updateMarket(){
 
-      box.textContent =
-        "No transactions yet.";
+    const old = price;
 
-      return;
-    }
+    price +=
+    (Math.random() - 0.5) * 0.002;
 
-    box.innerHTML = "";
+    const open = old;
 
-    transactions.forEach(function (tx) {
+    const close = price;
 
-      const currency =
-        String(
-          tx.currency || "USD"
-        ).toUpperCase();
+    const high =
+    Math.max(open,close)
+    + Math.random() * 0.001;
 
-      if (
-        tx.transaction_type === "DEPOSIT" &&
-        tx.status === "COMPLETED"
-      ) {
+    const low =
+    Math.min(open,close)
+    - Math.random() * 0.001;
 
-        if (currency === "NGN") {
-          ngnTotal += Number(tx.amount || 0);
-        } else {
-          usdTotal += Number(tx.amount || 0);
-        }
-      }
-
-      const div =
-        document.createElement("div");
-
-      div.className = "item";
-
-      const symbol =
-        currency === "NGN"
-          ? "₦"
-          : "$";
-
-      div.innerHTML =
-        "<strong>" +
-        (tx.transaction_type || "") +
-        "</strong> " +
-        symbol +
-        Number(tx.amount || 0).toLocaleString() +
-        "<br><small class='muted'>" +
-        currency +
-        " • " +
-        (tx.status || "") +
-        "</small>";
-
-      box.appendChild(div);
+    candles.push({
+        open,
+        close,
+        high,
+        low
     });
 
-    document.getElementById("usdDeposits")
-      .textContent =
-      usd(usdTotal);
-
-    document.getElementById("ngnDeposits")
-      .textContent =
-      ngn(ngnTotal);
-  }
-
-
-  /* =========================
-     TRADES
-     ========================= */
-
-  async function loadTrades() {
-
-    const result =
-      await client
-        .from("trades")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("opened_at", {
-          ascending: false
-        });
-
-    if (result.error) {
-
-      document.getElementById("trades")
-        .textContent =
-        "Unable to load trades.";
-
-      return;
+    if(candles.length > 80){
+        candles.shift();
     }
 
-    const trades =
-      result.data || [];
+    document.getElementById("chartPrice")
+    .textContent =
+    price.toFixed(5);
 
-    const open =
-      trades.filter(function (trade) {
-        return String(trade.status)
-          .toUpperCase() === "OPEN";
-      });
+    document.getElementById("priceText")
+    .textContent =
+    "Market price " + price.toFixed(5);
 
-    document.getElementById("openTrades")
-      .textContent =
-      open.length;
+    drawChart();
+}
 
-    const box =
-      document.getElementById("trades");
 
-    if (!trades.length) {
+/* ================================
+   DRAW CHART
+================================ */
 
-      box.textContent =
-        "No trades yet.";
+function drawChart(){
 
-      return;
+    if(!canvas.width){
+        return;
     }
 
-    box.innerHTML = "";
+    const width =
+    canvas.clientWidth;
 
-    trades.slice(0, 20)
-      .forEach(function (trade) {
+    const height =
+    canvas.clientHeight;
 
-        const div =
-          document.createElement("div");
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
 
-        div.className = "item";
-
-        div.innerHTML =
-          "<strong>" +
-          trade.pair +
-          "</strong> — " +
-          trade.trade_type +
-          "<br><small class='muted'>" +
-          "Units: " +
-          trade.units +
-          " • Open: " +
-          trade.open_price +
-          " • " +
-          trade.status +
-          "</small>";
-
-        box.appendChild(div);
-      });
-  }
-
-
-  /* =========================
-     DEMO TRADE
-     ========================= */
-
-  demoTradeBtn.onclick = async function () {
-
-    if (!profile) return;
-
-    if (
-      String(profile.account_type)
-        .toLowerCase() !== "demo"
-    ) {
-
-      alert(
-        "Demo trading is only available on a demo account."
-      );
-
-      return;
+    if(candles.length === 0){
+        return;
     }
 
-    const result =
-      await client
-        .from("trades")
-        .insert({
-          user_id: user.id,
-          pair: "EUR/USD",
-          trade_type: "BUY",
-          units: 1000,
-          open_price: 1.1000,
-          status: "OPEN"
-        });
+    let min =
+    Math.min(...candles.map(c=>c.low));
 
-    if (result.error) {
+    let max =
+    Math.max(...candles.map(c=>c.high));
 
-      alert(
-        "Demo trade failed: " +
-        result.error.message
-      );
+    const padding = 25;
 
-      return;
-    }
+    const range =
+    Math.max(max-min,0.001);
 
-    alert("Demo trade opened.");
+    const candleWidth =
+    Math.max(
+        4,
+        (width - padding*2)
+        / candles.length
+        * 0.68
+    );
 
-    await loadTrades();
-  };
+    candles.forEach((c,i)=>{
 
+        const x =
+        padding +
+        i *
+        ((width-padding*2)/candles.length);
 
-  /* =========================
-     START
-     ========================= */
+        const yHigh =
+        height-padding -
+        ((c.high-min)/range)
+        *(height-padding*2);
 
-  async function start() {
+        const yLow =
+        height-padding -
+        ((c.low-min)/range)
+        *(height-padding*2);
 
-    try {
+        const yOpen =
+        height-padding -
+        ((c.open-min)/range)
+        *(height-padding*2);
 
-      /*
-        Check that Supabase actually loaded.
-      */
+        const yClose =
+        height-padding -
+        ((c.close-min)/range)
+        *(height-padding*2);
 
-      if (
-        !window.supabase ||
-        typeof window.supabase.createClient !== "function"
-      ) {
+        const up =
+        c.close >= c.open;
 
-        throw new Error(
-          "Supabase could not load. Please check your internet connection and reload the page."
-        );
-      }
+        ctx.strokeStyle =
+        up ? "#25d98a" : "#ef625a";
 
+        ctx.fillStyle =
+        up ? "#25d98a" : "#ef625a";
 
-      client =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_KEY
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x+candleWidth/2,
+            yHigh
         );
 
-
-      const result =
-        await client.auth.getSession();
-
-
-      if (result.error) {
-        throw result.error;
-      }
-
-
-      if (!result.data.session) {
-
-        window.location.replace(
-          "login.html"
+        ctx.lineTo(
+            x+candleWidth/2,
+            yLow
         );
+
+        ctx.stroke();
+
+        const bodyTop =
+        Math.min(yOpen,yClose);
+
+        const bodyHeight =
+        Math.max(
+            2,
+            Math.abs(yClose-yOpen)
+        );
+
+        ctx.fillRect(
+            x,
+            bodyTop,
+            candleWidth,
+            bodyHeight
+        );
+
+    });
+
+    /* Current price line */
+
+    const currentY =
+    height-padding -
+    ((price-min)/range)
+    *(height-padding*2);
+
+    ctx.strokeStyle =
+    "#d4af37";
+
+    ctx.setLineDash([5,5]);
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,currentY);
+    ctx.lineTo(width,currentY);
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+}
+
+
+/* ================================
+   FORMAT MONEY
+================================ */
+
+function money(value){
+
+    return "$" +
+    Number(value || 0)
+    .toLocaleString(
+        "en-US",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+}
+
+
+/* ================================
+   LOAD ACCOUNT
+================================ */
+
+async function loadAccount(){
+
+    const {
+        data:{
+            session
+        }
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+    if(!session){
+
+        window.location.href =
+        "login.html";
 
         return;
-      }
-
-
-      user =
-        result.data.session.user;
-
-
-      await loadProfile();
-
-      await loadTransactions();
-
-      await loadTrades();
-
-
-      document.getElementById("loading")
-        .style.display = "none";
-
-      document.getElementById("dashboard")
-        .style.display = "block";
-
-    } catch (error) {
-
-      console.error(error);
-
-      showError(
-        error.message ||
-        "Unable to load your account."
-      );
     }
-  }
 
+    currentUser =
+    session.user;
 
-  /*
-    Give the browser a moment to finish
-    loading the Supabase script.
-  */
-
-  window.addEventListener("load", function () {
-    start();
-  });
-
-})();
-</script>
-
-</body>
-  </html>
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+   
