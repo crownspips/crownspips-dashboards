@@ -16,14 +16,19 @@
 html,body{
     margin:0;
     padding:0;
-    width:100%;
-    height:100%;
+    min-height:100%;
     font-family:Arial,Helvetica,sans-serif;
     background:#07111f;
     color:#fff;
 }
 
-button,select,input{
+body{
+    overflow-x:hidden;
+}
+
+button,
+input,
+select{
     font:inherit;
 }
 
@@ -31,27 +36,28 @@ button{
     cursor:pointer;
 }
 
-.app{
-    min-height:100vh;
-    background:
-        radial-gradient(circle at 50% 0%,#162842 0,#07111f 48%,#040b14 100%);
+button:disabled{
+    cursor:not-allowed;
+    opacity:.45;
 }
 
-/* TOP BAR */
+/* =========================
+   TOP BAR
+========================= */
 
 .topbar{
-    height:72px;
+    min-height:72px;
     display:flex;
     align-items:center;
     gap:12px;
-    padding:8px 14px;
-    border-bottom:1px solid #24354b;
+    padding:9px 14px;
     background:#0b1728;
+    border-bottom:1px solid #26384e;
     overflow-x:auto;
 }
 
 .brand{
-    min-width:170px;
+    min-width:185px;
     font-size:20px;
     font-weight:bold;
 }
@@ -60,109 +66,117 @@ button{
     color:#d4af37;
 }
 
-.asset-tabs{
+.assets{
     display:flex;
     gap:8px;
     flex:1;
+    min-width:250px;
     overflow-x:auto;
 }
 
-.asset-tab{
-    min-width:145px;
-    padding:10px 13px;
-    background:#101f34;
-    border:1px solid #253952;
+.asset{
+    min-width:125px;
+    padding:9px 12px;
+    border:1px solid #293d56;
     border-radius:8px;
+    background:#101f34;
     color:#fff;
     text-align:left;
 }
 
-.asset-tab.active{
+.asset.active{
     border-color:#d4af37;
-    background:#172b45;
+    background:#172a44;
 }
 
 .asset-name{
+    font-size:13px;
     font-weight:bold;
-    font-size:14px;
 }
 
-.asset-price{
-    font-size:12px;
-    color:#8ea0b6;
-    margin-top:3px;
+.asset-sub{
+    margin-top:4px;
+    font-size:10px;
+    color:#8295ad;
 }
 
-.balance-box{
-    min-width:150px;
+.account-balance{
+    min-width:145px;
     text-align:right;
 }
 
-.balance-label{
-    font-size:11px;
-    color:#8ea0b6;
+.account-balance small{
+    display:block;
+    color:#8295ad;
+    font-size:10px;
 }
 
-.balance{
-    font-size:19px;
-    font-weight:bold;
+.account-balance strong{
     color:#d4af37;
+    font-size:18px;
 }
 
-.deposit-btn{
-    border:1px solid #16a66a;
-    color:#36d68c;
-    background:#0d2a24;
-    padding:12px 18px;
+.deposit{
+    border:1px solid #15945d;
+    background:#0d2b23;
+    color:#39d994;
+    padding:12px 17px;
     border-radius:7px;
     font-weight:bold;
+    white-space:nowrap;
 }
 
-.logout-btn{
-    border:1px solid #52627a;
-    background:#17253a;
+.logout{
+    border:1px solid #465a73;
+    background:#15243a;
     color:#fff;
     padding:11px 14px;
     border-radius:7px;
 }
 
-/* LAYOUT */
+/* =========================
+   MAIN LAYOUT
+========================= */
 
 .main{
     display:grid;
-    grid-template-columns:70px minmax(0,1fr) 260px;
+    grid-template-columns:72px minmax(0,1fr) 270px;
     min-height:calc(100vh - 72px);
 }
 
-/* SIDE */
+/* =========================
+   LEFT MENU
+========================= */
 
-.side{
-    border-right:1px solid #24354b;
+.sidebar{
     background:#091625;
-    padding:15px 7px;
+    border-right:1px solid #26384e;
+    padding:13px 7px;
 }
 
 .side-item{
-    padding:14px 4px;
-    margin-bottom:9px;
-    border-radius:8px;
     text-align:center;
-    color:#8092a9;
+    color:#788ca5;
     font-size:10px;
+    padding:13px 3px;
+    border-radius:8px;
+    margin-bottom:8px;
 }
 
 .side-item.active{
-    background:#162941;
     color:#fff;
+    background:#172a43;
 }
 
 .side-icon{
     display:block;
-    font-size:22px;
-    margin-bottom:6px;
+    font-size:21px;
+    margin-bottom:5px;
 }
 
-/* CENTER */
+/* =========================
+   CENTER
+========================= */
 
 .center{
     min-width:0;
@@ -172,70 +186,63 @@ button{
 
 .marketbar{
     min-height:58px;
-    padding:10px 14px;
-    border-bottom:1px solid #24354b;
     display:flex;
     align-items:center;
     gap:12px;
+    padding:9px 14px;
+    background:#0a1728;
+    border-bottom:1px solid #26384e;
     flex-wrap:wrap;
-    background:#0a1627;
 }
 
 .market-select{
-    background:#101f34;
-    border:1px solid #334964;
-    color:#fff;
     padding:10px 12px;
+    min-width:145px;
     border-radius:7px;
-    min-width:140px;
+    border:1px solid #354b65;
+    background:#101f34;
+    color:#fff;
 }
 
-.market-status{
-    color:#8fa1b8;
+.price{
+    color:#a0b0c3;
     font-size:12px;
 }
 
-.demo-badge{
-    background:#163c61;
-    color:#58b8ff;
-    border:1px solid #24699e;
-    padding:7px 10px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:bold;
-}
-
 .real-badge{
-    background:#123b2c;
-    color:#42e29a;
-    border:1px solid #1b8058;
-    padding:7px 10px;
+    margin-left:auto;
+    padding:7px 11px;
     border-radius:20px;
-    font-size:11px;
+    border:1px solid #16855b;
+    background:#103528;
+    color:#42dc99;
+    font-size:10px;
     font-weight:bold;
 }
 
-/* CHART */
+/* =========================
+   CHART
+========================= */
 
-.chart-area{
+.chart{
     position:relative;
+    min-height:450px;
     flex:1;
-    min-height:420px;
-    background:#0a1525;
+    background:#091524;
     overflow:hidden;
 }
 
-.grid{
+.chart-grid{
     position:absolute;
     inset:0;
     background-image:
-        linear-gradient(#1c3047 1px,transparent 1px),
-        linear-gradient(90deg,#1c3047 1px,transparent 1px);
+        linear-gradient(#1b2d43 1px,transparent 1px),
+        linear-gradient(90deg,#1b2d43 1px,transparent 1px);
     background-size:70px 55px;
-    opacity:.5;
+    opacity:.55;
 }
 
-canvas{
+#chartCanvas{
     position:absolute;
     inset:0;
     width:100%;
@@ -244,228 +251,228 @@ canvas{
 
 .chart-info{
     position:absolute;
-    top:14px;
     left:15px;
+    top:14px;
     display:flex;
-    gap:9px;
+    gap:8px;
     flex-wrap:wrap;
-    z-index:2;
+    z-index:3;
 }
 
-.info-pill{
-    background:#101e31dd;
-    border:1px solid #263c56;
+.chart-pill{
+    background:#101f32e8;
+    border:1px solid #2b415b;
     padding:7px 10px;
     border-radius:6px;
     font-size:11px;
 }
 
-.chart-bottom{
+.chart-price{
+    color:#d4af37;
+}
+
+.chart-status{
+    color:#45db96;
+}
+
+.chart-footer{
     position:absolute;
+    left:12px;
+    right:12px;
     bottom:8px;
-    left:10px;
-    right:10px;
     display:flex;
     justify-content:space-between;
-    color:#71849d;
+    color:#647993;
     font-size:10px;
 }
 
-/* BOTTOM */
+/* =========================
+   OPEN POSITIONS
+========================= */
 
-.bottom-panel{
-    border-top:1px solid #263a52;
+.positions{
     background:#0b1728;
+    border-top:1px solid #26384e;
 }
 
-.panel-head{
+.positions-head{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    padding:11px 15px;
-    border-bottom:1px solid #24354b;
+    padding:12px 15px;
+    border-bottom:1px solid #26384e;
 }
 
-.panel-title{
+.positions-title{
     font-weight:bold;
     font-size:13px;
 }
 
-.pnl{
-    color:#f05d5d;
-    font-weight:bold;
-}
-
-.positions{
-    padding:10px 15px;
-    min-height:70px;
+.positions-note{
+    color:#71849c;
+    font-size:11px;
 }
 
 .empty{
-    color:#657990;
+    padding:18px 15px;
+    color:#647993;
     font-size:12px;
-    padding:10px 0;
 }
 
-/* RIGHT */
+/* =========================
+   RIGHT TRADE PANEL
+========================= */
 
 .trade-panel{
-    border-left:1px solid #24354b;
     background:#091625;
-    padding:15px;
+    border-left:1px solid #26384e;
+    padding:16px;
 }
 
 .trade-title{
-    font-size:18px;
+    font-size:19px;
     font-weight:bold;
-    margin-bottom:15px;
+    margin-bottom:18px;
+}
+
+.field{
+    margin-bottom:16px;
 }
 
 .field-label{
     display:block;
-    color:#8496ad;
+    margin-bottom:7px;
+    color:#8295ad;
     font-size:11px;
-    margin-bottom:6px;
 }
 
-.amount-wrap{
+.amount{
     display:flex;
+    border:1px solid #344a64;
     background:#101f34;
-    border:1px solid #334964;
     border-radius:7px;
     overflow:hidden;
-    margin-bottom:15px;
 }
 
-.amount-wrap input{
-    flex:1;
-    min-width:0;
-    background:transparent;
+.amount button{
+    width:42px;
+    border:0;
+    background:#162940;
     color:#fff;
+}
+
+.amount input{
+    width:100%;
+    min-width:0;
+    padding:13px;
     border:0;
     outline:0;
-    padding:13px;
-    font-weight:bold;
-}
-
-.amount-wrap button{
-    width:40px;
-    border:0;
-    border-left:1px solid #334964;
-    background:#15273e;
+    background:transparent;
     color:#fff;
+    font-weight:bold;
+    text-align:center;
 }
 
-.timer-select{
+.expiry{
     width:100%;
     padding:13px;
+    border:1px solid #344a64;
+    border-radius:7px;
     background:#101f34;
     color:#fff;
-    border:1px solid #334964;
-    border-radius:7px;
-    margin-bottom:15px;
 }
 
-.profit-box{
-    background:#101f34;
-    border:1px solid #293f59;
-    border-radius:8px;
+.info-box{
     padding:13px;
-    margin-bottom:15px;
+    margin-bottom:16px;
+    border:1px solid #293e57;
+    border-radius:8px;
+    background:#101f34;
 }
 
-.profit-row{
+.info-row{
     display:flex;
     justify-content:space-between;
-    font-size:12px;
-    color:#91a2b8;
     margin:7px 0;
+    font-size:12px;
 }
 
-.profit-value{
-    color:#45df98;
-    font-weight:bold;
+.info-row span{
+    color:#8295ad;
+}
+
+.info-row strong{
+    color:#fff;
 }
 
 .trade-button{
     width:100%;
+    padding:17px 10px;
+    margin-bottom:10px;
     border:0;
     border-radius:8px;
-    padding:17px 10px;
     color:#fff;
-    font-size:16px;
     font-weight:bold;
-    margin-bottom:10px;
+    font-size:16px;
 }
 
 .higher{
-    background:#10a968;
+    background:#10a969;
 }
 
 .lower{
-    background:#d84a43;
+    background:#d74d45;
 }
 
-.trade-button:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-}
-
-.trade-note{
-    text-align:center;
-    color:#71839a;
+.execution-message{
+    padding:11px;
+    margin-top:7px;
+    border-radius:7px;
+    background:#18263a;
+    border:1px solid #30455f;
+    color:#8ea0b7;
     font-size:10px;
     line-height:1.5;
-    margin-top:12px;
+    text-align:center;
 }
 
-.account-info{
-    border-top:1px solid #24354b;
+.account-section{
     margin-top:18px;
-    padding-top:15px;
+    padding-top:16px;
+    border-top:1px solid #26384e;
 }
 
 .account-row{
     display:flex;
     justify-content:space-between;
-    margin:8px 0;
+    margin:10px 0;
     font-size:12px;
 }
 
-.account-row span:first-child{
+.account-row span{
     color:#788ca5;
 }
 
-/* TIMER */
-
-.countdown{
-    position:absolute;
-    right:15px;
-    top:14px;
-    z-index:3;
-    display:none;
-    padding:8px 12px;
-    background:#121f33;
-    border:1px solid #52657d;
-    border-radius:7px;
-    font-weight:bold;
+.verified{
+    color:#42dc99;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:900px){
 
     .main{
-        grid-template-columns:55px minmax(0,1fr);
+        grid-template-columns:58px minmax(0,1fr);
     }
 
     .trade-panel{
         grid-column:1 / -1;
         border-left:0;
-        border-top:1px solid #24354b;
+        border-top:1px solid #26384e;
     }
 
-    .chart-area{
+    .chart{
         min-height:390px;
     }
 }
@@ -473,28 +480,27 @@ canvas{
 @media(max-width:600px){
 
     .topbar{
-        height:auto;
         min-height:65px;
     }
 
     .brand{
-        min-width:145px;
+        min-width:150px;
         font-size:17px;
     }
 
-    .balance-box{
-        min-width:115px;
+    .account-balance{
+        min-width:120px;
     }
 
-    .balance{
-        font-size:16px;
+    .account-balance strong{
+        font-size:15px;
     }
 
-    .deposit-btn{
+    .deposit{
         padding:10px 12px;
     }
 
-    .logout-btn{
+    .logout{
         padding:10px;
     }
 
@@ -502,12 +508,12 @@ canvas{
         grid-template-columns:52px minmax(0,1fr);
     }
 
-    .chart-area{
+    .chart{
         min-height:330px;
     }
 
-    .marketbar{
-        padding:8px;
+    .real-badge{
+        margin-left:0;
     }
 }
 </style>
@@ -515,31 +521,62 @@ canvas{
 
 <body>
 
-<div class="app">
-
 <header class="topbar">
 
     <div class="brand">
         Crownspips <span>Trading</span>
     </div>
 
-    <div class="asset-tabs" id="assetTabs"></div>
+    <div class="assets">
 
-    <div class="balance-box">
-        <div class="balance-label" id="balanceLabel">
-            ACCOUNT BALANCE
-        </div>
+        <button class="asset active" data-pair="EUR/USD">
+            <div class="asset-name">EUR/USD</div>
+            <div class="asset-sub">Forex</div>
+        </button>
 
-        <div class="balance" id="topBalance">
-            $0.00
-        </div>
+        <button class="asset" data-pair="GBP/USD">
+            <div class="asset-name">GBP/USD</div>
+            <div class="asset-sub">Forex</div>
+        </button>
+
+        <button class="asset" data-pair="USD/JPY">
+            <div class="asset-name">USD/JPY</div>
+            <div class="asset-sub">Forex</div>
+        </button>
+
+        <button class="asset" data-pair="AUD/USD">
+            <div class="asset-name">AUD/USD</div>
+            <div class="asset-sub">Forex</div>
+        </button>
+
+        <button class="asset" data-pair="USD/CAD">
+            <div class="asset-name">USD/CAD</div>
+            <div class="asset-sub">Forex</div>
+        </button>
+
     </div>
 
-    <button class="deposit-btn" id="depositButton">
+    <div class="account-balance">
+
+        <small>REAL USD BALANCE</small>
+
+        <strong id="topBalance">
+            $0.00
+        </strong>
+
+    </div>
+
+    <button
+        class="deposit"
+        id="depositButton"
+    >
         Deposit
     </button>
 
-    <button class="logout-btn" id="logoutButton">
+    <button
+        class="logout"
+        id="logoutButton"
+    >
         Logout
     </button>
 
@@ -548,11 +585,11 @@ canvas{
 
 <div class="main">
 
-    <aside class="side">
+    <aside class="sidebar">
 
         <div class="side-item active">
             <span class="side-icon">📊</span>
-            Portfolio
+            Trade
         </div>
 
         <div class="side-item">
@@ -561,13 +598,8 @@ canvas{
         </div>
 
         <div class="side-item">
-            <span class="side-icon">📈</span>
-            Markets
-        </div>
-
-        <div class="side-item">
-            <span class="side-icon">🏆</span>
-            Tournaments
+            <span class="side-icon">💼</span>
+            Portfolio
         </div>
 
         <div class="side-item">
@@ -582,77 +614,91 @@ canvas{
 
         <div class="marketbar">
 
-            <select id="assetSelect" class="market-select">
-                <option value="EUR/USD">EUR/USD</option>
-                <option value="GBP/USD">GBP/USD</option>
-                <option value="USD/JPY">USD/JPY</option>
-                <option value="AUD/USD">AUD/USD</option>
-                <option value="USD/CAD">USD/CAD</option>
-                <option value="USD/CHF">USD/CHF</option>
-                <option value="NZD/USD">NZD/USD</option>
+            <select
+                class="market-select"
+                id="pairSelect"
+            >
+                <option>EUR/USD</option>
+                <option>GBP/USD</option>
+                <option>USD/JPY</option>
+                <option>AUD/USD</option>
+                <option>USD/CAD</option>
+                <option>USD/CHF</option>
             </select>
 
-            <span class="market-status" id="priceText">
-                Loading market...
+            <span class="price">
+                Market price:
+                <strong
+                    id="currentPrice"
+                    class="chart-price"
+                >
+                    1.08500
+                </strong>
             </span>
 
-            <span id="accountBadge" class="demo-badge">
-                DEMO
+            <span class="real-badge">
+                VERIFIED REAL ACCOUNT
             </span>
 
         </div>
 
 
-        <div class="chart-area">
+        <div class="chart">
 
-            <div class="grid"></div>
+            <div class="chart-grid"></div>
 
-            <canvas id="chart"></canvas>
+            <canvas id="chartCanvas"></canvas>
 
             <div class="chart-info">
 
-                <div class="info-pill">
-                    PRICE <strong id="chartPrice">1.08500</strong>
+                <div class="chart-pill">
+                    PRICE:
+                    <strong
+                        id="chartPrice"
+                        class="chart-price"
+                    >
+                        1.08500
+                    </strong>
                 </div>
 
-                <div class="info-pill">
-                    MARKET <strong>OPEN</strong>
+                <div class="chart-pill">
+                    MARKET:
+                    <strong class="chart-status">
+                        OPEN
+                    </strong>
                 </div>
 
             </div>
 
-            <div class="countdown" id="countdown">
-                00:00
-            </div>
+            <div class="chart-footer">
 
-            <div class="chart-bottom">
                 <span>1m</span>
                 <span>5m</span>
                 <span>15m</span>
                 <span>1h</span>
+                <span>4h</span>
+
             </div>
 
         </div>
 
 
-        <div class="bottom-panel">
+        <div class="positions">
 
-            <div class="panel-head">
+            <div class="positions-head">
 
-                <div class="panel-title">
+                <div class="positions-title">
                     Open Positions
                 </div>
 
-                <div class="pnl" id="totalPnl">
-                    P/L $0.00
+                <div class="positions-note">
+                    Real account
                 </div>
 
             </div>
 
-            <div class="positions" id="positions">
-                <div class="empty">
-                    No open positions.
-                </div>
+            <div class="empty">
+                No open positions.
             </div>
 
         </div>
@@ -667,59 +713,113 @@ canvas{
         </div>
 
 
-        <label class="field-label">
-            Investment
-        </label>
+        <div class="field">
 
-        <div class="amount-wrap">
+            <label class="field-label">
+                Investment Amount
+            </label>
 
-            <button type="button" id="minus">
-                −
-            </button>
+            <div class="amount">
 
-            <input
-                id="amount"
-                type="number"
-                value="100"
-                min="1"
-                step="10"
-            >
+                <button
+                    type="button"
+                    id="minusButton"
+                >
+                    −
+                </button>
 
-            <button type="button" id="plus">
-                +
-            </button>
+                <input
+                    id="amountInput"
+                    type="number"
+                    value="100"
+                    min="1"
+                    step="10"
+                >
+
+                <button
+                    type="button"
+                    id="plusButton"
+                >
+                    +
+                </button>
+
+            </div>
 
         </div>
 
 
-        <label class="field-label">
-            Expiration
-        </label>
+        <div class="field">
 
-        <select id="timer" class="timer-select">
+            <label class="field-label">
+                Expiration
+            </label>
 
-            <option value="5">5 seconds</option>
-            <option value="10">10 seconds</option>
-            <option value="30">30 seconds</option>
-            <option value="60">1 minute</option>
-            <option value="300">5 minutes</option>
-            <option value="600">10 minutes</option>
+            <select
+                class="expiry"
+                id="expirySelect"
+            >
+                <option value="5">5 seconds</option>
+                <option value="10">10 seconds</option>
+                <option value="30">30 seconds</option>
+                <option value="60">1 minute</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+            </select>
 
-        </select>
+        </div>
 
 
-        <div class="profit-box">
+        <div class="info-box">
 
-            <div class="profit-row">
-                <span>Expected Profit</span>
-                <span class="profit-value">87%</span>
+            <div class="info-row">
+
+                <span>
+                    Account
+                </span>
+
+                <strong>
+                    REAL
+                </strong>
+
             </div>
 
-            <div class="profit-row">
-                <span>Potential Return</span>
-                <span class="profit-value" id="potential">
-                    $187.00
+            <div class="info-row">
+
+                <span>
+                    USD Balance
                 </span>
+
+                <strong id="usdBalance">
+                    $0.00
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+                    NGN Balance
+                </span>
+
+                <strong id="ngnBalance">
+                    ₦0.00
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>
+                    Verification
+                </span>
+
+                <strong
+                    id="verification"
+                    class="verified"
+                >
+                    VERIFIED
+                </strong>
+
             </div>
 
         </div>
@@ -728,6 +828,7 @@ canvas{
         <button
             class="trade-button higher"
             id="higherButton"
+            disabled
         >
             ▲ HIGHER
         </button>
@@ -736,44 +837,45 @@ canvas{
         <button
             class="trade-button lower"
             id="lowerButton"
+            disabled
         >
             ▼ LOWER
         </button>
 
 
-        <div class="trade-note" id="tradeNote">
-            Demo trading uses simulated funds.
+        <div class="execution-message">
+
+            Real trading execution is not connected yet.
+            Connect a licensed broker/execution provider before
+            these controls can place real-money orders.
+
         </div>
 
 
-        <div class="account-info">
+        <div class="account-section">
 
             <div class="account-row">
-                <span>Account</span>
-                <strong id="accountType">
-                    DEMO
-                </strong>
-            </div>
 
-            <div class="account-row">
-                <span>Verification</span>
-                <strong id="verification">
+                <span>
+                    Full Name
+                </span>
+
+                <strong id="fullName">
                     —
                 </strong>
+
             </div>
 
             <div class="account-row">
-                <span>USD</span>
-                <strong id="usdBalance">
-                    $0.00
-                </strong>
-            </div>
 
-            <div class="account-row">
-                <span>NGN</span>
-                <strong id="ngnBalance">
-                    ₦0.00
+                <span>
+                    Email
+                </span>
+
+                <strong id="email">
+                    —
                 </strong>
+
             </div>
 
         </div>
@@ -782,14 +884,12 @@ canvas{
 
 </div>
 
-</div>
-
 
 <script>
 
-/* ================================
+/* ==================================
    SUPABASE
-================================ */
+================================== */
 
 const SUPABASE_URL =
 "https://ghagrruxxqtnochooiaj.supabase.co";
@@ -804,31 +904,9 @@ window.supabase.createClient(
 );
 
 
-/* ================================
-   STATE
-================================ */
-
-let currentUser = null;
-let profile = null;
-
-let price = 1.08500;
-
-let candles = [];
-
-let positions = [];
-
-let timerInterval = null;
-
-
-/* ================================
+/* ==================================
    ELEMENTS
-================================ */
-
-const canvas =
-document.getElementById("chart");
-
-const ctx =
-canvas.getContext("2d");
+================================== */
 
 const topBalance =
 document.getElementById("topBalance");
@@ -839,315 +917,41 @@ document.getElementById("usdBalance");
 const ngnBalance =
 document.getElementById("ngnBalance");
 
-const accountType =
-document.getElementById("accountType");
-
 const verification =
 document.getElementById("verification");
 
-const accountBadge =
-document.getElementById("accountBadge");
+const fullName =
+document.getElementById("fullName");
 
-const tradeNote =
-document.getElementById("tradeNote");
+const email =
+document.getElementById("email");
 
 const amountInput =
-document.getElementById("amount");
+document.getElementById("amountInput");
 
-const potential =
-document.getElementById("potential");
+const potentialProfit =
+document.getElementById("potentialProfit");
 
-const positionsBox =
-document.getElementById("positions");
+const canvas =
+document.getElementById("chartCanvas");
 
-const totalPnl =
-document.getElementById("totalPnl");
+const ctx =
+canvas.getContext("2d");
 
-const countdown =
-document.getElementById("countdown");
+let profile = null;
 
-const higherButton =
-document.getElementById("higherButton");
+let user = null;
 
-const lowerButton =
-document.getElementById("lowerButton");
+let price = 1.08500;
 
+let candles = [];
 
-/* ================================
-   RESIZE CHART
-================================ */
 
-function resizeCanvas(){
+/* ==================================
+   MONEY
+================================== */
 
-    const rect =
-    canvas.parentElement.getBoundingClientRect();
-
-    const ratio =
-    window.devicePixelRatio || 1;
-
-    canvas.width =
-    rect.width * ratio;
-
-    canvas.height =
-    rect.height * ratio;
-
-    canvas.style.width =
-    rect.width + "px";
-
-    canvas.style.height =
-    rect.height + "px";
-
-    ctx.setTransform(
-        ratio,
-        0,
-        0,
-        ratio,
-        0,
-        0
-    );
-
-    drawChart();
-}
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
-
-
-/* ================================
-   CREATE INITIAL CANDLES
-================================ */
-
-function createCandles(){
-
-    candles = [];
-
-    let p = price;
-
-    for(let i=0;i<80;i++){
-
-        const open = p;
-
-        const change =
-        (Math.random() - 0.48) * 0.004;
-
-        const close =
-        open + change;
-
-        const high =
-        Math.max(open,close)
-        + Math.random() * 0.002;
-
-        const low =
-        Math.min(open,close)
-        - Math.random() * 0.002;
-
-        candles.push({
-            open,
-            close,
-            high,
-            low
-        });
-
-        p = close;
-    }
-
-    price = p;
-}
-
-
-/* ================================
-   UPDATE MARKET
-================================ */
-
-function updateMarket(){
-
-    const old = price;
-
-    price +=
-    (Math.random() - 0.5) * 0.002;
-
-    const open = old;
-
-    const close = price;
-
-    const high =
-    Math.max(open,close)
-    + Math.random() * 0.001;
-
-    const low =
-    Math.min(open,close)
-    - Math.random() * 0.001;
-
-    candles.push({
-        open,
-        close,
-        high,
-        low
-    });
-
-    if(candles.length > 80){
-        candles.shift();
-    }
-
-    document.getElementById("chartPrice")
-    .textContent =
-    price.toFixed(5);
-
-    document.getElementById("priceText")
-    .textContent =
-    "Market price " + price.toFixed(5);
-
-    drawChart();
-}
-
-
-/* ================================
-   DRAW CHART
-================================ */
-
-function drawChart(){
-
-    if(!canvas.width){
-        return;
-    }
-
-    const width =
-    canvas.clientWidth;
-
-    const height =
-    canvas.clientHeight;
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-    if(candles.length === 0){
-        return;
-    }
-
-    let min =
-    Math.min(...candles.map(c=>c.low));
-
-    let max =
-    Math.max(...candles.map(c=>c.high));
-
-    const padding = 25;
-
-    const range =
-    Math.max(max-min,0.001);
-
-    const candleWidth =
-    Math.max(
-        4,
-        (width - padding*2)
-        / candles.length
-        * 0.68
-    );
-
-    candles.forEach((c,i)=>{
-
-        const x =
-        padding +
-        i *
-        ((width-padding*2)/candles.length);
-
-        const yHigh =
-        height-padding -
-        ((c.high-min)/range)
-        *(height-padding*2);
-
-        const yLow =
-        height-padding -
-        ((c.low-min)/range)
-        *(height-padding*2);
-
-        const yOpen =
-        height-padding -
-        ((c.open-min)/range)
-        *(height-padding*2);
-
-        const yClose =
-        height-padding -
-        ((c.close-min)/range)
-        *(height-padding*2);
-
-        const up =
-        c.close >= c.open;
-
-        ctx.strokeStyle =
-        up ? "#25d98a" : "#ef625a";
-
-        ctx.fillStyle =
-        up ? "#25d98a" : "#ef625a";
-
-        ctx.lineWidth = 1;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x+candleWidth/2,
-            yHigh
-        );
-
-        ctx.lineTo(
-            x+candleWidth/2,
-            yLow
-        );
-
-        ctx.stroke();
-
-        const bodyTop =
-        Math.min(yOpen,yClose);
-
-        const bodyHeight =
-        Math.max(
-            2,
-            Math.abs(yClose-yOpen)
-        );
-
-        ctx.fillRect(
-            x,
-            bodyTop,
-            candleWidth,
-            bodyHeight
-        );
-
-    });
-
-    /* Current price line */
-
-    const currentY =
-    height-padding -
-    ((price-min)/range)
-    *(height-padding*2);
-
-    ctx.strokeStyle =
-    "#d4af37";
-
-    ctx.setLineDash([5,5]);
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,currentY);
-    ctx.lineTo(width,currentY);
-
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-}
-
-
-/* ================================
-   FORMAT MONEY
-================================ */
-
-function money(value){
+function formatUSD(value){
 
     return "$" +
     Number(value || 0)
@@ -1158,38 +962,193 @@ function money(value){
             maximumFractionDigits:2
         }
     );
+
+}
+
+function formatNGN(value){
+
+    return "₦" +
+    Number(value || 0)
+    .toLocaleString(
+        "en-NG",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+
 }
 
 
-/* ================================
+/* ==================================
    LOAD ACCOUNT
-================================ */
+================================== */
 
 async function loadAccount(){
 
-    const {
-        data:{
-            session
+    try{
+
+        const {
+            data:{
+                session
+            }
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
+
+        if(!session){
+
+            window.location.href =
+            "login.html";
+
+            return;
         }
-    } =
-    await supabaseClient
-    .auth
-    .getSession();
 
-    if(!session){
+        user =
+        session.user;
 
-        window.location.href =
-        "login.html";
 
-        return;
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("profiles")
+        .select(
+            "id,full_name,email,account_type,verification_status,real_balance,ngn_balance"
+        )
+        .eq("id",user.id)
+        .single();
+
+
+        if(error){
+
+            throw error;
+        }
+
+
+        profile = data;
+
+
+        /*
+         * This page is the REAL account terminal.
+         * Do not show a demo account here.
+         */
+
+        if(profile.account_type !== "real"){
+
+            window.location.href =
+            "login.html";
+
+            return;
+        }
+
+
+        renderAccount();
+
+    }catch(error){
+
+        document.body.innerHTML = `
+
+            <div style="
+                min-height:100vh;
+                background:#07111f;
+                color:white;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                padding:30px;
+                text-align:center;
+                font-family:Arial;
+            ">
+
+                <div>
+
+                    <h2>
+                        Unable to load your real account
+                    </h2>
+
+                    <p style="color:#9aaabd">
+                        ${escapeHTML(error.message)}
+                    </p>
+
+                    <button
+                        onclick="window.location.reload()"
+                        style="
+                            padding:12px 20px;
+                            border:0;
+                            border-radius:7px;
+                            background:#d4af37;
+                            color:#111;
+                            font-weight:bold;
+                        "
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
     }
 
-    currentUser =
-    session.user;
+}
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-   
+
+/* ==================================
+   ACCOUNT DISPLAY
+================================== */
+
+function renderAccount(){
+
+    const usd =
+    Number(profile.real_balance || 0);
+
+    const ngn =
+    Number(profile.ngn_balance || 0);
+
+
+    topBalance.textContent =
+    formatUSD(usd);
+
+    usdBalance.textContent =
+    formatUSD(usd);
+
+    ngnBalance.textContent =
+    formatNGN(ngn);
+
+
+    verification.textContent =
+    String(
+        profile.verification_status || "pending"
+    ).toUpperCase();
+
+
+    if(
+        profile.verification_status !==
+        "verified"
+    ){
+
+        verification.className = "";
+
+        verification.style.color =
+        "#f0a84b";
+
+    }
+
+
+    fullName.textContent =
+    profile.full_name || "—";
+
+    email.textContent =
+    profile.email || user.email || "—";
+
+}
+
+
+/* ==================================
+   HTML ESCAPE
+=======================
