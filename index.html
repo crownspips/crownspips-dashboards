@@ -2,519 +2,387 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Crownspips Trading Terminal</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
-    margin:0;
-    padding:0;
-    min-height:100%;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#07111f;
-    color:#fff;
+margin:0;
+min-height:100%;
+background:#07111f;
+color:#fff;
+font-family:Arial,sans-serif;
 }
 
-body{
-    overflow-x:hidden;
-}
-
-button,
-input,
-select{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-button:disabled{
-    cursor:not-allowed;
-    opacity:.45;
-}
-
-/* =========================
-   TOP BAR
-========================= */
+button,input,select{font:inherit}
+button{cursor:pointer}
 
 .topbar{
-    min-height:72px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:9px 14px;
-    background:#0b1728;
-    border-bottom:1px solid #26384e;
-    overflow-x:auto;
+min-height:72px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:9px 14px;
+background:#0b1728;
+border-bottom:1px solid #26384e;
+overflow-x:auto;
 }
 
 .brand{
-    min-width:185px;
-    font-size:20px;
-    font-weight:bold;
+min-width:180px;
+font-size:20px;
+font-weight:bold;
 }
 
-.brand span{
-    color:#d4af37;
-}
+.brand span{color:#d4af37}
 
 .assets{
-    display:flex;
-    gap:8px;
-    flex:1;
-    min-width:250px;
-    overflow-x:auto;
+display:flex;
+gap:7px;
+flex:1;
+overflow-x:auto;
 }
 
 .asset{
-    min-width:125px;
-    padding:9px 12px;
-    border:1px solid #293d56;
-    border-radius:8px;
-    background:#101f34;
-    color:#fff;
-    text-align:left;
+min-width:115px;
+padding:9px 11px;
+background:#101f34;
+color:white;
+border:1px solid #293d56;
+border-radius:8px;
+text-align:left;
 }
 
 .asset.active{
-    border-color:#d4af37;
-    background:#172a44;
+border-color:#d4af37;
+background:#172a44;
 }
 
 .asset-name{
-    font-size:13px;
-    font-weight:bold;
+font-size:13px;
+font-weight:bold;
 }
 
 .asset-sub{
-    margin-top:4px;
-    font-size:10px;
-    color:#8295ad;
+font-size:10px;
+color:#8295ad;
+margin-top:3px;
 }
 
-.account-balance{
-    min-width:145px;
-    text-align:right;
+.balance{
+min-width:130px;
+text-align:right;
 }
 
-.account-balance small{
-    display:block;
-    color:#8295ad;
-    font-size:10px;
+.balance small{
+display:block;
+color:#8295ad;
+font-size:10px;
 }
 
-.account-balance strong{
-    color:#d4af37;
-    font-size:18px;
+.balance strong{
+color:#d4af37;
+font-size:18px;
 }
 
 .deposit{
-    border:1px solid #15945d;
-    background:#0d2b23;
-    color:#39d994;
-    padding:12px 17px;
-    border-radius:7px;
-    font-weight:bold;
-    white-space:nowrap;
+padding:12px 16px;
+background:#0d2b23;
+border:1px solid #15945d;
+color:#39d994;
+border-radius:7px;
+font-weight:bold;
 }
 
 .logout{
-    border:1px solid #465a73;
-    background:#15243a;
-    color:#fff;
-    padding:11px 14px;
-    border-radius:7px;
+padding:11px 14px;
+background:#15243a;
+border:1px solid #465a73;
+color:white;
+border-radius:7px;
 }
-
-/* =========================
-   MAIN LAYOUT
-========================= */
 
 .main{
-    display:grid;
-    grid-template-columns:72px minmax(0,1fr) 270px;
-    min-height:calc(100vh - 72px);
+display:grid;
+grid-template-columns:70px minmax(0,1fr) 270px;
+min-height:calc(100vh - 72px);
 }
-
-/* =========================
-   LEFT MENU
-========================= */
 
 .sidebar{
-    background:#091625;
-    border-right:1px solid #26384e;
-    padding:13px 7px;
+background:#091625;
+border-right:1px solid #26384e;
+padding:13px 7px;
 }
 
-.side-item{
-    text-align:center;
-    color:#788ca5;
-    font-size:10px;
-    padding:13px 3px;
-    border-radius:8px;
-    margin-bottom:8px;
+.side{
+text-align:center;
+font-size:10px;
+color:#788ca5;
+padding:13px 3px;
+margin-bottom:8px;
+border-radius:8px;
 }
 
-.side-item.active{
-    color:#fff;
-    background:#172a43;
+.side.active{
+background:#172a43;
+color:white;
 }
 
 .side-icon{
-    display:block;
-    font-size:21px;
-    margin-bottom:5px;
+display:block;
+font-size:21px;
+margin-bottom:5px;
 }
 
-/* =========================
-   CENTER
-========================= */
-
 .center{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
+min-width:0;
+display:flex;
+flex-direction:column;
 }
 
 .marketbar{
-    min-height:58px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:9px 14px;
-    background:#0a1728;
-    border-bottom:1px solid #26384e;
-    flex-wrap:wrap;
+min-height:58px;
+display:flex;
+align-items:center;
+gap:12px;
+padding:9px 14px;
+background:#0a1728;
+border-bottom:1px solid #26384e;
+flex-wrap:wrap;
 }
 
-.market-select{
-    padding:10px 12px;
-    min-width:145px;
-    border-radius:7px;
-    border:1px solid #354b65;
-    background:#101f34;
-    color:#fff;
+.marketbar select{
+padding:10px 12px;
+background:#101f34;
+color:white;
+border:1px solid #354b65;
+border-radius:7px;
 }
 
 .price{
-    color:#a0b0c3;
-    font-size:12px;
+font-size:12px;
+color:#a0b0c3;
 }
 
-.real-badge{
-    margin-left:auto;
-    padding:7px 11px;
-    border-radius:20px;
-    border:1px solid #16855b;
-    background:#103528;
-    color:#42dc99;
-    font-size:10px;
-    font-weight:bold;
+.real{
+margin-left:auto;
+padding:7px 11px;
+border-radius:20px;
+background:#103528;
+border:1px solid #16855b;
+color:#42dc99;
+font-size:10px;
+font-weight:bold;
 }
-
-/* =========================
-   CHART
-========================= */
 
 .chart{
-    position:relative;
-    min-height:450px;
-    flex:1;
-    background:#091524;
-    overflow:hidden;
+position:relative;
+height:calc(100vh - 300px);
+min-height:430px;
+background:#091524;
+overflow:hidden;
 }
 
-.chart-grid{
-    position:absolute;
-    inset:0;
-    background-image:
-        linear-gradient(#1b2d43 1px,transparent 1px),
-        linear-gradient(90deg,#1b2d43 1px,transparent 1px);
-    background-size:70px 55px;
-    opacity:.55;
+.grid{
+position:absolute;
+inset:0;
+background-image:
+linear-gradient(#1b2d43 1px,transparent 1px),
+linear-gradient(90deg,#1b2d43 1px,transparent 1px);
+background-size:70px 55px;
+opacity:.55;
 }
 
-#chartCanvas{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
+#chart{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+z-index:2;
+display:block;
 }
 
 .chart-info{
-    position:absolute;
-    left:15px;
-    top:14px;
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    z-index:3;
+position:absolute;
+left:15px;
+top:14px;
+z-index:4;
+display:flex;
+gap:8px;
 }
 
-.chart-pill{
-    background:#101f32e8;
-    border:1px solid #2b415b;
-    padding:7px 10px;
-    border-radius:6px;
-    font-size:11px;
+.pill{
+background:#101f32e8;
+border:1px solid #2b415b;
+padding:7px 10px;
+border-radius:6px;
+font-size:11px;
 }
 
-.chart-price{
-    color:#d4af37;
-}
+.gold{color:#d4af37}
+.green{color:#42dc99}
 
-.chart-status{
-    color:#45db96;
+.chart-bottom{
+position:absolute;
+z-index:4;
+left:12px;
+right:12px;
+bottom:8px;
+display:flex;
+justify-content:space-between;
+color:#647993;
+font-size:10px;
 }
-
-.chart-footer{
-    position:absolute;
-    left:12px;
-    right:12px;
-    bottom:8px;
-    display:flex;
-    justify-content:space-between;
-    color:#647993;
-    font-size:10px;
-}
-
-/* =========================
-   OPEN POSITIONS
-========================= */
 
 .positions{
-    background:#0b1728;
-    border-top:1px solid #26384e;
+background:#0b1728;
+border-top:1px solid #26384e;
 }
 
 .positions-head{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 15px;
-    border-bottom:1px solid #26384e;
+display:flex;
+justify-content:space-between;
+padding:12px 15px;
 }
 
 .positions-title{
-    font-weight:bold;
-    font-size:13px;
+font-size:13px;
+font-weight:bold;
 }
 
 .positions-note{
-    color:#71849c;
-    font-size:11px;
+font-size:11px;
+color:#71849c;
 }
 
 .empty{
-    padding:18px 15px;
-    color:#647993;
-    font-size:12px;
+padding:18px 15px;
+color:#647993;
+font-size:12px;
 }
 
-/* =========================
-   RIGHT TRADE PANEL
-========================= */
-
-.trade-panel{
-    background:#091625;
-    border-left:1px solid #26384e;
-    padding:16px;
+.trade{
+background:#091625;
+border-left:1px solid #26384e;
+padding:16px;
 }
 
-.trade-title{
-    font-size:19px;
-    font-weight:bold;
-    margin-bottom:18px;
+.trade h2{
+font-size:19px;
+margin:0 0 18px;
 }
 
-.field{
-    margin-bottom:16px;
-}
-
-.field-label{
-    display:block;
-    margin-bottom:7px;
-    color:#8295ad;
-    font-size:11px;
+.label{
+display:block;
+font-size:11px;
+color:#8295ad;
+margin-bottom:7px;
 }
 
 .amount{
-    display:flex;
-    border:1px solid #344a64;
-    background:#101f34;
-    border-radius:7px;
-    overflow:hidden;
+display:flex;
+border:1px solid #344a64;
+background:#101f34;
+border-radius:7px;
+overflow:hidden;
+margin-bottom:16px;
 }
 
 .amount button{
-    width:42px;
-    border:0;
-    background:#162940;
-    color:#fff;
+width:42px;
+border:0;
+background:#162940;
+color:white;
 }
 
 .amount input{
-    width:100%;
-    min-width:0;
-    padding:13px;
-    border:0;
-    outline:0;
-    background:transparent;
-    color:#fff;
-    font-weight:bold;
-    text-align:center;
+width:100%;
+min-width:0;
+border:0;
+outline:0;
+background:transparent;
+color:white;
+text-align:center;
+font-weight:bold;
 }
 
 .expiry{
-    width:100%;
-    padding:13px;
-    border:1px solid #344a64;
-    border-radius:7px;
-    background:#101f34;
-    color:#fff;
+width:100%;
+padding:13px;
+margin-bottom:16px;
+background:#101f34;
+color:white;
+border:1px solid #344a64;
+border-radius:7px;
 }
 
-.info-box{
-    padding:13px;
-    margin-bottom:16px;
-    border:1px solid #293e57;
-    border-radius:8px;
-    background:#101f34;
+.info{
+padding:13px;
+background:#101f34;
+border:1px solid #293e57;
+border-radius:8px;
+margin-bottom:16px;
 }
 
-.info-row{
-    display:flex;
-    justify-content:space-between;
-    margin:7px 0;
-    font-size:12px;
+.row{
+display:flex;
+justify-content:space-between;
+font-size:12px;
+margin:8px 0;
 }
 
-.info-row span{
-    color:#8295ad;
+.row span{color:#8295ad}
+
+.higher,.lower{
+width:100%;
+padding:17px 10px;
+border:0;
+border-radius:8px;
+color:white;
+font-weight:bold;
+font-size:16px;
+margin-bottom:10px;
 }
 
-.info-row strong{
-    color:#fff;
-}
+.higher{background:#10a969}
+.lower{background:#d74d45}
 
-.trade-button{
-    width:100%;
-    padding:17px 10px;
-    margin-bottom:10px;
-    border:0;
-    border-radius:8px;
-    color:#fff;
-    font-weight:bold;
-    font-size:16px;
+.trade-note{
+padding:11px;
+text-align:center;
+font-size:10px;
+line-height:1.5;
+color:#8ea0b7;
+background:#18263a;
+border:1px solid #30455f;
+border-radius:7px;
 }
-
-.higher{
-    background:#10a969;
-}
-
-.lower{
-    background:#d74d45;
-}
-
-.execution-message{
-    padding:11px;
-    margin-top:7px;
-    border-radius:7px;
-    background:#18263a;
-    border:1px solid #30455f;
-    color:#8ea0b7;
-    font-size:10px;
-    line-height:1.5;
-    text-align:center;
-}
-
-.account-section{
-    margin-top:18px;
-    padding-top:16px;
-    border-top:1px solid #26384e;
-}
-
-.account-row{
-    display:flex;
-    justify-content:space-between;
-    margin:10px 0;
-    font-size:12px;
-}
-
-.account-row span{
-    color:#788ca5;
-}
-
-.verified{
-    color:#42dc99;
-}
-
-/* =========================
-   MOBILE
-========================= */
 
 @media(max-width:900px){
-
-    .main{
-        grid-template-columns:58px minmax(0,1fr);
-    }
-
-    .trade-panel{
-        grid-column:1 / -1;
-        border-left:0;
-        border-top:1px solid #26384e;
-    }
-
-    .chart{
-        min-height:390px;
-    }
+.main{
+grid-template-columns:55px minmax(0,1fr);
+}
+.trade{
+grid-column:1/-1;
+border-left:0;
+border-top:1px solid #26384e;
+}
+.chart{
+height:430px;
+}
 }
 
 @media(max-width:600px){
-
-    .topbar{
-        min-height:65px;
-    }
-
-    .brand{
-        min-width:150px;
-        font-size:17px;
-    }
-
-    .account-balance{
-        min-width:120px;
-    }
-
-    .account-balance strong{
-        font-size:15px;
-    }
-
-    .deposit{
-        padding:10px 12px;
-    }
-
-    .logout{
-        padding:10px;
-    }
-
-    .main{
-        grid-template-columns:52px minmax(0,1fr);
-    }
-
-    .chart{
-        min-height:330px;
-    }
-
-    .real-badge{
-        margin-left:0;
-    }
+.brand{min-width:145px;font-size:17px}
+.balance{min-width:115px}
+.main{grid-template-columns:52px minmax(0,1fr)}
+.chart{height:360px;min-height:360px}
+.real{margin-left:0}
 }
 </style>
 </head>
@@ -523,373 +391,246 @@ button:disabled{
 
 <header class="topbar">
 
-    <div class="brand">
-        Crownspips <span>Trading</span>
-    </div>
+<div class="brand">
+Crownspips <span>Trading</span>
+</div>
 
-    <div class="assets">
+<div class="assets">
 
-        <button class="asset active" data-pair="EUR/USD">
-            <div class="asset-name">EUR/USD</div>
-            <div class="asset-sub">Forex</div>
-        </button>
+<button class="asset active" data-pair="EUR/USD">
+<div class="asset-name">EUR/USD</div>
+<div class="asset-sub">Forex</div>
+</button>
 
-        <button class="asset" data-pair="GBP/USD">
-            <div class="asset-name">GBP/USD</div>
-            <div class="asset-sub">Forex</div>
-        </button>
+<button class="asset" data-pair="GBP/USD">
+<div class="asset-name">GBP/USD</div>
+<div class="asset-sub">Forex</div>
+</button>
 
-        <button class="asset" data-pair="USD/JPY">
-            <div class="asset-name">USD/JPY</div>
-            <div class="asset-sub">Forex</div>
-        </button>
+<button class="asset" data-pair="USD/JPY">
+<div class="asset-name">USD/JPY</div>
+<div class="asset-sub">Forex</div>
+</button>
 
-        <button class="asset" data-pair="AUD/USD">
-            <div class="asset-name">AUD/USD</div>
-            <div class="asset-sub">Forex</div>
-        </button>
+<button class="asset" data-pair="AUD/USD">
+<div class="asset-name">AUD/USD</div>
+<div class="asset-sub">Forex</div>
+</button>
 
-        <button class="asset" data-pair="USD/CAD">
-            <div class="asset-name">USD/CAD</div>
-            <div class="asset-sub">Forex</div>
-        </button>
+<button class="asset" data-pair="USD/CAD">
+<div class="asset-name">USD/CAD</div>
+<div class="asset-sub">Forex</div>
+</button>
 
-    </div>
+</div>
 
-    <div class="account-balance">
+<div class="balance">
+<small>REAL USD BALANCE</small>
+<strong id="topBalance">$0.00</strong>
+</div>
 
-        <small>REAL USD BALANCE</small>
-
-        <strong id="topBalance">
-            $0.00
-        </strong>
-
-    </div>
-
-    <button
-        class="deposit"
-        id="depositButton"
-    >
-        Deposit
-    </button>
-
-    <button
-        class="logout"
-        id="logoutButton"
-    >
-        Logout
-    </button>
+<button class="deposit" id="deposit">Deposit</button>
+<button class="logout" id="logout">Logout</button>
 
 </header>
 
 
 <div class="main">
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="side-item active">
-            <span class="side-icon">📊</span>
-            Trade
-        </div>
+<div class="side active">
+<span class="side-icon">📊</span>
+Trade
+</div>
 
-        <div class="side-item">
-            <span class="side-icon">◷</span>
-            History
-        </div>
+<div class="side">
+<span class="side-icon">◷</span>
+History
+</div>
 
-        <div class="side-item">
-            <span class="side-icon">💼</span>
-            Portfolio
-        </div>
+<div class="side">
+<span class="side-icon">💼</span>
+Portfolio
+</div>
 
-        <div class="side-item">
-            <span class="side-icon">⚙️</span>
-            Settings
-        </div>
+<div class="side">
+<span class="side-icon">⚙️</span>
+Settings
+</div>
 
-    </aside>
+</aside>
 
 
-    <section class="center">
+<section class="center">
 
-        <div class="marketbar">
+<div class="marketbar">
 
-            <select
-                class="market-select"
-                id="pairSelect"
-            >
-                <option>EUR/USD</option>
-                <option>GBP/USD</option>
-                <option>USD/JPY</option>
-                <option>AUD/USD</option>
-                <option>USD/CAD</option>
-                <option>USD/CHF</option>
-            </select>
+<select id="pair">
+<option>EUR/USD</option>
+<option>GBP/USD</option>
+<option>USD/JPY</option>
+<option>AUD/USD</option>
+<option>USD/CAD</option>
+<option>USD/CHF</option>
+</select>
 
-            <span class="price">
-                Market price:
-                <strong
-                    id="currentPrice"
-                    class="chart-price"
-                >
-                    1.08500
-                </strong>
-            </span>
+<span class="price">
+Market price:
+<strong id="price" class="gold">1.08500</strong>
+</span>
 
-            <span class="real-badge">
-                VERIFIED REAL ACCOUNT
-            </span>
+<span class="real">
+VERIFIED REAL ACCOUNT
+</span>
 
-        </div>
+</div>
 
 
-        <div class="chart">
+<div class="chart">
 
-            <div class="chart-grid"></div>
+<div class="grid"></div>
 
-            <canvas id="chartCanvas"></canvas>
+<canvas id="chart"></canvas>
 
-            <div class="chart-info">
+<div class="chart-info">
 
-                <div class="chart-pill">
-                    PRICE:
-                    <strong
-                        id="chartPrice"
-                        class="chart-price"
-                    >
-                        1.08500
-                    </strong>
-                </div>
+<div class="pill">
+PRICE:
+<strong id="chartPrice" class="gold">1.08500</strong>
+</div>
 
-                <div class="chart-pill">
-                    MARKET:
-                    <strong class="chart-status">
-                        OPEN
-                    </strong>
-                </div>
+<div class="pill">
+MARKET:
+<strong class="green">OPEN</strong>
+</div>
 
-            </div>
+</div>
 
-            <div class="chart-footer">
+<div class="chart-bottom">
+<span>1m</span>
+<span>5m</span>
+<span>15m</span>
+<span>1h</span>
+<span>4h</span>
+</div>
 
-                <span>1m</span>
-                <span>5m</span>
-                <span>15m</span>
-                <span>1h</span>
-                <span>4h</span>
+</div>
 
-            </div>
 
-        </div>
+<div class="positions">
 
+<div class="positions-head">
 
-        <div class="positions">
+<div class="positions-title">
+Open Positions
+</div>
 
-            <div class="positions-head">
+<div class="positions-note">
+Real account
+</div>
 
-                <div class="positions-title">
-                    Open Positions
-                </div>
+</div>
 
-                <div class="positions-note">
-                    Real account
-                </div>
+<div class="empty">
+No open positions.
+</div>
 
-            </div>
+</div>
 
-            <div class="empty">
-                No open positions.
-            </div>
+</section>
 
-        </div>
 
-    </section>
+<aside class="trade">
 
+<h2>Trade</h2>
 
-    <aside class="trade-panel">
+<label class="label">
+Investment Amount
+</label>
 
-        <div class="trade-title">
-            Trade
-        </div>
+<div class="amount">
 
+<button id="minus">−</button>
 
-        <div class="field">
+<input
+id="amount"
+type="number"
+value="100"
+min="1"
+step="10"
+>
 
-            <label class="field-label">
-                Investment Amount
-            </label>
+<button id="plus">+</button>
 
-            <div class="amount">
+</div>
 
-                <button
-                    type="button"
-                    id="minusButton"
-                >
-                    −
-                </button>
 
-                <input
-                    id="amountInput"
-                    type="number"
-                    value="100"
-                    min="1"
-                    step="10"
-                >
+<label class="label">
+Expiration
+</label>
 
-                <button
-                    type="button"
-                    id="plusButton"
-                >
-                    +
-                </button>
+<select id="expiry" class="expiry">
+<option>5 seconds</option>
+<option>10 seconds</option>
+<option>30 seconds</option>
+<option>1 minute</option>
+<option>5 minutes</option>
+<option>10 minutes</option>
+</select>
 
-            </div>
 
-        </div>
+<div class="info">
 
+<div class="row">
+<span>Account</span>
+<strong>REAL</strong>
+</div>
 
-        <div class="field">
+<div class="row">
+<span>USD Balance</span>
+<strong id="usd">$0.00</strong>
+</div>
 
-            <label class="field-label">
-                Expiration
-            </label>
+<div class="row">
+<span>NGN Balance</span>
+<strong id="ngn">₦0.00</strong>
+</div>
 
-            <select
-                class="expiry"
-                id="expirySelect"
-            >
-                <option value="5">5 seconds</option>
-                <option value="10">10 seconds</option>
-                <option value="30">30 seconds</option>
-                <option value="60">1 minute</option>
-                <option value="300">5 minutes</option>
-                <option value="600">10 minutes</option>
-            </select>
+<div class="row">
+<span>Verification</span>
+<strong id="verification" class="green">VERIFIED</strong>
+</div>
 
-        </div>
+</div>
 
 
-        <div class="info-box">
+<button
+class="higher"
+disabled
+>
+▲ HIGHER
+</button>
 
-            <div class="info-row">
+<button
+class="lower"
+disabled
+>
+▼ LOWER
+</button>
 
-                <span>
-                    Account
-                </span>
+<div class="trade-note">
+Real trading execution is not connected yet.
+A real broker/execution provider must be connected
+before these controls can place real-money orders.
+</div>
 
-                <strong>
-                    REAL
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>
-                    USD Balance
-                </span>
-
-                <strong id="usdBalance">
-                    $0.00
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>
-                    NGN Balance
-                </span>
-
-                <strong id="ngnBalance">
-                    ₦0.00
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>
-                    Verification
-                </span>
-
-                <strong
-                    id="verification"
-                    class="verified"
-                >
-                    VERIFIED
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <button
-            class="trade-button higher"
-            id="higherButton"
-            disabled
-        >
-            ▲ HIGHER
-        </button>
-
-
-        <button
-            class="trade-button lower"
-            id="lowerButton"
-            disabled
-        >
-            ▼ LOWER
-        </button>
-
-
-        <div class="execution-message">
-
-            Real trading execution is not connected yet.
-            Connect a licensed broker/execution provider before
-            these controls can place real-money orders.
-
-        </div>
-
-
-        <div class="account-section">
-
-            <div class="account-row">
-
-                <span>
-                    Full Name
-                </span>
-
-                <strong id="fullName">
-                    —
-                </strong>
-
-            </div>
-
-            <div class="account-row">
-
-                <span>
-                    Email
-                </span>
-
-                <strong id="email">
-                    —
-                </strong>
-
-            </div>
-
-        </div>
-
-    </aside>
+</aside>
 
 </div>
 
 
 <script>
-
-/* ==================================
-   SUPABASE
-================================== */
 
 const SUPABASE_URL =
 "https://ghagrruxxqtnochooiaj.supabase.co";
@@ -897,258 +638,516 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
-const supabaseClient =
+const sb =
 window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 
-/* ==================================
-   ELEMENTS
-================================== */
+/* =========================
+ACCOUNT
+========================= */
 
-const topBalance =
-document.getElementById("topBalance");
+async function loadAccount(){
 
-const usdBalance =
-document.getElementById("usdBalance");
+const {
+data:{session}
+}=await sb.auth.getSession();
 
-const ngnBalance =
-document.getElementById("ngnBalance");
+if(!session){
+window.location.href="login.html";
+return;
+}
 
-const verification =
-document.getElementById("verification");
+const {
+data:profile,
+error
+}=await sb
+.from("profiles")
+.select("*")
+.eq("id",session.user.id)
+.single();
 
-const fullName =
-document.getElementById("fullName");
+if(error){
+alert("Unable to load account: "+error.message);
+return;
+}
 
-const email =
-document.getElementById("email");
+if(profile.account_type!=="real"){
+window.location.href="login.html";
+return;
+}
 
-const amountInput =
-document.getElementById("amountInput");
+const usd =
+Number(profile.real_balance||0);
 
-const potentialProfit =
-document.getElementById("potentialProfit");
+const ngn =
+Number(profile.ngn_balance||0);
+
+document.getElementById("topBalance")
+.textContent =
+"$"+usd.toLocaleString(
+"en-US",
+{minimumFractionDigits:2,maximumFractionDigits:2}
+);
+
+document.getElementById("usd")
+.textContent =
+"$"+usd.toLocaleString(
+"en-US",
+{minimumFractionDigits:2,maximumFractionDigits:2}
+);
+
+document.getElementById("ngn")
+.textContent =
+"₦"+ngn.toLocaleString(
+"en-NG",
+{minimumFractionDigits:2,maximumFractionDigits:2}
+);
+
+document.getElementById("verification")
+.textContent =
+String(
+profile.verification_status||"pending"
+).toUpperCase();
+
+}
+
+
+/* =========================
+CHART
+========================= */
 
 const canvas =
-document.getElementById("chartCanvas");
+document.getElementById("chart");
 
 const ctx =
 canvas.getContext("2d");
 
-let profile = null;
-
-let user = null;
-
-let price = 1.08500;
-
-let candles = [];
+let candles=[];
+let currentPrice=1.08500;
 
 
-/* ==================================
-   MONEY
-================================== */
+function resizeChart(){
 
-function formatUSD(value){
+const rect =
+canvas.parentElement.getBoundingClientRect();
 
-    return "$" +
-    Number(value || 0)
-    .toLocaleString(
-        "en-US",
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-        }
-    );
+const dpr =
+window.devicePixelRatio||1;
 
-}
+canvas.width =
+Math.max(1,Math.floor(rect.width*dpr));
 
-function formatNGN(value){
+canvas.height =
+Math.max(1,Math.floor(rect.height*dpr));
 
-    return "₦" +
-    Number(value || 0)
-    .toLocaleString(
-        "en-NG",
-        {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-        }
-    );
+canvas.style.width =
+rect.width+"px";
+
+canvas.style.height =
+rect.height+"px";
+
+ctx.setTransform(
+dpr,0,0,dpr,0,0
+);
+
+drawChart();
 
 }
 
 
-/* ==================================
-   LOAD ACCOUNT
-================================== */
+function makeCandles(){
 
-async function loadAccount(){
+candles=[];
 
-    try{
+let value=currentPrice;
 
-        const {
-            data:{
-                session
-            }
-        } =
-        await supabaseClient
-        .auth
-        .getSession();
+for(let i=0;i<75;i++){
 
-        if(!session){
+const open=value;
 
-            window.location.href =
-            "login.html";
+const movement =
+(Math.random()-.48)*.003;
 
-            return;
-        }
+const close =
+open+movement;
 
-        user =
-        session.user;
+const high =
+Math.max(open,close)
++Math.random()*.0012;
 
+const low =
+Math.min(open,close)
+-Math.random()*.0012;
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-        .from("profiles")
-        .select(
-            "id,full_name,email,account_type,verification_status,real_balance,ngn_balance"
-        )
-        .eq("id",user.id)
-        .single();
+candles.push({
+open,
+close,
+high,
+low
+});
 
+value=close;
 
-        if(error){
+}
 
-            throw error;
-        }
-
-
-        profile = data;
-
-
-        /*
-         * This page is the REAL account terminal.
-         * Do not show a demo account here.
-         */
-
-        if(profile.account_type !== "real"){
-
-            window.location.href =
-            "login.html";
-
-            return;
-        }
-
-
-        renderAccount();
-
-    }catch(error){
-
-        document.body.innerHTML = `
-
-            <div style="
-                min-height:100vh;
-                background:#07111f;
-                color:white;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding:30px;
-                text-align:center;
-                font-family:Arial;
-            ">
-
-                <div>
-
-                    <h2>
-                        Unable to load your real account
-                    </h2>
-
-                    <p style="color:#9aaabd">
-                        ${escapeHTML(error.message)}
-                    </p>
-
-                    <button
-                        onclick="window.location.reload()"
-                        style="
-                            padding:12px 20px;
-                            border:0;
-                            border-radius:7px;
-                            background:#d4af37;
-                            color:#111;
-                            font-weight:bold;
-                        "
-                    >
-                        Refresh
-                    </button>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
+currentPrice=value;
 
 }
 
 
-/* ==================================
-   ACCOUNT DISPLAY
-================================== */
+function drawChart(){
 
-function renderAccount(){
+const width=canvas.clientWidth;
+const height=canvas.clientHeight;
 
-    const usd =
-    Number(profile.real_balance || 0);
+if(width<=0||height<=0)return;
 
-    const ngn =
-    Number(profile.ngn_balance || 0);
+ctx.clearRect(
+0,
+0,
+width,
+height
+);
 
+if(!candles.length)return;
 
-    topBalance.textContent =
-    formatUSD(usd);
+let min=Infinity;
+let max=-Infinity;
 
-    usdBalance.textContent =
-    formatUSD(usd);
+for(const c of candles){
 
-    ngnBalance.textContent =
-    formatNGN(ngn);
+if(c.low<min)min=c.low;
+if(c.high>max)max=c.high;
 
+}
 
-    verification.textContent =
-    String(
-        profile.verification_status || "pending"
-    ).toUpperCase();
+const range=
+Math.max(max-min,.0001);
 
+const pad=25;
 
-    if(
-        profile.verification_status !==
-        "verified"
-    ){
+const spacing=
+(width-pad*2)/candles.length;
 
-        verification.className = "";
-
-        verification.style.color =
-        "#f0a84b";
-
-    }
+const candleWidth=
+Math.max(3,spacing*.62);
 
 
-    fullName.textContent =
-    profile.full_name || "—";
+function y(value){
 
-    email.textContent =
-    profile.email || user.email || "—";
+return height-pad-
+((value-min)/range)*
+(height-pad*2);
 
 }
 
 
-/* ==================================
-   HTML ESCAPE
-=======================
+for(let i=0;i<candles.length;i++){
+
+const c=candles[i];
+
+const x=
+pad+i*spacing;
+
+const bullish=
+c.close>=c.open;
+
+ctx.strokeStyle=
+bullish
+?"#20d98a"
+:"#ed5c57";
+
+ctx.fillStyle=
+bullish
+?"#20d98a"
+:"#ed5c57";
+
+ctx.lineWidth=1;
+
+ctx.beginPath();
+
+ctx.moveTo(
+x+candleWidth/2,
+y(c.high)
+);
+
+ctx.lineTo(
+x+candleWidth/2,
+y(c.low)
+);
+
+ctx.stroke();
+
+const top=
+Math.min(
+y(c.open),
+y(c.close)
+);
+
+const heightBody=
+Math.max(
+2,
+Math.abs(
+y(c.open)-y(c.close)
+)
+);
+
+ctx.fillRect(
+x,
+top,
+candleWidth,
+heightBody
+);
+
+}
+
+
+/* Current price line */
+
+const lineY=y(currentPrice);
+
+ctx.strokeStyle="#d4af37";
+
+ctx.lineWidth=1;
+
+ctx.setLineDash([6,5]);
+
+ctx.beginPath();
+
+ctx.moveTo(0,lineY);
+ctx.lineTo(width,lineY);
+
+ctx.stroke();
+
+ctx.setLineDash([]);
+
+
+/* Current price marker */
+
+ctx.fillStyle="#d4af37";
+
+ctx.fillRect(
+width-78,
+lineY-10,
+78,
+20
+);
+
+ctx.fillStyle="#07111f";
+
+ctx.font="11px Arial";
+
+ctx.textAlign="center";
+
+ctx.fillText(
+currentPrice.toFixed(5),
+width-39,
+lineY+4
+);
+
+}
+
+
+function updateChart(){
+
+const last=
+candles[candles.length-1];
+
+const open=
+last?last.close:currentPrice;
+
+currentPrice +=
+(Math.random()-.5)*.0015;
+
+const close=currentPrice;
+
+candles.push({
+
+open,
+close,
+
+high:
+Math.max(open,close)
++Math.random()*.0008,
+
+low:
+Math.min(open,close)
+-Math.random()*.0008
+
+});
+
+if(candles.length>75){
+candles.shift();
+}
+
+document.getElementById("price")
+.textContent=
+currentPrice.toFixed(5);
+
+document.getElementById("chartPrice")
+.textContent=
+currentPrice.toFixed(5);
+
+drawChart();
+
+}
+
+
+/* =========================
+ASSET BUTTONS
+========================= */
+
+document
+.querySelectorAll(".asset")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+()=>{
+
+document
+.querySelectorAll(".asset")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+button.classList.add("active");
+
+document.getElementById("pair")
+.value=
+button.dataset.pair;
+
+}
+);
+
+});
+
+
+document
+.getElementById("pair")
+.addEventListener(
+"change",
+function(){
+
+document
+.querySelectorAll(".asset")
+.forEach(button=>{
+
+button.classList.toggle(
+"active",
+button.dataset.pair===this.value
+);
+
+});
+
+}
+);
+
+
+/* =========================
+AMOUNT
+========================= */
+
+document
+.getElementById("minus")
+.addEventListener(
+"click",
+()=>{
+
+const input=
+document.getElementById("amount");
+
+input.value=
+Math.max(
+1,
+Number(input.value||100)-10
+);
+
+}
+);
+
+document
+.getElementById("plus")
+.addEventListener(
+"click",
+()=>{
+
+const input=
+document.getElementById("amount");
+
+input.value=
+Number(input.value||100)+10;
+
+}
+);
+
+
+/* =========================
+DEPOSIT
+========================= */
+
+document
+.getElementById("deposit")
+.addEventListener(
+"click",
+()=>{
+
+window.location.href=
+"deposit.html";
+
+}
+);
+
+
+/* =========================
+LOGOUT
+========================= */
+
+document
+.getElementById("logout")
+.addEventListener(
+"click",
+async()=>{
+
+try{
+await sb.auth.signOut();
+}catch(e){
+console.log(e);
+}
+
+window.location.href=
+"login.html";
+
+}
+);
+
+
+/* =========================
+START
+========================= */
+
+makeCandles();
+
+loadAccount();
+
+requestAnimationFrame(
+resizeChart
+);
+
+window.addEventListener(
+"resize",
+resizeChart
+);
+
+setInterval(
+updateChart,
+1000
+);
+
+</script>
+
+</body>
+</html>
