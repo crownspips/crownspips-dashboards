@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crownspips Trading - Login</title>
+<title>Crownspips Trading - Investor Login</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -78,6 +78,21 @@ button:disabled{
     opacity:.6;
 }
 
+.register-btn{
+    display:block;
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+    border:1px solid #d4af37;
+    border-radius:8px;
+    background:white;
+    color:#111827;
+    font-weight:bold;
+    font-size:16px;
+    text-align:center;
+    text-decoration:none;
+}
+
 .message{
     margin-top:15px;
     padding:12px;
@@ -119,7 +134,9 @@ footer{
 
 <div class="box">
 
-<h1>Crownspips <span class="gold">Trading</span></h1>
+<h1>
+Crownspips <span class="gold">Trading</span>
+</h1>
 
 <div class="subtitle">
 Investor Login
@@ -128,6 +145,7 @@ Investor Login
 <form id="loginForm">
 
 <label>Email</label>
+
 <input
     type="email"
     id="email"
@@ -136,6 +154,7 @@ Investor Login
 >
 
 <label>Password</label>
+
 <input
     type="password"
     id="password"
@@ -144,16 +163,20 @@ Investor Login
 >
 
 <button id="loginButton" type="submit">
-Login
+Investor Login
 </button>
 
 </form>
 
+<a href="register.html" class="register-btn">
+Register Account
+</a>
+
 <div id="message" class="message"></div>
 
 <div class="notice">
-<strong>Demo Environment</strong><br>
-This platform is currently being developed. Real deposits and withdrawals are not available.
+<strong>Investor Account</strong><br>
+Login to access your Crownspips investor dashboard.
 </div>
 
 </div>
@@ -178,7 +201,6 @@ window.supabase.createClient(
     SUPABASE_KEY
 );
 
-
 function showMessage(text,type){
 
     const message =
@@ -192,25 +214,24 @@ function showMessage(text,type){
     message.style.display="block";
 }
 
-
 document.getElementById("loginForm")
 .addEventListener("submit",async function(e){
 
     e.preventDefault();
 
-    const email=
+    const email =
     document.getElementById("email").value.trim();
 
-    const password=
+    const password =
     document.getElementById("password").value;
 
-    const button=
+    const button =
     document.getElementById("loginButton");
 
     button.disabled=true;
     button.textContent="Logging in...";
 
-    const {data,error}=
+    const {data,error} =
     await supabaseClient.auth.signInWithPassword({
         email:email,
         password:password
@@ -224,7 +245,7 @@ document.getElementById("loginForm")
         );
 
         button.disabled=false;
-        button.textContent="Login";
+        button.textContent="Investor Login";
 
         return;
     }
