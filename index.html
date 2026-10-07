@@ -98,6 +98,15 @@ border-radius:7px;
 font-weight:bold;
 }
 
+.withdraw{
+padding:12px 16px;
+background:#30200e;
+border:1px solid #c88b27;
+color:#f0bd58;
+border-radius:7px;
+font-weight:bold;
+}
+
 .logout{
 padding:11px 14px;
 background:#15243a;
@@ -363,26 +372,200 @@ border:1px solid #30455f;
 border-radius:7px;
 }
 
-@media(max-width:900px){
+/* =========================
+WITHDRAWAL MODAL
+========================= */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+z-index:100;
+background:rgba(0,0,0,.72);
+align-items:center;
+justify-content:center;
+padding:18px;
+}
+
+.modal.show{
+display:flex;
+}
+
+.modal-box{
+width:100%;
+max-width:430px;
+max-height:90vh;
+overflow-y:auto;
+background:#0b1728;
+border:1px solid #344a64;
+border-radius:12px;
+padding:20px;
+box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.modal-head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+}
+
+.modal-head h2{
+margin:0;
+font-size:20px;
+}
+
+.close{
+width:34px;
+height:34px;
+border:1px solid #465a73;
+background:#15243a;
+color:white;
+border-radius:7px;
+}
+
+.modal-label{
+display:block;
+font-size:11px;
+color:#8295ad;
+margin:13px 0 7px;
+}
+
+.modal-input,
+.modal-select{
+width:100%;
+padding:13px;
+background:#101f34;
+border:1px solid #344a64;
+border-radius:7px;
+color:white;
+outline:none;
+}
+
+.modal-input:focus,
+.modal-select:focus{
+border-color:#d4af37;
+}
+
+.available{
+margin-top:8px;
+font-size:11px;
+color:#8295ad;
+}
+
+.available strong{
+color:#42dc99;
+}
+
+.withdraw-submit{
+width:100%;
+padding:14px;
+margin-top:18px;
+border:0;
+border-radius:8px;
+background:#d4af37;
+color:#07111f;
+font-weight:bold;
+}
+
+.withdraw-submit:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.withdraw-message{
+display:none;
+margin-top:12px;
+padding:10px;
+border-radius:7px;
+font-size:11px;
+line-height:1.5;
+}
+
+.withdraw-message.show{
+display:block;
+}
+
+.withdraw-message.error{
+background:#351a1a;
+border:1px solid #8d3939;
+color:#ff8e8e;
+}
+
+.withdraw-message.success{
+background:#103528;
+border:1px solid #16855b;
+color:#42dc99;
+}
+
+.notice{
+margin-top:12px;
+padding:10px;
+background:#18263a;
+border:1px solid #30455f;
+border-radius:7px;
+font-size:10px;
+line-height:1.5;
+color:#8ea0b7;
+}
+
+@media(max-width:1000px){
+
+.topbar{
+flex-wrap:wrap;
+}
+
+.assets{
+order:3;
+flex-basis:100%;
+}
+
 .main{
 grid-template-columns:55px minmax(0,1fr);
 }
+
 .trade{
 grid-column:1/-1;
 border-left:0;
 border-top:1px solid #26384e;
 }
+
 .chart{
 height:430px;
 }
+
 }
 
 @media(max-width:600px){
-.brand{min-width:145px;font-size:17px}
-.balance{min-width:115px}
-.main{grid-template-columns:52px minmax(0,1fr)}
-.chart{height:360px;min-height:360px}
-.real{margin-left:0}
+
+.brand{
+min-width:145px;
+font-size:17px;
+}
+
+.balance{
+min-width:115px;
+}
+
+.deposit,
+.withdraw,
+.logout{
+padding:10px 12px;
+}
+
+.main{
+grid-template-columns:52px minmax(0,1fr);
+}
+
+.chart{
+height:360px;
+min-height:360px;
+}
+
+.real{
+margin-left:0;
+}
+
 }
 </style>
 </head>
@@ -429,8 +612,17 @@ Crownspips <span>Trading</span>
 <strong id="topBalance">$0.00</strong>
 </div>
 
-<button class="deposit" id="deposit">Deposit</button>
-<button class="logout" id="logout">Logout</button>
+<button class="deposit" id="deposit">
+Deposit
+</button>
+
+<button class="withdraw" id="withdraw">
+Withdraw
+</button>
+
+<button class="logout" id="logout">
+Logout
+</button>
 
 </header>
 
@@ -630,6 +822,135 @@ before these controls can place real-money orders.
 </div>
 
 
+<!-- =========================
+WITHDRAWAL MODAL
+========================= -->
+
+<div class="modal" id="withdrawModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>Withdraw Funds</h2>
+
+<button
+class="close"
+id="closeWithdraw"
+type="button"
+>
+×
+</button>
+
+</div>
+
+
+<label class="modal-label">
+Currency
+</label>
+
+<select
+id="withdrawCurrency"
+class="modal-select"
+>
+
+<option value="USD">
+USD — US Dollar
+</option>
+
+<option value="NGN">
+NGN — Nigerian Naira
+</option>
+
+</select>
+
+
+<div class="available">
+Available:
+<strong id="withdrawAvailable">
+$0.00
+</strong>
+</div>
+
+
+<label class="modal-label">
+Withdrawal Amount
+</label>
+
+<input
+id="withdrawAmount"
+class="modal-input"
+type="number"
+min="0.01"
+step="0.01"
+placeholder="Enter amount"
+>
+
+
+<label class="modal-label">
+Bank Name
+</label>
+
+<input
+id="bankName"
+class="modal-input"
+type="text"
+placeholder="Enter bank name"
+>
+
+
+<label class="modal-label">
+Account Name
+</label>
+
+<input
+id="accountName"
+class="modal-input"
+type="text"
+placeholder="Enter account name"
+>
+
+
+<label class="modal-label">
+Account Number
+</label>
+
+<input
+id="accountNumber"
+class="modal-input"
+type="text"
+inputmode="numeric"
+placeholder="Enter account number"
+>
+
+
+<div class="notice">
+Your withdrawal request will be submitted as
+<strong>PENDING</strong>. Your balance will only be
+reduced after the withdrawal has been reviewed and
+marked completed.
+</div>
+
+
+<div
+id="withdrawMessage"
+class="withdraw-message"
+></div>
+
+
+<button
+id="submitWithdrawal"
+class="withdraw-submit"
+type="button"
+>
+Submit Withdrawal Request
+</button>
+
+</div>
+
+</div>
+
+
 <script>
 
 const SUPABASE_URL =
@@ -643,6 +964,9 @@ window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
+
+let currentUserId = null;
+let currentProfile = null;
 
 
 /* =========================
@@ -660,6 +984,8 @@ window.location.href="login.html";
 return;
 }
 
+currentUserId = session.user.id;
+
 const {
 data:profile,
 error
@@ -670,49 +996,503 @@ error
 .single();
 
 if(error){
-alert("Unable to load account: "+error.message);
+
+alert(
+"Unable to load account: "+
+error.message
+);
+
 return;
 }
 
 if(profile.account_type!=="real"){
+
 window.location.href="login.html";
 return;
 }
 
+currentProfile = profile;
+
+updateBalanceDisplay();
+
+}
+
+
+/* =========================
+BALANCE DISPLAY
+========================= */
+
+function updateBalanceDisplay(){
+
+if(!currentProfile)return;
+
 const usd =
-Number(profile.real_balance||0);
+Number(currentProfile.real_balance||0);
 
 const ngn =
-Number(profile.ngn_balance||0);
+Number(currentProfile.ngn_balance||0);
 
 document.getElementById("topBalance")
 .textContent =
-"$"+usd.toLocaleString(
+"$"+
+usd.toLocaleString(
 "en-US",
-{minimumFractionDigits:2,maximumFractionDigits:2}
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
 );
 
 document.getElementById("usd")
 .textContent =
-"$"+usd.toLocaleString(
+"$"+
+usd.toLocaleString(
 "en-US",
-{minimumFractionDigits:2,maximumFractionDigits:2}
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
 );
 
 document.getElementById("ngn")
 .textContent =
-"₦"+ngn.toLocaleString(
+"₦"+
+ngn.toLocaleString(
 "en-NG",
-{minimumFractionDigits:2,maximumFractionDigits:2}
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
 );
 
 document.getElementById("verification")
 .textContent =
 String(
-profile.verification_status||"pending"
+currentProfile.verification_status||"pending"
 ).toUpperCase();
 
+updateWithdrawalAvailable();
+
 }
+
+
+/* =========================
+WITHDRAWAL
+========================= */
+
+const withdrawModal =
+document.getElementById("withdrawModal");
+
+const withdrawCurrency =
+document.getElementById("withdrawCurrency");
+
+const withdrawAmount =
+document.getElementById("withdrawAmount");
+
+const withdrawAvailable =
+document.getElementById("withdrawAvailable");
+
+const withdrawMessage =
+document.getElementById("withdrawMessage");
+
+const submitWithdrawal =
+document.getElementById("submitWithdrawal");
+
+
+function formatUSD(amount){
+
+return "$"+
+Number(amount||0).toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
+
+
+function formatNGN(amount){
+
+return "₦"+
+Number(amount||0).toLocaleString(
+"en-NG",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}
+
+
+function getWithdrawalBalance(){
+
+if(!currentProfile)return 0;
+
+if(withdrawCurrency.value==="NGN"){
+
+return Number(
+currentProfile.ngn_balance||0
+);
+
+}
+
+return Number(
+currentProfile.real_balance||0
+);
+
+}
+
+
+function updateWithdrawalAvailable(){
+
+const balance =
+getWithdrawalBalance();
+
+if(withdrawCurrency.value==="NGN"){
+
+withdrawAvailable.textContent =
+formatNGN(balance);
+
+}else{
+
+withdrawAvailable.textContent =
+formatUSD(balance);
+
+}
+
+}
+
+
+function showWithdrawMessage(
+message,
+type
+){
+
+withdrawMessage.textContent =
+message;
+
+withdrawMessage.className =
+"withdraw-message show "+
+type;
+
+}
+
+
+function clearWithdrawMessage(){
+
+withdrawMessage.textContent="";
+
+withdrawMessage.className =
+"withdraw-message";
+
+}
+
+
+document
+.getElementById("withdraw")
+.addEventListener(
+"click",
+()=>{
+
+clearWithdrawMessage();
+
+withdrawAmount.value="";
+document.getElementById("bankName").value="";
+document.getElementById("accountName").value="";
+document.getElementById("accountNumber").value="";
+
+withdrawModal.classList.add("show");
+
+updateWithdrawalAvailable();
+
+}
+);
+
+
+document
+.getElementById("closeWithdraw")
+.addEventListener(
+"click",
+()=>{
+
+withdrawModal.classList.remove("show");
+
+}
+);
+
+
+withdrawModal.addEventListener(
+"click",
+event=>{
+
+if(event.target===withdrawModal){
+
+withdrawModal.classList.remove("show");
+
+}
+
+}
+);
+
+
+withdrawCurrency.addEventListener(
+"change",
+()=>{
+
+withdrawAmount.value="";
+
+clearWithdrawMessage();
+
+updateWithdrawalAvailable();
+
+}
+);
+
+
+/* =========================
+SUBMIT WITHDRAWAL
+========================= */
+
+submitWithdrawal.addEventListener(
+"click",
+async()=>{
+
+clearWithdrawMessage();
+
+if(!currentUserId || !currentProfile){
+
+showWithdrawMessage(
+"Your account is still loading. Please try again.",
+"error"
+);
+
+return;
+}
+
+
+if(
+String(
+currentProfile.verification_status
+).toLowerCase()!=="verified"
+){
+
+showWithdrawMessage(
+"Your account must be verified before you can withdraw.",
+"error"
+);
+
+return;
+}
+
+
+const currency =
+withdrawCurrency.value;
+
+const amount =
+Number(withdrawAmount.value);
+
+const available =
+getWithdrawalBalance();
+
+const bankName =
+document
+.getElementById("bankName")
+.value
+.trim();
+
+const accountName =
+document
+.getElementById("accountName")
+.value
+.trim();
+
+const accountNumber =
+document
+.getElementById("accountNumber")
+.value
+.trim();
+
+
+if(!amount || amount<=0){
+
+showWithdrawMessage(
+"Please enter a valid withdrawal amount.",
+"error"
+);
+
+return;
+}
+
+
+if(amount>available){
+
+showWithdrawMessage(
+"Insufficient "+
+currency+
+" balance.",
+"error"
+);
+
+return;
+}
+
+
+if(!bankName){
+
+showWithdrawMessage(
+"Please enter your bank name.",
+"error"
+);
+
+return;
+}
+
+
+if(!accountName){
+
+showWithdrawMessage(
+"Please enter the account name.",
+"error"
+);
+
+return;
+}
+
+
+if(!accountNumber){
+
+showWithdrawMessage(
+"Please enter the account number.",
+"error"
+);
+
+return;
+}
+
+
+submitWithdrawal.disabled=true;
+
+submitWithdrawal.textContent=
+"Submitting...";
+
+
+try{
+
+const paymentReference =
+"WD-"+
+Date.now()+
+"-"+
+Math.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
+
+
+const withdrawalDetails = {
+bank_name:bankName,
+account_name:accountName,
+account_number:accountNumber,
+currency:currency
+};
+
+
+const {
+error
+}=await sb
+.from("transactions")
+.insert({
+
+user_id:currentUserId,
+
+transaction_type:
+"WITHDRAWAL",
+
+amount:amount,
+
+status:
+"PENDING",
+
+currency:currency,
+
+payment_method:
+"BANK_TRANSFER",
+
+payment_reference:
+paymentReference,
+
+description:
+JSON.stringify(
+withdrawalDetails
+)
+
+});
+
+
+if(error){
+
+throw error;
+
+}
+
+
+showWithdrawMessage(
+"Withdrawal request submitted successfully. Reference: "+
+paymentReference+
+". Your request is now PENDING review.",
+"success"
+);
+
+withdrawAmount.value="";
+
+document
+.getElementById("bankName")
+.value="";
+
+document
+.getElementById("accountName")
+.value="";
+
+document
+.getElementById("accountNumber")
+.value="";
+
+
+setTimeout(
+()=>{
+
+withdrawModal.classList.remove(
+"show"
+);
+
+},
+3000
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showWithdrawMessage(
+"Unable to submit withdrawal: "+
+error.message,
+"error"
+);
+
+}finally{
+
+submitWithdrawal.disabled=false;
+
+submitWithdrawal.textContent=
+"Submit Withdrawal Request";
+
+}
+
+}
+);
 
 
 /* =========================
@@ -738,10 +1518,16 @@ const dpr =
 window.devicePixelRatio||1;
 
 canvas.width =
-Math.max(1,Math.floor(rect.width*dpr));
+Math.max(
+1,
+Math.floor(rect.width*dpr)
+);
 
 canvas.height =
-Math.max(1,Math.floor(rect.height*dpr));
+Math.max(
+1,
+Math.floor(rect.height*dpr)
+);
 
 canvas.style.width =
 rect.width+"px";
@@ -768,19 +1554,19 @@ for(let i=0;i<75;i++){
 
 const open=value;
 
-const movement =
+const movement=
 (Math.random()-.48)*.003;
 
-const close =
+const close=
 open+movement;
 
-const high =
-Math.max(open,close)
-+Math.random()*.0012;
+const high=
+Math.max(open,close)+
+Math.random()*.0012;
 
-const low =
-Math.min(open,close)
--Math.random()*.0012;
+const low=
+Math.min(open,close)-
+Math.random()*.0012;
 
 candles.push({
 open,
@@ -798,356 +1584,4 @@ currentPrice=value;
 }
 
 
-function drawChart(){
-
-const width=canvas.clientWidth;
-const height=canvas.clientHeight;
-
-if(width<=0||height<=0)return;
-
-ctx.clearRect(
-0,
-0,
-width,
-height
-);
-
-if(!candles.length)return;
-
-let min=Infinity;
-let max=-Infinity;
-
-for(const c of candles){
-
-if(c.low<min)min=c.low;
-if(c.high>max)max=c.high;
-
-}
-
-const range=
-Math.max(max-min,.0001);
-
-const pad=25;
-
-const spacing=
-(width-pad*2)/candles.length;
-
-const candleWidth=
-Math.max(3,spacing*.62);
-
-
-function y(value){
-
-return height-pad-
-((value-min)/range)*
-(height-pad*2);
-
-}
-
-
-for(let i=0;i<candles.length;i++){
-
-const c=candles[i];
-
-const x=
-pad+i*spacing;
-
-const bullish=
-c.close>=c.open;
-
-ctx.strokeStyle=
-bullish
-?"#20d98a"
-:"#ed5c57";
-
-ctx.fillStyle=
-bullish
-?"#20d98a"
-:"#ed5c57";
-
-ctx.lineWidth=1;
-
-ctx.beginPath();
-
-ctx.moveTo(
-x+candleWidth/2,
-y(c.high)
-);
-
-ctx.lineTo(
-x+candleWidth/2,
-y(c.low)
-);
-
-ctx.stroke();
-
-const top=
-Math.min(
-y(c.open),
-y(c.close)
-);
-
-const heightBody=
-Math.max(
-2,
-Math.abs(
-y(c.open)-y(c.close)
-)
-);
-
-ctx.fillRect(
-x,
-top,
-candleWidth,
-heightBody
-);
-
-}
-
-
-/* Current price line */
-
-const lineY=y(currentPrice);
-
-ctx.strokeStyle="#d4af37";
-
-ctx.lineWidth=1;
-
-ctx.setLineDash([6,5]);
-
-ctx.beginPath();
-
-ctx.moveTo(0,lineY);
-ctx.lineTo(width,lineY);
-
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-
-/* Current price marker */
-
-ctx.fillStyle="#d4af37";
-
-ctx.fillRect(
-width-78,
-lineY-10,
-78,
-20
-);
-
-ctx.fillStyle="#07111f";
-
-ctx.font="11px Arial";
-
-ctx.textAlign="center";
-
-ctx.fillText(
-currentPrice.toFixed(5),
-width-39,
-lineY+4
-);
-
-}
-
-
-function updateChart(){
-
-const last=
-candles[candles.length-1];
-
-const open=
-last?last.close:currentPrice;
-
-currentPrice +=
-(Math.random()-.5)*.0015;
-
-const close=currentPrice;
-
-candles.push({
-
-open,
-close,
-
-high:
-Math.max(open,close)
-+Math.random()*.0008,
-
-low:
-Math.min(open,close)
--Math.random()*.0008
-
-});
-
-if(candles.length>75){
-candles.shift();
-}
-
-document.getElementById("price")
-.textContent=
-currentPrice.toFixed(5);
-
-document.getElementById("chartPrice")
-.textContent=
-currentPrice.toFixed(5);
-
-drawChart();
-
-}
-
-
-/* =========================
-ASSET BUTTONS
-========================= */
-
-document
-.querySelectorAll(".asset")
-.forEach(button=>{
-
-button.addEventListener(
-"click",
-()=>{
-
-document
-.querySelectorAll(".asset")
-.forEach(x=>
-x.classList.remove("active")
-);
-
-button.classList.add("active");
-
-document.getElementById("pair")
-.value=
-button.dataset.pair;
-
-}
-);
-
-});
-
-
-document
-.getElementById("pair")
-.addEventListener(
-"change",
-function(){
-
-document
-.querySelectorAll(".asset")
-.forEach(button=>{
-
-button.classList.toggle(
-"active",
-button.dataset.pair===this.value
-);
-
-});
-
-}
-);
-
-
-/* =========================
-AMOUNT
-========================= */
-
-document
-.getElementById("minus")
-.addEventListener(
-"click",
-()=>{
-
-const input=
-document.getElementById("amount");
-
-input.value=
-Math.max(
-1,
-Number(input.value||100)-10
-);
-
-}
-);
-
-document
-.getElementById("plus")
-.addEventListener(
-"click",
-()=>{
-
-const input=
-document.getElementById("amount");
-
-input.value=
-Number(input.value||100)+10;
-
-}
-);
-
-
-/* =========================
-DEPOSIT
-========================= */
-
-document
-.getElementById("deposit")
-.addEventListener(
-"click",
-()=>{
-
-window.location.href=
-"deposit.html";
-
-}
-);
-
-
-/* =========================
-LOGOUT
-========================= */
-
-document
-.getElementById("logout")
-.addEventListener(
-"click",
-async()=>{
-
-try{
-await sb.auth.signOut();
-}catch(e){
-console.log(e);
-}
-
-window.location.href=
-"login.html";
-
-}
-);
-
-
-/* =========================
-START
-========================= */
-
-makeCandles();
-
-loadAccount();
-
-requestAnimationFrame(
-resizeChart
-);
-
-window.addEventListener(
-"resize",
-resizeChart
-);
-
-setInterval(
-updateChart,
-1000
-);
-
-</script>
-
-</body>
-</html>
+function drawChart(
