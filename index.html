@@ -1656,4 +1656,451 @@ button.dataset.pair === value
 
 /* =====================================
 AMOUNT BUTTONS
-=================================
+===================================== */
+
+const amountInput =
+document.getElementById("amount");
+
+document.getElementById("minus").onclick =
+function(){
+
+let value =
+Number(amountInput.value) || 100;
+
+value -= 10;
+
+if(value < 1){
+value = 1;
+}
+
+amountInput.value = value;
+
+};
+
+
+document.getElementById("plus").onclick =
+function(){
+
+let value =
+Number(amountInput.value) || 100;
+
+value += 10;
+
+amountInput.value = value;
+
+};
+
+
+/* =====================================
+CANDLESTICK CHART
+===================================== */
+
+const canvas =
+document.getElementById("chart");
+
+const ctx =
+canvas.getContext("2d");
+
+let candles = [];
+
+const pairPrices = {
+"EUR/USD":1.08500,
+"GBP/USD":1.27400,
+"USD/JPY":149.200,
+"AUD/USD":0.65500,
+"USD/CAD":1.35200,
+"USD/CHF":0.89000
+};
+
+
+function generateCandles(){
+
+const pair =
+document.getElementById("pair").value;
+
+let base =
+pairPrices[pair] || 1.08500;
+
+candles = [];
+
+let price = base;
+
+for(let i = 0; i < 55; i++){
+
+const open = price;
+
+const movement =
+(base * (Math.random() - 0.48) * 0.004);
+
+const close =
+open + movement;
+
+const high =
+Math.max(open,close) +
+(base * Math.random() * 0.002);
+
+const low =
+Math.min(open,close) -
+(base * Math.random() * 0.002);
+
+candles.push({
+open:open,
+close:close,
+high:high,
+low:low
+});
+
+price = close;
+
+}
+
+drawChart();
+
+}
+
+
+function resizeChart(){
+
+const rect =
+canvas.parentElement.getBoundingClientRect();
+
+const dpr =
+window.devicePixelRatio || 1;
+
+canvas.width =
+Math.max(1,Math.floor(rect.width * dpr));
+
+canvas.height =
+Math.max(1,Math.floor(rect.height * dpr));
+
+canvas.style.width =
+rect.width + "px";
+
+canvas.style.height =
+rect.height + "px";
+
+ctx.setTransform(
+dpr,
+0,
+0,
+dpr,
+0,
+0
+);
+
+drawChart();
+
+}
+
+
+function drawChart(){
+
+const width =
+canvas.clientWidth;
+
+const height =
+canvas.clientHeight;
+
+if(!width || !height){
+return;
+}
+
+ctx.clearRect(
+0,
+0,
+width,
+height
+);
+
+if(!candles.length){
+return;
+}
+
+
+/* Find price range */
+
+let highest =
+Math.max(
+...candles.map(c => c.high)
+);
+
+let lowest =
+Math.min(
+...candles.map(c => c.low)
+);
+
+const padding =
+(highest - lowest) * 0.15;
+
+highest += padding;
+lowest -= padding;
+
+
+/* Chart area */
+
+const left =
+18;
+
+const right =
+12;
+
+const top =
+60;
+
+const bottom =
+30;
+
+const chartWidth =
+width - left - right;
+
+const chartHeight =
+height - top - bottom;
+
+const candleWidth =
+chartWidth / candles.length;
+
+
+/* Draw candles */
+
+candles.forEach(
+function(candle,index){
+
+const x =
+left +
+(index * candleWidth) +
+(candleWidth / 2);
+
+function y(price){
+
+return top +
+(
+(highest - price) /
+(highest - lowest)
+) *
+chartHeight;
+
+}
+
+const yOpen =
+y(candle.open);
+
+const yClose =
+y(candle.close);
+
+const yHigh =
+y(candle.high);
+
+const yLow =
+y(candle.low);
+
+const bullish =
+candle.close >= candle.open;
+
+
+/* Wick */
+
+ctx.beginPath();
+
+ctx.moveTo(x,yHigh);
+
+ctx.lineTo(x,yLow);
+
+ctx.lineWidth = 1;
+
+ctx.strokeStyle =
+bullish ?
+"#42dc99" :
+"#ff6258";
+
+ctx.stroke();
+
+
+/* Body */
+
+const bodyTop =
+Math.min(yOpen,yClose);
+
+const bodyHeight =
+Math.max(
+2,
+Math.abs(yClose-yOpen)
+);
+
+const bodyWidth =
+Math.max(
+3,
+candleWidth * 0.58
+);
+
+ctx.fillStyle =
+bullish ?
+"#42dc99" :
+"#ff6258";
+
+ctx.fillRect(
+x - bodyWidth / 2,
+bodyTop,
+bodyWidth,
+bodyHeight
+);
+
+}
+);
+
+
+/* Current price line */
+
+const last =
+candles[candles.length - 1];
+
+const currentPrice =
+last.close;
+
+const currentY =
+top +
+(
+(highest-currentPrice) /
+(highest-lowest)
+) *
+chartHeight;
+
+
+ctx.beginPath();
+
+ctx.moveTo(
+left,
+currentY
+);
+
+ctx.lineTo(
+width-right,
+currentY
+);
+
+ctx.setLineDash([5,5]);
+
+ctx.strokeStyle =
+"#d4af37";
+
+ctx.lineWidth = 1;
+
+ctx.stroke();
+
+ctx.setLineDash([]);
+
+
+/* Update price */
+
+const pair =
+document.getElementById("pair").value;
+
+const decimals =
+pair === "USD/JPY" ? 3 : 5;
+
+const formatted =
+currentPrice.toFixed(decimals);
+
+document.getElementById(
+"price"
+).textContent =
+formatted;
+
+document.getElementById(
+"chartPrice"
+).textContent =
+formatted;
+
+}
+
+
+/* =====================================
+PAIR CHANGE
+===================================== */
+
+document.getElementById(
+"pair"
+).addEventListener(
+"change",
+function(){
+
+generateCandles();
+
+}
+);
+
+
+/* =====================================
+START CHART
+===================================== */
+
+window.addEventListener(
+"resize",
+resizeChart
+);
+
+generateCandles();
+
+setInterval(
+function(){
+
+if(!candles.length){
+generateCandles();
+return;
+}
+
+const last =
+candles[candles.length - 1];
+
+const pair =
+document.getElementById("pair").value;
+
+const base =
+pairPrices[pair] || 1.08500;
+
+const open =
+last.close;
+
+const close =
+open +
+(base *
+(Math.random()-0.48) *
+0.003);
+
+const high =
+Math.max(open,close) +
+(base * Math.random() * 0.0015);
+
+const low =
+Math.min(open,close) -
+(base * Math.random() * 0.0015);
+
+candles.push({
+open:open,
+close:close,
+high:high,
+low:low
+});
+
+if(candles.length > 55){
+
+candles.shift();
+
+}
+
+drawChart();
+
+},
+2000
+);
+
+
+/* =====================================
+LOAD ACCOUNT
+===================================== */
+
+loadAccount();
+
+</script>
+
+</body>
+</html>
