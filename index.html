@@ -89,30 +89,31 @@ color:#d4af37;
 font-size:18px;
 }
 
+.deposit,
+.withdraw,
+.logout{
+padding:11px 14px;
+border-radius:7px;
+font-weight:bold;
+white-space:nowrap;
+}
+
 .deposit{
-padding:12px 16px;
 background:#0d2b23;
 border:1px solid #15945d;
 color:#39d994;
-border-radius:7px;
-font-weight:bold;
 }
 
 .withdraw{
-padding:12px 16px;
 background:#30200e;
 border:1px solid #c88b27;
 color:#f0bd58;
-border-radius:7px;
-font-weight:bold;
 }
 
 .logout{
-padding:11px 14px;
 background:#15243a;
 border:1px solid #465a73;
 color:white;
-border-radius:7px;
 }
 
 .main{
@@ -372,16 +373,14 @@ border:1px solid #30455f;
 border-radius:7px;
 }
 
-/* =========================
-WITHDRAWAL MODAL
-========================= */
+/* WITHDRAW MODAL */
 
 .modal{
 display:none;
 position:fixed;
 inset:0;
-z-index:100;
-background:rgba(0,0,0,.72);
+z-index:9999;
+background:rgba(0,0,0,.75);
 align-items:center;
 justify-content:center;
 padding:18px;
@@ -400,7 +399,6 @@ background:#0b1728;
 border:1px solid #344a64;
 border-radius:12px;
 padding:20px;
-box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
 
 .modal-head{
@@ -416,12 +414,13 @@ font-size:20px;
 }
 
 .close{
-width:34px;
-height:34px;
+width:36px;
+height:36px;
 border:1px solid #465a73;
 background:#15243a;
 color:white;
 border-radius:7px;
+font-size:20px;
 }
 
 .modal-label{
@@ -440,11 +439,6 @@ border:1px solid #344a64;
 border-radius:7px;
 color:white;
 outline:none;
-}
-
-.modal-input:focus,
-.modal-select:focus{
-border-color:#d4af37;
 }
 
 .available{
@@ -466,11 +460,6 @@ border-radius:8px;
 background:#d4af37;
 color:#07111f;
 font-weight:bold;
-}
-
-.withdraw-submit:disabled{
-opacity:.5;
-cursor:not-allowed;
 }
 
 .withdraw-message{
@@ -612,15 +601,15 @@ Crownspips <span>Trading</span>
 <strong id="topBalance">$0.00</strong>
 </div>
 
-<button class="deposit" id="deposit">
+<button class="deposit" id="deposit" type="button">
 Deposit
 </button>
 
-<button class="withdraw" id="withdraw">
+<button class="withdraw" id="withdraw" type="button">
 Withdraw
 </button>
 
-<button class="logout" id="logout">
+<button class="logout" id="logout" type="button">
 Logout
 </button>
 
@@ -743,7 +732,7 @@ Investment Amount
 
 <div class="amount">
 
-<button id="minus">−</button>
+<button id="minus" type="button">−</button>
 
 <input
 id="amount"
@@ -753,7 +742,7 @@ min="1"
 step="10"
 >
 
-<button id="plus">+</button>
+<button id="plus" type="button">+</button>
 
 </div>
 
@@ -797,17 +786,11 @@ Expiration
 </div>
 
 
-<button
-class="higher"
-disabled
->
+<button class="higher" disabled type="button">
 ▲ HIGHER
 </button>
 
-<button
-class="lower"
-disabled
->
+<button class="lower" disabled type="button">
 ▼ LOWER
 </button>
 
@@ -822,9 +805,7 @@ before these controls can place real-money orders.
 </div>
 
 
-<!-- =========================
-WITHDRAWAL MODAL
-========================= -->
+<!-- WITHDRAWAL MODAL -->
 
 <div class="modal" id="withdrawModal">
 
@@ -843,7 +824,6 @@ type="button"
 </button>
 
 </div>
-
 
 <label class="modal-label">
 Currency
@@ -864,14 +844,10 @@ NGN — Nigerian Naira
 
 </select>
 
-
 <div class="available">
 Available:
-<strong id="withdrawAvailable">
-$0.00
-</strong>
+<strong id="withdrawAvailable">$0.00</strong>
 </div>
-
 
 <label class="modal-label">
 Withdrawal Amount
@@ -886,7 +862,6 @@ step="0.01"
 placeholder="Enter amount"
 >
 
-
 <label class="modal-label">
 Bank Name
 </label>
@@ -898,7 +873,6 @@ type="text"
 placeholder="Enter bank name"
 >
 
-
 <label class="modal-label">
 Account Name
 </label>
@@ -909,7 +883,6 @@ class="modal-input"
 type="text"
 placeholder="Enter account name"
 >
-
 
 <label class="modal-label">
 Account Number
@@ -923,20 +896,16 @@ inputmode="numeric"
 placeholder="Enter account number"
 >
 
-
 <div class="notice">
 Your withdrawal request will be submitted as
 <strong>PENDING</strong>. Your balance will only be
-reduced after the withdrawal has been reviewed and
-marked completed.
+reduced after the request is reviewed and completed.
 </div>
-
 
 <div
 id="withdrawMessage"
 class="withdraw-message"
 ></div>
-
 
 <button
 id="submitWithdrawal"
@@ -947,11 +916,14 @@ Submit Withdrawal Request
 </button>
 
 </div>
-
 </div>
 
 
 <script>
+
+/* =====================================
+SUPABASE
+===================================== */
 
 const SUPABASE_URL =
 "https://ghagrruxxqtnochooiaj.supabase.co";
@@ -959,32 +931,143 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_FORCt30umzxv7ardnSxokA_8l0-En0B";
 
-const sb =
+let sb = null;
+let currentUserId = null;
+let currentProfile = null;
+
+
+/* =====================================
+BUTTONS FIRST
+These are initialized immediately.
+===================================== */
+
+document.getElementById("deposit").onclick =
+function(){
+
+window.location.href =
+"deposit.html";
+
+};
+
+
+document.getElementById("logout").onclick =
+async function(){
+
+try{
+
+if(sb){
+
+await sb.auth.signOut();
+
+}
+
+}catch(error){
+
+console.log(error);
+
+}
+
+window.location.replace("login.html");
+
+};
+
+
+document.getElementById("withdraw").onclick =
+function(){
+
+document
+.getElementById("withdrawModal")
+.classList.add("show");
+
+};
+
+
+document.getElementById("closeWithdraw").onclick =
+function(){
+
+document
+.getElementById("withdrawModal")
+.classList.remove("show");
+
+};
+
+
+document.getElementById("withdrawModal").onclick =
+function(event){
+
+if(event.target === this){
+
+this.classList.remove("show");
+
+}
+
+};
+
+
+/* =====================================
+SUPABASE INITIALIZATION
+===================================== */
+
+try{
+
+if(
+window.supabase &&
+window.supabase.createClient
+){
+
+sb =
 window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
-let currentUserId = null;
-let currentProfile = null;
+}
+
+}catch(error){
+
+console.error(
+"Supabase initialization error:",
+error
+);
+
+}
 
 
-/* =========================
+/* =====================================
 ACCOUNT
-========================= */
+===================================== */
 
 async function loadAccount(){
+
+if(!sb){
+
+console.log(
+"Supabase unavailable."
+);
+
+return;
+
+}
+
+try{
 
 const {
 data:{session}
 }=await sb.auth.getSession();
 
 if(!session){
-window.location.href="login.html";
+
+window.location.replace(
+"login.html"
+);
+
 return;
+
 }
 
-currentUserId = session.user.id;
+currentUserId =
+session.user.id;
+
 
 const {
 data:profile,
@@ -995,45 +1078,70 @@ error
 .eq("id",session.user.id)
 .single();
 
+
 if(error){
 
-alert(
-"Unable to load account: "+
-error.message
+console.error(
+"Profile error:",
+error
 );
 
 return;
+
 }
 
-if(profile.account_type!=="real"){
 
-window.location.href="login.html";
+if(profile.account_type !== "real"){
+
+window.location.replace(
+"login.html"
+);
+
 return;
+
 }
 
-currentProfile = profile;
+
+currentProfile =
+profile;
 
 updateBalanceDisplay();
 
+
+}catch(error){
+
+console.error(
+"Account loading error:",
+error
+);
+
+}
+
 }
 
 
-/* =========================
-BALANCE DISPLAY
-========================= */
+/* =====================================
+BALANCE
+===================================== */
 
 function updateBalanceDisplay(){
 
 if(!currentProfile)return;
 
 const usd =
-Number(currentProfile.real_balance||0);
+Number(
+currentProfile.real_balance || 0
+);
 
 const ngn =
-Number(currentProfile.ngn_balance||0);
+Number(
+currentProfile.ngn_balance || 0
+);
 
-document.getElementById("topBalance")
-.textContent =
+
+document.getElementById(
+"topBalance"
+).textContent =
 "$"+
 usd.toLocaleString(
 "en-US",
@@ -1043,8 +1151,10 @@ maximumFractionDigits:2
 }
 );
 
-document.getElementById("usd")
-.textContent =
+
+document.getElementById(
+"usd"
+).textContent =
 "$"+
 usd.toLocaleString(
 "en-US",
@@ -1054,8 +1164,10 @@ maximumFractionDigits:2
 }
 );
 
-document.getElementById("ngn")
-.textContent =
+
+document.getElementById(
+"ngn"
+).textContent =
 "₦"+
 ngn.toLocaleString(
 "en-NG",
@@ -1065,44 +1177,80 @@ maximumFractionDigits:2
 }
 );
 
-document.getElementById("verification")
-.textContent =
+
+document.getElementById(
+"verification"
+).textContent =
 String(
-currentProfile.verification_status||"pending"
+currentProfile.verification_status ||
+"pending"
 ).toUpperCase();
 
-updateWithdrawalAvailable();
+
+updateAvailable();
 
 }
 
 
-/* =========================
+/* =====================================
 WITHDRAWAL
-========================= */
+===================================== */
 
-const withdrawModal =
-document.getElementById("withdrawModal");
+function getAvailable(){
 
-const withdrawCurrency =
-document.getElementById("withdrawCurrency");
+if(!currentProfile)return 0;
 
-const withdrawAmount =
-document.getElementById("withdrawAmount");
+if(
+document.getElementById(
+"withdrawCurrency"
+).value === "NGN"
+){
 
-const withdrawAvailable =
-document.getElementById("withdrawAvailable");
+return Number(
+currentProfile.ngn_balance || 0
+);
 
-const withdrawMessage =
-document.getElementById("withdrawMessage");
+}
 
-const submitWithdrawal =
-document.getElementById("submitWithdrawal");
+return Number(
+currentProfile.real_balance || 0
+);
+
+}
 
 
-function formatUSD(amount){
+function updateAvailable(){
 
-return "$"+
-Number(amount||0).toLocaleString(
+const currency =
+document.getElementById(
+"withdrawCurrency"
+).value;
+
+const amount =
+getAvailable();
+
+
+if(currency === "NGN"){
+
+document.getElementById(
+"withdrawAvailable"
+).textContent =
+"₦"+
+amount.toLocaleString(
+"en-NG",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
+}else{
+
+document.getElementById(
+"withdrawAvailable"
+).textContent =
+"$"+
+amount.toLocaleString(
 "en-US",
 {
 minimumFractionDigits:2,
@@ -1112,224 +1260,147 @@ maximumFractionDigits:2
 
 }
 
-
-function formatNGN(amount){
-
-return "₦"+
-Number(amount||0).toLocaleString(
-"en-NG",
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
-
 }
 
 
-function getWithdrawalBalance(){
+document.getElementById(
+"withdrawCurrency"
+).onchange =
+function(){
 
-if(!currentProfile)return 0;
+updateAvailable();
 
-if(withdrawCurrency.value==="NGN"){
-
-return Number(
-currentProfile.ngn_balance||0
-);
-
-}
-
-return Number(
-currentProfile.real_balance||0
-);
-
-}
+};
 
 
-function updateWithdrawalAvailable(){
+/* =====================================
+WITHDRAWAL MESSAGE
+===================================== */
 
-const balance =
-getWithdrawalBalance();
-
-if(withdrawCurrency.value==="NGN"){
-
-withdrawAvailable.textContent =
-formatNGN(balance);
-
-}else{
-
-withdrawAvailable.textContent =
-formatUSD(balance);
-
-}
-
-}
-
-
-function showWithdrawMessage(
-message,
+function message(
+text,
 type
 ){
 
-withdrawMessage.textContent =
-message;
+const box =
+document.getElementById(
+"withdrawMessage"
+);
 
-withdrawMessage.className =
+box.textContent =
+text;
+
+box.className =
 "withdraw-message show "+
 type;
 
 }
 
 
-function clearWithdrawMessage(){
-
-withdrawMessage.textContent="";
-
-withdrawMessage.className =
-"withdraw-message";
-
-}
-
-
-document
-.getElementById("withdraw")
-.addEventListener(
-"click",
-()=>{
-
-clearWithdrawMessage();
-
-withdrawAmount.value="";
-document.getElementById("bankName").value="";
-document.getElementById("accountName").value="";
-document.getElementById("accountNumber").value="";
-
-withdrawModal.classList.add("show");
-
-updateWithdrawalAvailable();
-
-}
-);
-
-
-document
-.getElementById("closeWithdraw")
-.addEventListener(
-"click",
-()=>{
-
-withdrawModal.classList.remove("show");
-
-}
-);
-
-
-withdrawModal.addEventListener(
-"click",
-event=>{
-
-if(event.target===withdrawModal){
-
-withdrawModal.classList.remove("show");
-
-}
-
-}
-);
-
-
-withdrawCurrency.addEventListener(
-"change",
-()=>{
-
-withdrawAmount.value="";
-
-clearWithdrawMessage();
-
-updateWithdrawalAvailable();
-
-}
-);
-
-
-/* =========================
+/* =====================================
 SUBMIT WITHDRAWAL
-========================= */
+===================================== */
 
-submitWithdrawal.addEventListener(
-"click",
-async()=>{
+document.getElementById(
+"submitWithdrawal"
+).onclick =
+async function(){
 
-clearWithdrawMessage();
+const button = this;
 
-if(!currentUserId || !currentProfile){
+const currency =
+document.getElementById(
+"withdrawCurrency"
+).value;
 
-showWithdrawMessage(
-"Your account is still loading. Please try again.",
+const amount =
+Number(
+document.getElementById(
+"withdrawAmount"
+).value
+);
+
+const bankName =
+document.getElementById(
+"bankName"
+).value.trim();
+
+const accountName =
+document.getElementById(
+"accountName"
+).value.trim();
+
+const accountNumber =
+document.getElementById(
+"accountNumber"
+).value.trim();
+
+
+if(!currentUserId){
+
+message(
+"Please wait for your account to finish loading.",
 "error"
 );
 
 return;
+
+}
+
+
+if(
+!currentProfile
+){
+
+message(
+"Your account information has not loaded yet.",
+"error"
+);
+
+return;
+
 }
 
 
 if(
 String(
 currentProfile.verification_status
-).toLowerCase()!=="verified"
+).toLowerCase() !==
+"verified"
 ){
 
-showWithdrawMessage(
+message(
 "Your account must be verified before you can withdraw.",
 "error"
 );
 
 return;
+
 }
 
 
-const currency =
-withdrawCurrency.value;
+if(
+!amount ||
+amount <= 0
+){
 
-const amount =
-Number(withdrawAmount.value);
-
-const available =
-getWithdrawalBalance();
-
-const bankName =
-document
-.getElementById("bankName")
-.value
-.trim();
-
-const accountName =
-document
-.getElementById("accountName")
-.value
-.trim();
-
-const accountNumber =
-document
-.getElementById("accountNumber")
-.value
-.trim();
-
-
-if(!amount || amount<=0){
-
-showWithdrawMessage(
-"Please enter a valid withdrawal amount.",
+message(
+"Enter a valid withdrawal amount.",
 "error"
 );
 
 return;
+
 }
 
 
-if(amount>available){
+const available =
+getAvailable();
 
-showWithdrawMessage(
+
+if(amount > available){
+
+message(
 "Insufficient "+
 currency+
 " balance.",
@@ -1337,71 +1408,91 @@ currency+
 );
 
 return;
+
 }
 
 
 if(!bankName){
 
-showWithdrawMessage(
-"Please enter your bank name.",
+message(
+"Enter the bank name.",
 "error"
 );
 
 return;
+
 }
 
 
 if(!accountName){
 
-showWithdrawMessage(
-"Please enter the account name.",
+message(
+"Enter the account name.",
 "error"
 );
 
 return;
+
 }
 
 
 if(!accountNumber){
 
-showWithdrawMessage(
-"Please enter the account number.",
+message(
+"Enter the account number.",
 "error"
 );
 
 return;
+
 }
 
 
-submitWithdrawal.disabled=true;
+if(!sb){
 
-submitWithdrawal.textContent=
+message(
+"Connection to the account system is unavailable.",
+"error"
+);
+
+return;
+
+}
+
+
+button.disabled = true;
+
+button.textContent =
 "Submitting...";
 
 
 try{
 
-const paymentReference =
+const reference =
 "WD-"+
 Date.now()+
 "-"+
 Math.random()
 .toString(36)
-.substring(2,8)
+.substring(2,7)
 .toUpperCase();
 
 
-const withdrawalDetails = {
+const details = JSON.stringify({
+
 bank_name:bankName,
+
 account_name:accountName,
+
 account_number:accountNumber,
+
 currency:currency
-};
+
+});
 
 
-const {
-error
-}=await sb
+const {error} =
+await sb
 .from("transactions")
 .insert({
 
@@ -1421,12 +1512,10 @@ payment_method:
 "BANK_TRANSFER",
 
 payment_reference:
-paymentReference,
+reference,
 
 description:
-JSON.stringify(
-withdrawalDetails
-)
+details
 
 });
 
@@ -1438,34 +1527,42 @@ throw error;
 }
 
 
-showWithdrawMessage(
+message(
 "Withdrawal request submitted successfully. Reference: "+
-paymentReference+
-". Your request is now PENDING review.",
+reference+
+". Your request is now pending review.",
 "success"
 );
 
-withdrawAmount.value="";
 
-document
-.getElementById("bankName")
-.value="";
+document.getElementById(
+"withdrawAmount"
+).value="";
 
-document
-.getElementById("accountName")
-.value="";
 
-document
-.getElementById("accountNumber")
-.value="";
+document.getElementById(
+"bankName"
+).value="";
+
+
+document.getElementById(
+"accountName"
+).value="";
+
+
+document.getElementById(
+"accountNumber"
+).value="";
 
 
 setTimeout(
-()=>{
+function(){
 
-withdrawModal.classList.remove(
-"show"
-);
+document
+.getElementById(
+"withdrawModal"
+)
+.classList.remove("show");
 
 },
 3000
@@ -1476,7 +1573,7 @@ withdrawModal.classList.remove(
 
 console.error(error);
 
-showWithdrawMessage(
+message(
 "Unable to submit withdrawal: "+
 error.message,
 "error"
@@ -1484,104 +1581,79 @@ error.message,
 
 }finally{
 
-submitWithdrawal.disabled=false;
+button.disabled = false;
 
-submitWithdrawal.textContent=
+button.textContent =
 "Submit Withdrawal Request";
 
 }
 
-}
+};
+
+
+/* =====================================
+ASSET BUTTONS
+===================================== */
+
+document
+.querySelectorAll(".asset")
+.forEach(
+function(button){
+
+button.onclick =
+function(){
+
+document
+.querySelectorAll(".asset")
+.forEach(
+function(item){
+
+item.classList.remove(
+"active"
 );
 
-
-/* =========================
-CHART
-========================= */
-
-const canvas =
-document.getElementById("chart");
-
-const ctx =
-canvas.getContext("2d");
-
-let candles=[];
-let currentPrice=1.08500;
-
-
-function resizeChart(){
-
-const rect =
-canvas.parentElement.getBoundingClientRect();
-
-const dpr =
-window.devicePixelRatio||1;
-
-canvas.width =
-Math.max(
-1,
-Math.floor(rect.width*dpr)
-);
-
-canvas.height =
-Math.max(
-1,
-Math.floor(rect.height*dpr)
-);
-
-canvas.style.width =
-rect.width+"px";
-
-canvas.style.height =
-rect.height+"px";
-
-ctx.setTransform(
-dpr,0,0,dpr,0,0
-);
-
-drawChart();
-
-}
-
-
-function makeCandles(){
-
-candles=[];
-
-let value=currentPrice;
-
-for(let i=0;i<75;i++){
-
-const open=value;
-
-const movement=
-(Math.random()-.48)*.003;
-
-const close=
-open+movement;
-
-const high=
-Math.max(open,close)+
-Math.random()*.0012;
-
-const low=
-Math.min(open,close)-
-Math.random()*.0012;
-
-candles.push({
-open,
-close,
-high,
-low
 });
 
-value=close;
+
+button.classList.add(
+"active"
+);
+
+
+document.getElementById(
+"pair"
+).value =
+button.dataset.pair;
+
+};
 
 }
-
-currentPrice=value;
-
-}
+);
 
 
-function drawChart(
+document.getElementById(
+"pair"
+).onchange =
+function(){
+
+const value =
+this.value;
+
+document
+.querySelectorAll(".asset")
+.forEach(
+function(button){
+
+button.classList.toggle(
+"active",
+button.dataset.pair === value
+);
+
+});
+
+};
+
+
+/* =====================================
+AMOUNT BUTTONS
+=================================
